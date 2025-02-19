@@ -4,7 +4,7 @@ import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
 import { FaUser, FaEnvelope, FaPhone, FaLock } from "react-icons/fa";
-import signupSideImage from "../assets/login_side_image.png"; // Ensure correct path
+import signupSideImage from "../assets/signup_side_image.png"; // Ensure correct path
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -56,13 +56,13 @@ const SignUp = () => {
     <div className="flex h-screen w-screen bg-gray-100">
       {/* Left-side Image */}
       <div className="hidden md:flex w-1/2 items-center justify-center bg-white">
-        <img src={signupSideImage} alt="Sign Up Illustration" className="max-w-lg" />
+      <img src={signupSideImage} alt="Sign Up Illustration" className="max-w-3xl" />
       </div>
 
       {/* Right-side Sign Up Form */}
       <div className="w-full md:w-1/2 flex flex-col justify-center bg-white px-8 md:px-16 shadow-md">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-6">
-          Join <span className="text-purple-600 font-bold">Design School</span>
+        <h2 className="text-3xl font-semibold text-gray-800 mb-6">
+          Join <span className="text-blue-600 font-bold">Courtsite</span>
         </h2>
 
         {/* Social Sign Ups */}
@@ -85,7 +85,7 @@ const SignUp = () => {
           <input
             type="text"
             placeholder="Full Name"
-            className="w-full p-3 pl-10 border border-gray-300 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full p-3 pl-10 border border-gray-300 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
@@ -97,7 +97,7 @@ const SignUp = () => {
           <input
             type="email"
             placeholder="Email"
-            className="w-full p-3 pl-10 border border-gray-300 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full p-3 pl-10 border border-gray-300 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -109,7 +109,7 @@ const SignUp = () => {
           <input
             type="text"
             placeholder="Phone Number"
-            className="w-full p-3 pl-10 border border-gray-300 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full p-3 pl-10 border border-gray-300 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={phoneNumber}
             onChange={(e) => setPhoneNumber(e.target.value)}
           />
@@ -121,7 +121,7 @@ const SignUp = () => {
           <input
             type={showPassword ? "text" : "password"}
             placeholder="Password"
-            className="w-full p-3 pl-10 border border-gray-300 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full p-3 pl-10 border border-gray-300 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
@@ -143,7 +143,7 @@ const SignUp = () => {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 transition"
+          className="w-full bg-blue-600 font-bold text-white py-3 rounded-lg hover:bg-blue-700 transition"
           onClick={handleSignUp}
         >
           {isLoading ? "Signing Up..." : "Sign Up"}
@@ -152,7 +152,7 @@ const SignUp = () => {
         {/* Login Link */}
         <p className="text-center text-sm mt-4">
           Already have an account?{" "}
-          <a href="#" className="text-purple-600 hover:underline">
+          <a href="#" className="text-blue-600 hover:underline">
             Log In
           </a>
         </p>

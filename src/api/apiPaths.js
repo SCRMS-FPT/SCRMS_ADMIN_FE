@@ -16,7 +16,7 @@ const API_CONFIG = {
   userManagement: {
     baseUrl: "https://localhost:7105",
     endpoints: {
-      list: (role = "") => `/api/admin/users${role ? "?role=" + role : ""}`,
+      list: `/api/admin/users`,
       updateStatus: (userId) => `/api/admin/users/${userId}/status`,
       deleteUser: (userId) => `/api/admin/users/${userId}`,
       assignRoles: "/api/identity/admin/assign-roles",

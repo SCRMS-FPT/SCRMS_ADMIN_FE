@@ -1,6 +1,8 @@
 import API_CONFIG from "./apiPaths";
 const { baseUrl, endpoints } = API_CONFIG.systemSettings;
 
+//TODO: I don't know what should be done in here
+
 export async function getSystemSettings() {
   const url = baseUrl + endpoints.view;
   const response = await fetch(url);

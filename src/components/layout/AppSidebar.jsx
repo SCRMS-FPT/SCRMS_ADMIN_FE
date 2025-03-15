@@ -1,7 +1,17 @@
-"use client"
-import { Activity, Home, Users, Building2, User, Package, CreditCard, Star, Settings, LogOut } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+"use client";
+import {
+  Activity,
+  Home,
+  Users,
+  Building2,
+  User,
+  Package,
+  CreditCard,
+  Star,
+  Settings,
+  LogOut,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Sidebar,
   SidebarContent,
@@ -13,234 +23,197 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
-import { Sheet, SheetContent } from "@/components/ui/sheet"
-import { ScrollArea } from "@/components/ui/scroll-area"
+} from "@/components/ui/sidebar";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import PropTypes from "prop-types";
 
-const AppSidebar = ({ activeSection, handleSectionChange, isMobileMenuOpen, setIsMobileMenuOpen }) => {
+// Reusable menu items configuration
+const MENU_ITEMS = [
+  {
+    group: "Main",
+    items: [
+      {
+        label: "Dashboard",
+        icon: <Home className="h-5 w-5" />,
+        section: "dashboard",
+      },
+      {
+        label: "User Management",
+        icon: <Users className="h-5 w-5" />,
+        section: "users",
+      },
+      {
+        label: "Court Management",
+        icon: <Building2 className="h-5 w-5" />,
+        section: "courts",
+      },
+      {
+        label: "Coach Management",
+        icon: <User className="h-5 w-5" />,
+        section: "coaches",
+      },
+    ],
+  },
+  {
+    group: "Services",
+    items: [
+      {
+        label: "Service Packages",
+        icon: <Package className="h-5 w-5" />,
+        section: "packages",
+      },
+      {
+        label: "Payment Management",
+        icon: <CreditCard className="h-5 w-5" />,
+        section: "payments",
+      },
+    ],
+  },
+  {
+    group: "Moderation",
+    items: [
+      {
+        label: "Reviews & Reports",
+        icon: <Star className="h-5 w-5" />,
+        section: "reviews",
+      },
+    ],
+  },
+  {
+    group: "System",
+    items: [
+      {
+        label: "System Settings",
+        icon: <Settings className="h-5 w-5" />,
+        section: "settings",
+      },
+    ],
+  },
+];
+
+const AppSidebar = ({
+  activeSection,
+  onSectionChange,
+  isMobileMenuOpen,
+  setIsMobileMenuOpen,
+  onLogout,
+}) => {
+  // Reusable Sidebar Item Component
+  const SidebarItem = ({ item, isActive, onClick }) => (
+    <SidebarMenuItem>
+      <SidebarMenuButton
+        onClick={onClick}
+        isActive={isActive}
+        asChild
+        aria-label={item.label}
+      >
+        <Button
+          variant={isActive ? "default" : "ghost"}
+          className="w-full justify-start"
+        >
+          {item.icon}
+          <span>{item.label}</span>
+        </Button>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+
   return (
     <>
       {/* Desktop Sidebar */}
-      <Sidebar className="hidden md:flex">
+      <Sidebar className="hidden md:flex border-r">
         <SidebarHeader className="border-b">
           <div className="flex items-center gap-2 px-2 py-3">
-            <Activity className="h-6 w-6 text-sidebar-primary" />
+            <Activity className="h-6 w-6 text-primary" />
             <span className="text-xl font-bold">Admin Portal</span>
           </div>
         </SidebarHeader>
         <SidebarContent>
-          <SidebarGroup>
-            <SidebarGroupLabel>Main</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    onClick={() => handleSectionChange("dashboard")}
-                    isActive={activeSection === "dashboard"}
-                  >
-                    <Home className="h-4 w-4" />
-                    <span>Dashboard</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton onClick={() => handleSectionChange("users")} isActive={activeSection === "users"}>
-                    <Users className="h-4 w-4" />
-                    <span>User Management</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    onClick={() => handleSectionChange("courts")}
-                    isActive={activeSection === "courts"}
-                  >
-                    <Building2 className="h-4 w-4" />
-                    <span>Court Management</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    onClick={() => handleSectionChange("coaches")}
-                    isActive={activeSection === "coaches"}
-                  >
-                    <User className="h-4 w-4" />
-                    <span>Coach Management</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-          <SidebarGroup>
-            <SidebarGroupLabel>Services</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    onClick={() => handleSectionChange("packages")}
-                    isActive={activeSection === "packages"}
-                  >
-                    <Package className="h-4 w-4" />
-                    <span>Service Packages</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    onClick={() => handleSectionChange("payments")}
-                    isActive={activeSection === "payments"}
-                  >
-                    <CreditCard className="h-4 w-4" />
-                    <span>Payment Management</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-          <SidebarGroup>
-            <SidebarGroupLabel>Moderation</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    onClick={() => handleSectionChange("reviews")}
-                    isActive={activeSection === "reviews"}
-                  >
-                    <Star className="h-4 w-4" />
-                    <span>Reviews & Reports</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-          <SidebarGroup>
-            <SidebarGroupLabel>System</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    onClick={() => handleSectionChange("settings")}
-                    isActive={activeSection === "settings"}
-                  >
-                    <Settings className="h-4 w-4" />
-                    <span>System Settings</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
+          {MENU_ITEMS.map((group) => (
+            <SidebarGroup key={group.group}>
+              <SidebarGroupLabel>{group.group}</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {group.items.map((item) => (
+                    <SidebarItem
+                      key={item.section}
+                      item={item}
+                      isActive={activeSection === item.section}
+                      onClick={() => onSectionChange(item.section)}
+                    />
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          ))}
         </SidebarContent>
         <SidebarFooter className="border-t">
           <div className="flex items-center justify-between p-4">
             <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-full bg-sidebar-primary text-sidebar-primary-foreground flex items-center justify-center">
+              <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
                 <span className="text-sm font-medium">AD</span>
               </div>
               <div>
                 <p className="text-sm font-medium">Admin User</p>
-                <p className="text-xs text-sidebar-foreground/70">admin@example.com</p>
+                <p className="text-xs text-muted-foreground">
+                  admin@example.com
+                </p>
               </div>
             </div>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
-                    <LogOut className="h-4 w-4" />
-                    <span className="sr-only">Log out</span>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Log out</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onLogout}
+              aria-label="Log out"
+            >
+              <LogOut className="h-5 w-5" />
+            </Button>
           </div>
         </SidebarFooter>
       </Sidebar>
 
       {/* Mobile Sidebar */}
       <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-        <SheetContent side="left" className="w-[300px] sm:w-[400px] p-0">
+        <SheetContent side="left" className="w-[300px] p-0">
+          <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
+          <SheetDescription className="sr-only">
+            This is the mobile menu for the admin portal.
+          </SheetDescription>
           <div className="flex flex-col h-full">
             <div className="border-b p-4 flex items-center gap-2">
-              <Activity className="h-6 w-6" />
+              <Activity className="h-6 w-6 text-primary" />
               <span className="text-xl font-bold">Admin Portal</span>
             </div>
             <ScrollArea className="flex-1">
               <div className="p-4 space-y-4">
-                <div className="space-y-2">
-                  <h3 className="text-sm font-medium">Main</h3>
-                  <Button
-                    variant={activeSection === "dashboard" ? "default" : "ghost"}
-                    className="w-full justify-start"
-                    onClick={() => handleSectionChange("dashboard")}
-                  >
-                    <Home className="h-4 w-4 mr-2" />
-                    Dashboard
-                  </Button>
-                  <Button
-                    variant={activeSection === "users" ? "default" : "ghost"}
-                    className="w-full justify-start"
-                    onClick={() => handleSectionChange("users")}
-                  >
-                    <Users className="h-4 w-4 mr-2" />
-                    User Management
-                  </Button>
-                  <Button
-                    variant={activeSection === "courts" ? "default" : "ghost"}
-                    className="w-full justify-start"
-                    onClick={() => handleSectionChange("courts")}
-                  >
-                    <Building2 className="h-4 w-4 mr-2" />
-                    Court Management
-                  </Button>
-                  <Button
-                    variant={activeSection === "coaches" ? "default" : "ghost"}
-                    className="w-full justify-start"
-                    onClick={() => handleSectionChange("coaches")}
-                  >
-                    <User className="h-4 w-4 mr-2" />
-                    Coach Management
-                  </Button>
-                </div>
-                <div className="space-y-2">
-                  <h3 className="text-sm font-medium">Services</h3>
-                  <Button
-                    variant={activeSection === "packages" ? "default" : "ghost"}
-                    className="w-full justify-start"
-                    onClick={() => handleSectionChange("packages")}
-                  >
-                    <Package className="h-4 w-4 mr-2" />
-                    Service Packages
-                  </Button>
-                  <Button
-                    variant={activeSection === "payments" ? "default" : "ghost"}
-                    className="w-full justify-start"
-                    onClick={() => handleSectionChange("payments")}
-                  >
-                    <CreditCard className="h-4 w-4 mr-2" />
-                    Payment Management
-                  </Button>
-                </div>
-                <div className="space-y-2">
-                  <h3 className="text-sm font-medium">Moderation</h3>
-                  <Button
-                    variant={activeSection === "reviews" ? "default" : "ghost"}
-                    className="w-full justify-start"
-                    onClick={() => handleSectionChange("reviews")}
-                  >
-                    <Star className="h-4 w-4 mr-2" />
-                    Reviews & Reports
-                  </Button>
-                </div>
-                <div className="space-y-2">
-                  <h3 className="text-sm font-medium">System</h3>
-                  <Button
-                    variant={activeSection === "settings" ? "default" : "ghost"}
-                    className="w-full justify-start"
-                    onClick={() => handleSectionChange("settings")}
-                  >
-                    <Settings className="h-4 w-4 mr-2" />
-                    System Settings
-                  </Button>
-                </div>
+                {MENU_ITEMS.map((group) => (
+                  <div key={group.group} className="space-y-2">
+                    <h3 className="text-sm font-medium">{group.group}</h3>
+                    {group.items.map((item) => (
+                      <Button
+                        key={item.section}
+                        variant={
+                          activeSection === item.section ? "default" : "ghost"
+                        }
+                        className="w-full justify-start"
+                        onClick={() => {
+                          onSectionChange(item.section);
+                          setIsMobileMenuOpen(false);
+                        }}
+                        aria-label={item.label}
+                      >
+                        {item.icon}
+                        {item.label}
+                      </Button>
+                    ))}
+                  </div>
+                ))}
               </div>
             </ScrollArea>
             <div className="border-t p-4">
@@ -251,12 +224,18 @@ const AppSidebar = ({ activeSection, handleSectionChange, isMobileMenuOpen, setI
                   </div>
                   <div>
                     <p className="text-sm font-medium">Admin User</p>
-                    <p className="text-xs text-muted-foreground">admin@example.com</p>
+                    <p className="text-xs text-muted-foreground">
+                      admin@example.com
+                    </p>
                   </div>
                 </div>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
-                  <LogOut className="h-4 w-4" />
-                  <span className="sr-only">Log out</span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={onLogout}
+                  aria-label="Log out"
+                >
+                  <LogOut className="h-5 w-5" />
                 </Button>
               </div>
             </div>
@@ -264,8 +243,15 @@ const AppSidebar = ({ activeSection, handleSectionChange, isMobileMenuOpen, setI
         </SheetContent>
       </Sheet>
     </>
-  )
-}
+  );
+};
 
-export default AppSidebar
+AppSidebar.propTypes = {
+  activeSection: PropTypes.string.isRequired,
+  onSectionChange: PropTypes.func.isRequired,
+  isMobileMenuOpen: PropTypes.bool.isRequired,
+  setIsMobileMenuOpen: PropTypes.func.isRequired,
+  onLogout: PropTypes.func.isRequired,
+};
 
+export default AppSidebar;

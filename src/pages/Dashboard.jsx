@@ -1,29 +1,42 @@
-import { Skeleton } from "@/components/ui/skeleton"
-import { Users, Building2, BarChart3, DollarSign } from "lucide-react"
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import CardSkeleton from "@/components/ui/CardSkeleton"
-import StatCard from "@/components/ui/StatCard"
-import StatusBadge from "@/components/ui/StatusBadge"
-import RevenueChart from "@/components/charts/RevenueChart"
-import BookingChart from "@/components/charts/BookingChart"
-import { useDashboardData } from "@/hooks/useDashboardData"
-import { formatCurrency } from "@/lib/utils"
+import { Skeleton } from "@/components/ui/skeleton";
+import { Users, Building2, BarChart3, DollarSign } from "lucide-react";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import CardSkeleton from "@/components/ui/CardSkeleton";
+import StatCard from "@/components/ui/StatCard";
+import StatusBadge from "@/components/ui/StatusBadge";
+import RevenueChart from "../components/charts/RevenueChart";
+import BookingChart from "../components/charts/BookingChart";
+import { useDashboardData } from "@/hooks/useDashboardData";
+import { formatCurrency } from "@/lib/utils";
 
 const Dashboard = () => {
-  const { data: dashboardData, isLoading } = useDashboardData()
+  const { data: dashboardData, isLoading } = useDashboardData();
 
   // Revenue chart data
   const revenueData = [
-    { date: "Jan", revenue: 25000 },
-    { date: "Feb", revenue: 35000 },
-    { date: "Mar", revenue: 32000 },
-    { date: "Apr", revenue: 40000 },
-    { date: "May", revenue: 45000 },
-    { date: "Jun", revenue: 48000 },
-    { date: "Jul", revenue: 52000 },
-  ]
+    { date: "2024-01-01", revenue: 25000 },
+    { date: "2024-02-01", revenue: 35000 },
+    { date: "2024-03-01", revenue: 32000 },
+    { date: "2024-04-01", revenue: 40000 },
+    { date: "2024-05-01", revenue: 45000 },
+    { date: "2024-06-01", revenue: 48000 },
+    { date: "2024-07-01", revenue: 52000 },
+  ];
 
   return (
     <div className="space-y-6">
@@ -87,7 +100,9 @@ const Dashboard = () => {
             <Card>
               <CardHeader>
                 <CardTitle>Revenue Trend</CardTitle>
-                <p className="text-sm text-muted-foreground">Monthly revenue for the current year</p>
+                <p className="text-sm text-muted-foreground">
+                  Monthly revenue for the current year
+                </p>
               </CardHeader>
               <CardContent className="h-[300px]">
                 <RevenueChart data={revenueData} />
@@ -96,7 +111,9 @@ const Dashboard = () => {
             <Card>
               <CardHeader>
                 <CardTitle>Booking Trends</CardTitle>
-                <p className="text-sm text-muted-foreground">Monthly booking count</p>
+                <p className="text-sm text-muted-foreground">
+                  Monthly booking count
+                </p>
               </CardHeader>
               <CardContent className="h-[300px]">
                 <BookingChart data={dashboardData.bookingTrends} />
@@ -108,7 +125,9 @@ const Dashboard = () => {
           <Card>
             <CardHeader>
               <CardTitle>Recent Transactions</CardTitle>
-              <p className="text-sm text-muted-foreground">Latest payment activities across the platform</p>
+              <p className="text-sm text-muted-foreground">
+                Latest payment activities across the platform
+              </p>
             </CardHeader>
             <CardContent>
               <Table>
@@ -124,7 +143,9 @@ const Dashboard = () => {
                   {dashboardData.recentTransactions.map((transaction) => (
                     <TableRow key={transaction.id}>
                       <TableCell>{transaction.user}</TableCell>
-                      <TableCell>{formatCurrency(transaction.amount)}</TableCell>
+                      <TableCell>
+                        {formatCurrency(transaction.amount)}
+                      </TableCell>
                       <TableCell>
                         <StatusBadge status={transaction.status} />
                       </TableCell>
@@ -143,8 +164,7 @@ const Dashboard = () => {
         </>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default Dashboard
-
+export default Dashboard;

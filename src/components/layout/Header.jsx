@@ -11,97 +11,123 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useDashboardData } from "@/hooks/useDashboardData";
+import PropTypes from "prop-types";
 
-const Header = ({ activeSection, isMobileMenuOpen, setIsMobileMenuOpen }) => {
+// Menu titles as a constant to avoid hardcoding in the component
+const SECTION_TITLES = {
+  dashboard: "Dashboard Overview",
+  users: "User Management",
+  courts: "Court Management",
+  coaches: "Coach Management",
+  packages: "Service Package Management",
+  payments: "Payment Management",
+  reviews: "Review & Report Management",
+  settings: "System Settings",
+};
+
+const Header = ({ activeSection, toggleMobileMenu }) => {
   const { theme, setTheme } = useTheme();
   const { data: dashboardData } = useDashboardData();
 
-  const getSectionTitle = () => {
-    const titles = {
-      dashboard: "Dashboard Overview",
-      users: "User Management",
-      courts: "Court Management",
-      coaches: "Coach Management",
-      packages: "Service Package Management",
-      payments: "Payment Management",
-      reviews: "Review & Report Management",
-      settings: "System Settings",
-    };
-    return titles[activeSection] || "Dashboard";
-  };
+  const getSectionTitle = () => SECTION_TITLES[activeSection] || "Dashboard";
+
+  const handleThemeToggle = () => setTheme(theme === "dark" ? "light" : "dark");
 
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
+      {/* Mobile Menu Toggle */}
       <Button
         variant="ghost"
         size="icon"
         className="md:hidden"
-        onClick={() => setIsMobileMenuOpen(true)}
+        type="button"
+        onClick={toggleMobileMenu}
+        aria-label="Toggle mobile menu"
       >
         <Menu className="h-5 w-5" />
-        <span className="sr-only">Toggle menu</span>
+        <span className="sr-only">Toggle mobile menu</span>
       </Button>
+
+      {/* Section Title */}
       <div className="flex-1">
         <h1 className="text-lg font-semibold md:text-xl">
           {getSectionTitle()}
         </h1>
       </div>
+
+      {/* Right-side Controls */}
       <div className="flex items-center gap-2">
+        {/* Theme Toggle */}
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          type="button"
+          onClick={handleThemeToggle}
+          aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
         >
           <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
           <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
           <span className="sr-only">Toggle theme</span>
         </Button>
+
+        {/* Notifications Dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="relative">
-              <Flag className="h-5 w-5" />
-              <span className="sr-only">Notifications</span>
-              <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-destructive text-[10px] font-medium text-destructive-foreground">
-                {dashboardData?.notifications?.length || 0}
-              </span>
-            </Button>
+            <div className="relative">
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="View notifications"
+              >
+                <Flag className="h-5 w-5" />
+                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
+                  {dashboardData?.notifications?.length || 0}
+                </span>
+              </Button>
+            </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-80">
             <DropdownMenuLabel>Notifications</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {dashboardData?.notifications?.map((notification) => (
-              <DropdownMenuItem
-                key={notification.id}
-                className="flex flex-col items-start"
-              >
-                <div className="flex w-full justify-between">
-                  <span className="font-medium">{notification.message}</span>
-                  <Badge
-                    variant={
-                      notification.type === "alert"
-                        ? "destructive"
-                        : notification.type === "warning"
-                        ? "warning"
-                        : "default"
-                    }
-                    className="ml-2"
-                  >
-                    {notification.type}
-                  </Badge>
-                </div>
-                <span className="text-xs text-muted-foreground">
-                  {notification.time}
-                </span>
-              </DropdownMenuItem>
-            ))}
+            {dashboardData?.notifications?.length > 0 ? (
+              dashboardData.notifications.map((notification) => (
+                <DropdownMenuItem
+                  key={notification.id}
+                  className="flex flex-col items-start"
+                >
+                  <div className="flex w-full justify-between">
+                    <span className="font-medium">{notification.message}</span>
+                    <Badge
+                      variant={
+                        notification.type === "alert"
+                          ? "destructive"
+                          : notification.type === "warning"
+                          ? "warning"
+                          : "default"
+                      }
+                    >
+                      {notification.type}
+                    </Badge>
+                  </div>
+                  <span className="text-xs text-muted-foreground">
+                    {notification.time}
+                  </span>
+                </DropdownMenuItem>
+              ))
+            ) : (
+              <DropdownMenuItem>No notifications available</DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
+
+        {/* User Account Dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
               size="icon"
               className="relative h-8 w-8 rounded-full"
+              aria-label="User account options"
             >
               <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
                 <span className="text-sm font-medium">AD</span>
@@ -120,6 +146,11 @@ const Header = ({ activeSection, isMobileMenuOpen, setIsMobileMenuOpen }) => {
       </div>
     </header>
   );
+};
+
+Header.propTypes = {
+  activeSection: PropTypes.string.isRequired,
+  toggleMobileMenu: PropTypes.func.isRequired,
 };
 
 export default Header;

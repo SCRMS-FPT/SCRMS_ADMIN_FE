@@ -1,4 +1,4 @@
-import { formatCurrency } from "@/lib/utils"
+import { formatCurrency } from "@/lib/utils";
 import {
   ChartContainer,
   ChartTooltip,
@@ -7,7 +7,7 @@ import {
   ChartTooltipLabel,
   ChartTooltipValue,
   LineChart,
-} from "@/components/ui/chart"
+} from "@/components/ui/chart";
 
 const RevenueChart = ({ data }) => {
   return (
@@ -34,8 +34,7 @@ const RevenueChart = ({ data }) => {
         </ChartTooltipContent>
       </ChartTooltip>
     </ChartContainer>
-  )
-}
+  );
+};
 
-export default RevenueChart
-
+export default RevenueChart;

@@ -1,19 +1,24 @@
 import API_CONFIG from "./apiPaths";
 
 const { baseUrl, endpoints } = API_CONFIG.dashboard;
+const token = localStorage.getItem("authToken");
 /**
  * Fetches dashboard statistics from the API.
  * @returns {Promise<Object>} A promise that resolves to the JSON response containing dashboard statistics.
  * @throws {Error} If the network request fails or the response is not OK.
  */
 export async function getDashboardStats() {
-  const response = await fetch(baseUrl + endpoints.stats);
+  const response = await fetch(baseUrl + endpoints.stats, {
+    headers: {
+      Authorization: "bearer " + token,
+    },
+  });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(
-      errorData.message || "Failed to fetch dashboard statistics."
-    );
+    throw {
+      status: response.status,
+      message: response.statusText,
+    };
   }
 
   return response.json();
@@ -25,11 +30,17 @@ export async function getDashboardStats() {
  * @throws {Error} If the network request fails or the response is not OK.
  */
 export async function getRevenueReport() {
-  const response = await fetch(baseUrl + endpoints.revenue);
+  const response = await fetch(baseUrl + endpoints.revenue, {
+    headers: {
+      Authorization: "bearer " + token,
+    },
+  });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || "Failed to fetch revenue report.");
+    throw {
+      status: response.status,
+      message: response.statusText,
+    };
   }
 
   return response.json();
@@ -41,13 +52,17 @@ export async function getRevenueReport() {
  * @throws {Error} If the network request fails or the response is not OK.
  */
 export async function getRecentTransactions() {
-  const response = await fetch(baseUrl + endpoints.transactions);
+  const response = await fetch(baseUrl + endpoints.transactions, {
+    headers: {
+      Authorization: "bearer " + token,
+    },
+  });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(
-      errorData.message || "Failed to fetch recent transactions."
-    );
+    throw {
+      status: response.status,
+      message: response.statusText,
+    };
   }
 
   return response.json();

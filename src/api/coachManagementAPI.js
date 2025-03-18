@@ -6,8 +6,19 @@ const { baseUrl, endpoints } = API_CONFIG.coachManagement;
  * @returns the list of coach
  */
 export async function getCoaches() {
+  const token = localStorage.getItem("authToken");
   const url = baseUrl + endpoints.list;
-  const response = await fetch(url);
+  const response = await fetch(url, {
+    headers: {
+      Authorization: "bearer " + token,
+    },
+  });
+  if (!response.ok) {
+    throw {
+      status: response.status,
+      message: response.statusText,
+    };
+  }
   return response.json();
 }
 
@@ -17,7 +28,18 @@ export async function getCoaches() {
  * @returns object coach
  */
 export async function getCoachDetails(coachId) {
+  const token = localStorage.getItem("authToken");
   const url = baseUrl + endpoints.details(coachId);
-  const response = await fetch(url);
+  const response = await fetch(url, {
+    headers: {
+      Authorization: "bearer " + token,
+    },
+  });
+  if (!response.ok) {
+    throw {
+      status: response.status,
+      message: response.statusText,
+    };
+  }
   return response.json();
 }

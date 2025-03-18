@@ -11,6 +11,8 @@ import Payments from "@/pages/Payments";
 import Reviews from "@/pages/Reviews";
 import Settings from "@/pages/Settings";
 import Login from "@/pages/Login";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("authToken");
@@ -37,6 +39,7 @@ const MainLayout = () => {
 
   return (
     <div className="flex min-h-screen w-full">
+      <ToastContainer position="bottom-right" />
       <AppSidebar
         activeSection={activeSection}
         onSectionChange={handleSectionChange}

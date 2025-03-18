@@ -15,11 +15,10 @@ export default function AdminLogin() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Check if user is already logged in and redirect to main page if so.
   useEffect(() => {
     const token = localStorage.getItem("authToken");
     if (token) {
-      navigate("/"); // Redirect to main page if already logged in.
+      navigate("/");
     }
   }, [navigate]);
 
@@ -27,7 +26,6 @@ export default function AdminLogin() {
     e.preventDefault();
     setLoading(true);
 
-    // Prepare login data matching your C# model: { Email, Password }
     const loginData = {
       Email: email,
       Password: password,
@@ -35,10 +33,9 @@ export default function AdminLogin() {
 
     try {
       const result = await login(loginData);
-      // Expected result: { Token, UserId, User }
-      localStorage.setItem("authToken", result.Token);
-      localStorage.setItem("user", JSON.stringify(result.User));
-      navigate("/"); // Redirect to the main page after successful login.
+      localStorage.setItem("authToken", result.token);
+      localStorage.setItem("user", JSON.stringify(result.user));
+      navigate("/");
     } catch (err) {
       toast.error(err.message || "Login failed", {
         position: "bottom-right",

@@ -1,5 +1,6 @@
 import API_CONFIG from "./apiPaths";
 const { baseUrl, endpoints } = API_CONFIG.userManagement;
+const token = localStorage.getItem("authToken");
 /**
  * @typedef {Object} ProfileData
  * @property {string} UserId - The unique identifier of the user (UUID format).
@@ -18,11 +19,17 @@ const { baseUrl, endpoints } = API_CONFIG.userManagement;
  */
 export async function getUsers() {
   const url = baseUrl + endpoints.list();
-  const response = await fetch(url);
+  const response = await fetch(url, {
+    headers: {
+      Authorization: "bearer " + token,
+    },
+  });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || "Failed to fetch users.");
+    throw {
+      status: response.status,
+      message: response.statusText,
+    };
   }
 
   return response.json();
@@ -44,15 +51,18 @@ export async function updateUser(userId, profileData) {
   const url = baseUrl + endpoints.updateStatus(userId);
   const response = await fetch(url, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "bearer " + token,
+    },
     body: JSON.stringify(profileData),
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(
-      errorData.message || `Failed to update user with ID: ${userId}`
-    );
+    throw {
+      status: response.status,
+      message: response.statusText,
+    };
   }
 
   return response.json();
@@ -82,15 +92,18 @@ export async function assignUserRoles(userId, roleData) {
   const url = baseUrl + endpoints.assignRoles;
   const response = await fetch(url, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "bearer " + token,
+    },
     body: JSON.stringify({ userId, roles: roleData }),
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(
-      errorData.message || `Failed to assign roles to user ID: ${userId}`
-    );
+    throw {
+      status: response.status,
+      message: response.statusText,
+    };
   }
 
   return response.json();
@@ -108,13 +121,18 @@ export async function deleteUser(userId) {
   }
 
   const url = baseUrl + endpoints.deleteUser(userId);
-  const response = await fetch(url, { method: "DELETE" });
+  const response = await fetch(url, {
+    method: "DELETE",
+    headers: {
+      Authorization: "bearer " + token,
+    },
+  });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(
-      errorData.message || `Failed to delete user with ID: ${userId}`
-    );
+    throw {
+      status: response.status,
+      message: response.statusText,
+    };
   }
 
   return response.json();

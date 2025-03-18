@@ -1,35 +1,53 @@
-"use client"
-
-import { useState } from "react"
-import { ChevronDown, Star } from "lucide-react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Skeleton } from "@/components/ui/skeleton"
+import { useState } from "react";
+import { ChevronDown, Star } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { useCoaches } from "@/hooks/useCoaches"
+} from "@/components/ui/dropdown-menu";
+import { useCoaches } from "@/hooks/useCoaches";
+import { logoutUser, showToast } from "../lib/utils";
 
 const Coaches = () => {
-  const [searchTerm, setSearchTerm] = useState("")
-  const { coaches, isLoading } = useCoaches()
+  const [searchTerm, setSearchTerm] = useState("");
+  const { coaches, isLoading, error } = useCoaches();
 
   // Filter coaches by search term
   const filteredCoaches = searchTerm
     ? coaches.filter(
         (coach) =>
           coach.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          coach.specialization.toLowerCase().includes(searchTerm.toLowerCase()),
+          coach.specialization.toLowerCase().includes(searchTerm.toLowerCase())
       )
-    : coaches
-
+    : coaches;
+  if (error) {
+    showToast(error.message, "error");
+  }
+  if (error && error.status === 401) {
+    logoutUser();
+    return null;
+  }
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -71,19 +89,17 @@ const Coaches = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Specialization</TableHead>
-                  <TableHead>Experience</TableHead>
+                  <TableHead>Bio</TableHead>
+                  <TableHead>Created At</TableHead>
                   <TableHead>Rating</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredCoaches.map((coach) => (
-                  <TableRow key={coach.id}>
-                    <TableCell className="font-medium">{coach.name}</TableCell>
-                    <TableCell>{coach.specialization}</TableCell>
-                    <TableCell>{coach.experience}</TableCell>
+                  <TableRow key={coach.userId}>
+                    <TableCell>{coach.bio}</TableCell>
+                    <TableCell>{coach.createdAt}</TableCell>
                     <TableCell>
                       <div className="flex items-center">
                         <Star className="h-4 w-4 fill-primary text-primary mr-1" />
@@ -103,7 +119,9 @@ const Coaches = () => {
                           <DropdownMenuItem>Edit Details</DropdownMenuItem>
                           <DropdownMenuItem>View Schedule</DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-destructive">Remove Coach</DropdownMenuItem>
+                          <DropdownMenuItem className="text-destructive">
+                            Remove Coach
+                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -115,8 +133,7 @@ const Coaches = () => {
         </CardContent>
       </Card>
     </div>
-  )
-}
+  );
+};
 
-export default Coaches
-
+export default Coaches;

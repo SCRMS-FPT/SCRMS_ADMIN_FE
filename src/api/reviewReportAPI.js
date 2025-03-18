@@ -1,5 +1,6 @@
 import API_CONFIG from "./apiPaths";
 const { baseUrl, endpoints } = API_CONFIG.reviewReportManagement;
+const token = localStorage.getItem("authToken");
 
 /**
  * Fetches the list of review reports from the API.
@@ -8,11 +9,17 @@ const { baseUrl, endpoints } = API_CONFIG.reviewReportManagement;
  */
 export async function getReviewReports() {
   const url = baseUrl + endpoints.reviewReports;
-  const response = await fetch(url);
+  const response = await fetch(url, {
+    headers: {
+      Authorization: "bearer " + token,
+    },
+  });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || "Failed to fetch review reports.");
+    throw {
+      status: response.status,
+      message: response.statusText,
+    };
   }
 
   return response.json();
@@ -30,13 +37,18 @@ export async function deleteReview(reviewId) {
   }
 
   const url = baseUrl + endpoints.deleteReview(reviewId);
-  const response = await fetch(url, { method: "DELETE" });
+  const response = await fetch(url, {
+    method: "DELETE",
+    headers: {
+      Authorization: "bearer " + token,
+    },
+  });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(
-      errorData.message || `Failed to delete review with ID: ${reviewId}`
-    );
+    throw {
+      status: response.status,
+      message: response.statusText,
+    };
   }
 
   return response.json();
@@ -49,11 +61,17 @@ export async function deleteReview(reviewId) {
  */
 export async function getReports() {
   const url = baseUrl + endpoints.listReports;
-  const response = await fetch(url);
+  const response = await fetch(url, {
+    headers: {
+      Authorization: "bearer " + token,
+    },
+  });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || "Failed to fetch reports.");
+    throw {
+      status: response.status,
+      message: response.statusText,
+    };
   }
 
   return response.json();

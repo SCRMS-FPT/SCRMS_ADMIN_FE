@@ -1,6 +1,6 @@
 const API_CONFIG = {
   login: {
-    baseUrl: "https://localhost:7158",
+    baseUrl: "https://localhost:7105",
     endpoints: {
       login: "/api/identity/login",
     },
@@ -34,7 +34,7 @@ const API_CONFIG = {
   coachManagement: {
     baseUrl: "https://localhost:7237",
     endpoints: {
-      list: "/api/admin/users?role=coach",
+      list: "/coaches",
       details: (coachId) => `/api/coaches/${coachId}`,
     },
   },

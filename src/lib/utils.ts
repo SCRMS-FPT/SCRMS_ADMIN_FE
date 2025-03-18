@@ -1,5 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -52,4 +54,28 @@ export const filterBySearchTerm = <T extends Record<string, any>>(
       return value && value.toString().toLowerCase().includes(lowercasedTerm);
     })
   );
+};
+
+export function logoutUser() {
+  localStorage.removeItem("authToken");
+  window.location.href = "/login";
+}
+
+export const showToast = (
+  message: string,
+  type: "success" | "error" | "info" | "warning" = "info"
+) => {
+  switch (type) {
+    case "success":
+      toast.success(message);
+      break;
+    case "error":
+      toast.error(message);
+      break;
+    case "warning":
+      toast.warning(message);
+      break;
+    default:
+      toast.info(message);
+  }
 };

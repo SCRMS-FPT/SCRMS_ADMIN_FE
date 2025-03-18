@@ -1,5 +1,6 @@
 import API_CONFIG from "./apiPaths";
 const { baseUrl, endpoints } = API_CONFIG.paymentManagement;
+const token = localStorage.getItem("authToken");
 
 /**
  * Fetches the list of transactions from the API.
@@ -8,11 +9,17 @@ const { baseUrl, endpoints } = API_CONFIG.paymentManagement;
  */
 export async function getTransactions() {
   const url = baseUrl + endpoints.transactions;
-  const response = await fetch(url);
+  const response = await fetch(url, {
+    headers: {
+      Authorization: "bearer " + token,
+    },
+  });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || "Failed to fetch transactions.");
+    throw {
+      status: response.status,
+      message: response.statusText,
+    };
   }
 
   return response.json();
@@ -30,14 +37,17 @@ export async function getTransactionDetails(transactionId) {
   }
 
   const url = baseUrl + endpoints.transactionDetails(transactionId);
-  const response = await fetch(url);
+  const response = await fetch(url, {
+    headers: {
+      Authorization: "bearer " + token,
+    },
+  });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(
-      errorData.message ||
-        `Failed to fetch details for transaction ID: ${transactionId}`
-    );
+    throw {
+      status: response.status,
+      message: response.statusText,
+    };
   }
 
   return response.json();

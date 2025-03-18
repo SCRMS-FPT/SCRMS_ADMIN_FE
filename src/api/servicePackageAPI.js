@@ -1,5 +1,6 @@
 import API_CONFIG from "./apiPaths";
 const { baseUrl, endpoints } = API_CONFIG.servicePackageManagement;
+const token = localStorage.getItem("authToken");
 
 /**
  * @typedef {Object} ServicePackage
@@ -20,11 +21,17 @@ const { baseUrl, endpoints } = API_CONFIG.servicePackageManagement;
  */
 export async function getServicePackages() {
   const url = baseUrl + endpoints.list;
-  const response = await fetch(url);
+  const response = await fetch(url, {
+    headers: {
+      Authorization: "bearer " + token,
+    },
+  });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || "Failed to fetch service packages.");
+    throw {
+      status: response.status,
+      message: response.statusText,
+    };
   }
 
   return response.json();
@@ -42,14 +49,17 @@ export async function getServicePackageDetails(packageId) {
   }
 
   const url = baseUrl + endpoints.details(packageId);
-  const response = await fetch(url);
+  const response = await fetch(url, {
+    headers: {
+      Authorization: "bearer " + token,
+    },
+  });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(
-      errorData.message ||
-        `Failed to fetch details for package ID: ${packageId}`
-    );
+    throw {
+      status: response.status,
+      message: response.statusText,
+    };
   }
 
   return response.json();
@@ -67,13 +77,18 @@ export async function createServicePackage(packageData) {
   const url = baseUrl + endpoints.create;
   const response = await fetch(url, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "bearer " + token,
+    },
     body: JSON.stringify(packageData),
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || "Failed to create service package.");
+    throw {
+      status: response.status,
+      message: response.statusText,
+    };
   }
 
   return response.json();
@@ -95,16 +110,18 @@ export async function updateServicePackage(packageId, packageData) {
   const url = baseUrl + endpoints.update(packageId);
   const response = await fetch(url, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "bearer " + token,
+    },
     body: JSON.stringify(packageData),
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(
-      errorData.message ||
-        `Failed to update service package with ID: ${packageId}`
-    );
+    throw {
+      status: response.status,
+      message: response.statusText,
+    };
   }
 
   return response.json();
@@ -122,14 +139,18 @@ export async function deleteServicePackage(packageId) {
   }
 
   const url = baseUrl + endpoints.delete(packageId);
-  const response = await fetch(url, { method: "DELETE" });
+  const response = await fetch(url, {
+    method: "DELETE",
+    headers: {
+      Authorization: "bearer " + token,
+    },
+  });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(
-      errorData.message ||
-        `Failed to delete service package with ID: ${packageId}`
-    );
+    throw {
+      status: response.status,
+      message: response.statusText,
+    };
   }
 
   return response.json();

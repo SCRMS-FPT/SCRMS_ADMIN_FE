@@ -41,13 +41,19 @@ const Coaches = () => {
           coach.specialization.toLowerCase().includes(searchTerm.toLowerCase())
       )
     : coaches;
+
   if (error) {
-    showToast(error.message, "error");
+    switch (error.status) {
+      case 401: {
+        logoutUser();
+        return null;
+      }
+      default: {
+        showToast(`Error: ${error.message}`, "error");
+      }
+    }
   }
-  if (error && error.status === 401) {
-    logoutUser();
-    return null;
-  }
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -96,37 +102,47 @@ const Coaches = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredCoaches.map((coach) => (
-                  <TableRow key={coach.userId}>
-                    <TableCell>{coach.bio}</TableCell>
-                    <TableCell>{coach.createdAt}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center">
-                        <Star className="h-4 w-4 fill-primary text-primary mr-1" />
-                        <span>{coach.rating}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <ChevronDown className="h-4 w-4" />
-                            <span className="sr-only">Actions</span>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>View Profile</DropdownMenuItem>
-                          <DropdownMenuItem>Edit Details</DropdownMenuItem>
-                          <DropdownMenuItem>View Schedule</DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-destructive">
-                            Remove Coach
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                {filteredCoaches &&
+                Array.isArray(filteredCoaches) &&
+                filteredCoaches.size > 0 ? (
+                  filteredCoaches.map((coach) => (
+                    <TableRow key={coach.userId}>
+                      <TableCell>{coach.bio}</TableCell>
+                      <TableCell>{coach.createdAt}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center">
+                          <Star className="h-4 w-4 fill-primary text-primary mr-1" />
+                          <span>{coach.rating}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                              <ChevronDown className="h-4 w-4" />
+                              <span className="sr-only">Actions</span>
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem>View Profile</DropdownMenuItem>
+                            <DropdownMenuItem>Edit Details</DropdownMenuItem>
+                            <DropdownMenuItem>View Schedule</DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem className="text-destructive">
+                              Remove Coach
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan="7" className="text-center">
+                      No users available
                     </TableCell>
                   </TableRow>
-                ))}
+                )}
               </TableBody>
             </Table>
           )}

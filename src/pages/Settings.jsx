@@ -1,29 +1,38 @@
-"use client"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
-import { Skeleton } from "@/components/ui/skeleton"
-import { useSettings } from "@/hooks/useSettings"
+"use client";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useSettings } from "@/hooks/useSettings";
 
 const Settings = () => {
-  const { settings, updateSettings, isLoading } = useSettings()
+  const { settings, updateSettings, isLoading } = useSettings();
 
   const handleSwitchChange = (field) => (checked) => {
-    updateSettings({ [field]: checked })
-  }
+    updateSettings({ [field]: checked });
+  };
 
   const handleInputChange = (field) => (e) => {
-    updateSettings({ [field]: e.target.value })
-  }
+    updateSettings({ [field]: e.target.value });
+  };
 
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
           <CardTitle>System Settings</CardTitle>
-          <CardDescription>Manage global system configuration parameters</CardDescription>
+          <CardDescription>
+            Manage global system configuration parameters
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {isLoading ? (
@@ -40,7 +49,9 @@ const Settings = () => {
             <>
               <div className="space-y-2">
                 <h3 className="text-lg font-medium">Platform Fees</h3>
-                <p className="text-sm text-muted-foreground">Set the percentage fee charged on transactions</p>
+                <p className="text-sm text-muted-foreground">
+                  Set the percentage fee charged on transactions
+                </p>
                 <div className="flex items-center gap-2">
                   <Input
                     type="number"
@@ -57,7 +68,9 @@ const Settings = () => {
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
                     <Label htmlFor="notifications">System Notifications</Label>
-                    <p className="text-sm text-muted-foreground">Enable or disable system-wide notifications</p>
+                    <p className="text-sm text-muted-foreground">
+                      Enable or disable system-wide notifications
+                    </p>
                   </div>
                   <Switch
                     id="notifications"
@@ -90,7 +103,8 @@ const Settings = () => {
                   <div className="space-y-0.5">
                     <Label htmlFor="maintenance-mode">Maintenance Mode</Label>
                     <p className="text-sm text-muted-foreground">
-                      Put the system in maintenance mode (users will see a maintenance page)
+                      Put the system in maintenance mode (users will see a
+                      maintenance page)
                     </p>
                   </div>
                   <Switch
@@ -105,8 +119,12 @@ const Settings = () => {
                 <h3 className="text-lg font-medium">Security Settings</h3>
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label htmlFor="two-factor">Two-Factor Authentication</Label>
-                    <p className="text-sm text-muted-foreground">Require two-factor authentication for admin users</p>
+                    <Label htmlFor="two-factor">
+                      Two-Factor Authentication
+                    </Label>
+                    <p className="text-sm text-muted-foreground">
+                      Require two-factor authentication for admin users
+                    </p>
                   </div>
                   <Switch
                     id="two-factor"
@@ -118,7 +136,9 @@ const Settings = () => {
 
               <div className="space-y-2">
                 <h3 className="text-lg font-medium">Data Retention</h3>
-                <p className="text-sm text-muted-foreground">Set the number of days to retain user data</p>
+                <p className="text-sm text-muted-foreground">
+                  Set the number of days to retain user data
+                </p>
                 <div className="flex items-center gap-2">
                   <Input
                     type="number"
@@ -138,8 +158,7 @@ const Settings = () => {
         </CardFooter>
       </Card>
     </div>
-  )
-}
+  );
+};
 
-export default Settings
-
+export default Settings;

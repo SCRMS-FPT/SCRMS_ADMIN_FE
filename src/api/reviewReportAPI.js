@@ -1,15 +1,31 @@
 import API_CONFIG from "./apiPaths";
 const { baseUrl, endpoints } = API_CONFIG.reviewReportManagement;
-const token = localStorage.getItem("authToken");
 
 /**
- * Fetches the list of review reports from the API.
+ * Fetches the list of review reports from the API with optional filters.
+ * @param {number} page - The page number for pagination.
+ * @param {number|null} [limit=null] - The number of items per page. If null, the default server value is used.
+ * @param {string|null} [subjectType=null] - The type of the subject to filter reviews. If null, all types are included.
+ * @param {string|null} [subjectId=null] - The ID of the subject to filter reviews. If null, all subjects are included.
  * @returns {Promise<Object>} A promise that resolves to the JSON response containing review reports.
  * @throws {Error} If the network request fails or the response is not OK.
  */
-export async function getReviewReports() {
-  const url = baseUrl + endpoints.reviewReports;
-  const response = await fetch(url, {
+export async function getReviews(
+  page,
+  limit = null,
+  subjectType = null,
+  subjectId = null
+) {
+  const url = new URL(baseUrl + endpoints.listReviews);
+  const token = localStorage.getItem("authToken");
+
+  url.searchParams.append("page", page);
+  url.searchParams.append("limit", limit);
+  url.searchParams.append("subjectType", subjectType);
+  url.searchParams.append("subjectId", subjectId);
+  console.log(url);
+
+  const response = await fetch(url.toString(), {
     headers: {
       Authorization: "bearer " + token,
     },
@@ -36,32 +52,10 @@ export async function deleteReview(reviewId) {
     throw new Error("Review ID is required to delete a review.");
   }
 
+  const token = localStorage.getItem("authToken");
   const url = baseUrl + endpoints.deleteReview(reviewId);
   const response = await fetch(url, {
     method: "DELETE",
-    headers: {
-      Authorization: "bearer " + token,
-    },
-  });
-
-  if (!response.ok) {
-    throw {
-      status: response.status,
-      message: response.statusText,
-    };
-  }
-
-  return response.json();
-}
-
-/**
- * Fetches the list of reports from the API.
- * @returns {Promise<Object>} A promise that resolves to the JSON response containing reports.
- * @throws {Error} If the network request fails or the response is not OK.
- */
-export async function getReports() {
-  const url = baseUrl + endpoints.listReports;
-  const response = await fetch(url, {
     headers: {
       Authorization: "bearer " + token,
     },

@@ -1,13 +1,26 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { ChevronDown } from "lucide-react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Skeleton } from "@/components/ui/skeleton"
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Dialog,
   DialogContent,
@@ -16,31 +29,45 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Label } from "@/components/ui/label"
-import StatusBadge from "@/components/ui/StatusBadge"
-import { useUsers } from "@/hooks/useUsers"
+} from "@/components/ui/dropdown-menu";
+import { Label } from "@/components/ui/label";
+import StatusBadge from "@/components/ui/StatusBadge";
+import { useUsers } from "../hooks/useUsers";
+import { showToast, logoutUser } from "../lib/utils";
 
 const Users = () => {
-  const [userRole, setUserRole] = useState("all")
-  const [searchTerm, setSearchTerm] = useState("")
-  const { users, isLoading } = useUsers(userRole)
+  const [userRole, setUserRole] = useState("all");
+  const [searchTerm, setSearchTerm] = useState("");
+  const { users, isLoading, error, totalPages } = useUsers(userRole);
+  const [page, setPage] = useState(1);
 
   // Filter users by search term
   const filteredUsers = searchTerm
     ? users.filter(
         (user) =>
           user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          user.email.toLowerCase().includes(searchTerm.toLowerCase()),
+          user.email.toLowerCase().includes(searchTerm.toLowerCase())
       )
-    : users
+    : users;
+  if (error) {
+    switch (error.status) {
+      case 401: {
+        // showToast("User not login", "error");
+        logoutUser();
+        return null;
+      }
+      default: {
+        showToast(`Error: ${error.message}`, "error");
+      }
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -71,7 +98,9 @@ const Users = () => {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Add New User</DialogTitle>
-              <DialogDescription>Create a new user account with the following details.</DialogDescription>
+              <DialogDescription>
+                Create a new user account with the following details.
+              </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
@@ -80,7 +109,11 @@ const Users = () => {
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" placeholder="Enter email address" />
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Enter email address"
+                />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="role">Role</Label>
@@ -119,52 +152,87 @@ const Users = () => {
               ))}
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredUsers.map((user) => (
-                  <TableRow key={user.id}>
-                    <TableCell className="font-medium">{user.name}</TableCell>
-                    <TableCell>{user.email}</TableCell>
-                    <TableCell>{user.role}</TableCell>
-                    <TableCell>
-                      <StatusBadge status={user.status} />
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <ChevronDown className="h-4 w-4" />
-                            <span className="sr-only">Actions</span>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>View Details</DropdownMenuItem>
-                          <DropdownMenuItem>Edit User</DropdownMenuItem>
-                          <DropdownMenuItem>Change Role</DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-destructive">Delete User</DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
+            <>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Gender</TableHead>
+                    <TableHead>Phone</TableHead>
+                    <TableHead>Role</TableHead>
+                    <TableHead>Created At</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {filteredUsers &&
+                  Array.isArray(filteredUsers) &&
+                  filteredUsers.length > 0 ? (
+                    filteredUsers.map((user) => (
+                      <TableRow key={user.id}>
+                        <TableCell className="font-medium">
+                          {user.firstName + user.lastName}
+                        </TableCell>
+                        <TableCell>{user.email}</TableCell>
+                        <TableCell>{user.gender}</TableCell>
+                        <TableCell>{user.phone}</TableCell>
+                        <TableCell>{user.role}</TableCell>
+                        <TableCell>{user.birthDate}</TableCell>
+                        {/* <TableCell>
+                      <StatusBadge status={user.status} />
+                    </TableCell> */}
+                        <TableCell className="text-right">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon">
+                                <ChevronDown className="h-4 w-4" />
+                                <span className="sr-only">Actions</span>
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem>View Details</DropdownMenuItem>
+                              <DropdownMenuItem>Edit User</DropdownMenuItem>
+                              <DropdownMenuItem>Change Role</DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem className="text-destructive">
+                                Delete User
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan="7" className="text-center">
+                        No users available
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+
+              <div className="flex justify-end mt-4">
+                <Button disabled={page === 1} onClick={() => setPage(page - 1)}>
+                  Previous
+                </Button>
+                <span className="mx-4">
+                  Page {page} of {totalPages}
+                </span>
+                <Button
+                  disabled={page === totalPages}
+                  onClick={() => setPage(page + 1)}
+                >
+                  Next
+                </Button>
+              </div>
+            </>
           )}
         </CardContent>
       </Card>
     </div>
-  )
-}
+  );
+};
 
-export default Users
-
+export default Users;

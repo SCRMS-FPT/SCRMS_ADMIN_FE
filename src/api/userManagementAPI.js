@@ -1,6 +1,5 @@
 import API_CONFIG from "./apiPaths";
 const { baseUrl, endpoints } = API_CONFIG.userManagement;
-const token = localStorage.getItem("authToken");
 /**
  * @typedef {Object} ProfileData
  * @property {string} UserId - The unique identifier of the user (UUID format).
@@ -18,7 +17,8 @@ const token = localStorage.getItem("authToken");
  * @throws {Error} If the network request fails.
  */
 export async function getUsers() {
-  const url = baseUrl + endpoints.list();
+  const url = baseUrl + endpoints.list;
+  const token = localStorage.getItem("authToken");
   const response = await fetch(url, {
     headers: {
       Authorization: "bearer " + token,
@@ -48,6 +48,7 @@ export async function updateUser(userId, profileData) {
   }
   validateProfileData(profileData);
 
+  const token = localStorage.getItem("authToken");
   const url = baseUrl + endpoints.updateStatus(userId);
   const response = await fetch(url, {
     method: "PUT",
@@ -89,6 +90,7 @@ export async function assignUserRoles(userId, roleData) {
     );
   }
 
+  const token = localStorage.getItem("authToken");
   const url = baseUrl + endpoints.assignRoles;
   const response = await fetch(url, {
     method: "POST",
@@ -120,6 +122,7 @@ export async function deleteUser(userId) {
     throw new Error("User ID is required to delete user.");
   }
 
+  const token = localStorage.getItem("authToken");
   const url = baseUrl + endpoints.deleteUser(userId);
   const response = await fetch(url, {
     method: "DELETE",

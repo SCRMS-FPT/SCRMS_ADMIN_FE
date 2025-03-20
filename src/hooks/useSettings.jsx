@@ -1,15 +1,13 @@
-"use client"
-
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "react";
 
 export const useSettings = () => {
-  const [settings, setSettings] = useState({})
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [settings, setSettings] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchSettings = async () => {
-      setIsLoading(true)
+      setIsLoading(true);
 
       try {
         // Simulate API call
@@ -21,23 +19,22 @@ export const useSettings = () => {
             maintenanceMode: false,
             twoFactorAuth: true,
             dataRetentionDays: 90,
-          })
-          setIsLoading(false)
-        }, 1000)
+          });
+          setIsLoading(false);
+        }, 1000);
       } catch (err) {
-        setError(err)
-        setIsLoading(false)
+        setError(err);
+        setIsLoading(false);
       }
-    }
+    };
 
-    fetchSettings()
-  }, [])
+    fetchSettings();
+  }, []);
 
   const updateSettings = (newSettings) => {
-    setSettings((prev) => ({ ...prev, ...newSettings }))
+    setSettings((prev) => ({ ...prev, ...newSettings }));
     // In a real app, you would make an API call here
-  }
+  };
 
-  return { settings, updateSettings, isLoading, error }
-}
-
+  return { settings, updateSettings, isLoading, error };
+};

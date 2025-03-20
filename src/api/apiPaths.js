@@ -16,9 +16,9 @@ const API_CONFIG = {
   userManagement: {
     baseUrl: "https://localhost:7105",
     endpoints: {
-      list: `/api/admin/users`,
-      updateStatus: (userId) => `/api/admin/users/${userId}/status`,
-      deleteUser: (userId) => `/api/admin/users/${userId}`,
+      list: "/api/users",
+      updateStatus: (userId) => `/api/users/${userId}/status`,
+      deleteUser: (userId) => `/api/users/${userId}`,
       assignRoles: "/api/identity/admin/assign-roles",
     },
   },
@@ -41,11 +41,11 @@ const API_CONFIG = {
   servicePackageManagement: {
     baseUrl: "https://localhost:7105",
     endpoints: {
-      list: "/api/admin/service-packages",
-      details: (packageId) => `/api/admin/service-packages/${packageId}`,
-      create: "/api/admin/service-packages",
-      update: (packageId) => `/api/admin/service-packages/${packageId}`,
-      delete: (packageId) => `/api/admin/service-packages/${packageId}`,
+      list: "/api/service-packages",
+      details: (packageId) => `/api/service-packages/${packageId}`,
+      create: "/api/service-packages",
+      update: (packageId) => `/api/service-packages/${packageId}`,
+      delete: (packageId) => `/api/service-packages/${packageId}`,
     },
   },
   paymentManagement: {
@@ -60,9 +60,8 @@ const API_CONFIG = {
   reviewReportManagement: {
     baseUrl: "https://localhost:7052",
     endpoints: {
-      reviewReports: "/api/admin/reviews/reports",
       deleteReview: (reviewId) => `/api/admin/reviews/${reviewId}`,
-      listReports: "/api/admin/reports",
+      listReviews: "/api/review",
     },
   },
   systemSettings: {

@@ -71,7 +71,7 @@ const Header = ({ activeSection, toggleMobileMenu }) => {
         </Button>
 
         {/* Notifications Dropdown */}
-        <DropdownMenu>
+        {/* <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <div className="relative">
               <Button
@@ -118,7 +118,7 @@ const Header = ({ activeSection, toggleMobileMenu }) => {
               <DropdownMenuItem>No notifications available</DropdownMenuItem>
             )}
           </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenu> */}
 
         {/* User Account Dropdown */}
         <DropdownMenu>

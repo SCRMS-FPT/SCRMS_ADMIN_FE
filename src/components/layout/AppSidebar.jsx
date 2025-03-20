@@ -85,16 +85,6 @@ const MENU_ITEMS = [
       },
     ],
   },
-  {
-    group: "System",
-    items: [
-      {
-        label: "System Settings",
-        icon: <Settings className="h-5 w-5" />,
-        section: "settings",
-      },
-    ],
-  },
 ];
 
 const AppSidebar = ({

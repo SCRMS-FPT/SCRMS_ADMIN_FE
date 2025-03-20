@@ -64,13 +64,6 @@ const API_CONFIG = {
       listReviews: "/api/review",
     },
   },
-  systemSettings: {
-    baseUrl: "?????",
-    endpoints: {
-      view: "/api/admin/settings",
-      update: "/api/admin/settings",
-    },
-  },
 };
 
 export default API_CONFIG;

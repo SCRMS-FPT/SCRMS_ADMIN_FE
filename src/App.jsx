@@ -9,7 +9,6 @@ import Coaches from "@/pages/Coaches";
 import Packages from "@/pages/Packages";
 import Payments from "@/pages/Payments";
 import Reviews from "@/pages/Reviews";
-import Settings from "@/pages/Settings";
 import Login from "@/pages/Login";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -61,7 +60,6 @@ const MainLayout = () => {
             <Route path="/packages" element={<Packages />} />
             <Route path="/payments" element={<Payments />} />
             <Route path="/reviews" element={<Reviews />} />
-            <Route path="/settings" element={<Settings />} />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </main>

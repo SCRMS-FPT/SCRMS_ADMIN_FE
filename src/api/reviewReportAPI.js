@@ -1,5 +1,5 @@
-import API_CONFIG from "./apiPaths";
-const { baseUrl, endpoints } = API_CONFIG.reviewReportManagement;
+import { API_CONFIG, BASE_URL } from "./apiPaths";
+const { endpoints } = API_CONFIG.reviewReportManagement;
 
 /**
  * Fetches the list of review reports from the API with optional filters.
@@ -16,7 +16,7 @@ export async function getReviews(
   subjectType = null,
   subjectId = null
 ) {
-  const url = new URL(baseUrl + endpoints.listReviews);
+  const url = new URL(BASE_URL + endpoints.listReviews);
   const token = localStorage.getItem("authToken");
 
   url.searchParams.append("page", page);
@@ -53,7 +53,7 @@ export async function deleteReview(reviewId) {
   }
 
   const token = localStorage.getItem("authToken");
-  const url = baseUrl + endpoints.deleteReview(reviewId);
+  const url = BASE_URL + endpoints.deleteReview(reviewId);
   const response = await fetch(url, {
     method: "DELETE",
     headers: {

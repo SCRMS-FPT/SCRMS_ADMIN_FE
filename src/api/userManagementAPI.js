@@ -1,5 +1,5 @@
-import API_CONFIG from "./apiPaths";
-const { baseUrl, endpoints } = API_CONFIG.userManagement;
+import { API_CONFIG, BASE_URL } from "./apiPaths";
+const { endpoints } = API_CONFIG.userManagement;
 /**
  * @typedef {Object} ProfileData
  * @property {string} UserId - The unique identifier of the user (UUID format).
@@ -13,11 +13,41 @@ const { baseUrl, endpoints } = API_CONFIG.userManagement;
 
 /**
  * Fetches the list of users.
+ * @param {string} [searchQuery] - The search term for filtering users.
+ * @param {string} [role] - The role to filter users by.
+ * @param {number} page - The page index for pagination.
+ * @param {number} pageSize - The number of users per page.
  * @returns {Promise<Object[]>} A promise that resolves to an array of user objects.
  * @throws {Error} If the network request fails.
  */
-export async function getUsers() {
-  const url = baseUrl + endpoints.list;
+export async function getUsers(searchQuery, role, page, pageSize) {
+  const url = `${BASE_URL}${endpoints.list(searchQuery, role, page, pageSize)}`;
+  const token = localStorage.getItem("authToken");
+
+  const response = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw {
+      status: response.status,
+      message: response.statusText,
+    };
+  }
+
+  return response.json();
+}
+
+/**
+ * Fetches the list of users.
+ * @param {string} id - The unique identifier of the user.
+ * @returns {ProfileData} A object that contains information.
+ * @throws {Error} If the network request fails.
+ */
+export async function getUser(id) {
+  const url = BASE_URL + endpoints.getDetail(id);
   const token = localStorage.getItem("authToken");
   const response = await fetch(url, {
     headers: {
@@ -49,7 +79,7 @@ export async function updateUser(userId, profileData) {
   validateProfileData(profileData);
 
   const token = localStorage.getItem("authToken");
-  const url = baseUrl + endpoints.updateStatus(userId);
+  const url = BASE_URL + endpoints.updateStatus(userId);
   const response = await fetch(url, {
     method: "PUT",
     headers: {
@@ -91,7 +121,7 @@ export async function assignUserRoles(userId, roleData) {
   }
 
   const token = localStorage.getItem("authToken");
-  const url = baseUrl + endpoints.assignRoles;
+  const url = BASE_URL + endpoints.assignRoles;
   const response = await fetch(url, {
     method: "POST",
     headers: {
@@ -123,7 +153,7 @@ export async function deleteUser(userId) {
   }
 
   const token = localStorage.getItem("authToken");
-  const url = baseUrl + endpoints.deleteUser(userId);
+  const url = BASE_URL + endpoints.deleteUser(userId);
   const response = await fetch(url, {
     method: "DELETE",
     headers: {

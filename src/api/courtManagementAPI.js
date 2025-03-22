@@ -1,8 +1,8 @@
-import API_CONFIG from "./apiPaths";
-const { baseUrl, endpoints } = API_CONFIG.courtManagement;
+import { API_CONFIG, BASE_URL } from "./apiPaths";
+const { endpoints } = API_CONFIG.courtManagement;
 
 export async function getCourts() {
-  const url = baseUrl + endpoints.list;
+  const url = BASE_URL + endpoints.list;
   const token = localStorage.getItem("authToken");
   const response = await fetch(url, {
     headers: {
@@ -20,7 +20,7 @@ export async function getCourts() {
 
 export async function getCourtDetails(courtId) {
   const token = localStorage.getItem("authToken");
-  const url = baseUrl + endpoints.details(courtId);
+  const url = BASE_URL + endpoints.details(courtId);
   const response = await fetch(url, {
     headers: {
       Authorization: "bearer " + token,
@@ -37,7 +37,7 @@ export async function getCourtDetails(courtId) {
 
 export async function updateCourt(courtId, courtData) {
   const token = localStorage.getItem("authToken");
-  const url = baseUrl + endpoints.update(courtId);
+  const url = BASE_URL + endpoints.update(courtId);
   const response = await fetch(url, {
     method: "PUT",
     headers: {
@@ -57,7 +57,7 @@ export async function updateCourt(courtId, courtData) {
 
 export async function deleteCourt(courtId) {
   const token = localStorage.getItem("authToken");
-  const url = baseUrl + endpoints.delete(courtId);
+  const url = BASE_URL + endpoints.delete(courtId);
   const response = await fetch(url, {
     headers: {
       Authorization: "bearer " + token,

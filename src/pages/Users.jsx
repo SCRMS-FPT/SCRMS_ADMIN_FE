@@ -43,28 +43,26 @@ import { useUsers } from "../hooks/useUsers";
 import { showToast, logoutUser } from "../lib/utils";
 
 const Users = () => {
-  const [userRole, setUserRole] = useState("all");
+  const pageSize = 10;
+  const [userRole, setUserRole] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const { users, isLoading, error, totalPages } = useUsers(userRole);
   const [page, setPage] = useState(1);
+  const { users, isLoading, error, totalPages } = useUsers(
+    pageSize,
+    page,
+    userRole,
+    searchTerm
+  );
 
-  // Filter users by search term
-  const filteredUsers = searchTerm
-    ? users.filter(
-        (user) =>
-          user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          user.email.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    : users;
   if (error) {
     switch (error.status) {
       case 401: {
-        // showToast("User not login", "error");
         logoutUser();
         return null;
       }
       default: {
         showToast(`Error: ${error.message}`, "error");
+        console.log(error.message);
       }
     }
   }
@@ -166,10 +164,8 @@ const Users = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredUsers &&
-                  Array.isArray(filteredUsers) &&
-                  filteredUsers.length > 0 ? (
-                    filteredUsers.map((user) => (
+                  {users && Array.isArray(users) && users.length > 0 ? (
+                    users.map((user) => (
                       <TableRow key={user.id}>
                         <TableCell className="font-medium">
                           {user.firstName + user.lastName}

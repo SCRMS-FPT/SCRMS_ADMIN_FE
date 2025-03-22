@@ -1,6 +1,6 @@
-import API_CONFIG from "./apiPaths";
+import { API_CONFIG, BASE_URL } from "./apiPaths";
 
-const { baseUrl, endpoints } = API_CONFIG.login;
+const { endpoints } = API_CONFIG.login;
 
 /**
  * Sends a login request.
@@ -11,7 +11,7 @@ const { baseUrl, endpoints } = API_CONFIG.login;
  * @throws {Error} If the network request fails or the response is not OK.
  */
 export async function login(loginData) {
-  const response = await fetch(`${baseUrl}${endpoints.login}`, {
+  const response = await fetch(`${BASE_URL}${endpoints.login}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

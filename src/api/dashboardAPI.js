@@ -1,14 +1,14 @@
-import API_CONFIG from "./apiPaths";
+import { API_CONFIG, BASE_URL } from "./apiPaths";
 
-const { baseUrl, endpoints } = API_CONFIG.dashboard;
-const token = localStorage.getItem("authToken");
+const { endpoints } = API_CONFIG.dashboard;
 /**
  * Fetches dashboard statistics from the API.
  * @returns {Promise<Object>} A promise that resolves to the JSON response containing dashboard statistics.
  * @throws {Error} If the network request fails or the response is not OK.
  */
 export async function getDashboardStats() {
-  const response = await fetch(baseUrl + endpoints.stats, {
+  const token = localStorage.getItem("authToken");
+  const response = await fetch(BASE_URL + endpoints.stats, {
     headers: {
       Authorization: "bearer " + token,
     },
@@ -30,7 +30,8 @@ export async function getDashboardStats() {
  * @throws {Error} If the network request fails or the response is not OK.
  */
 export async function getRevenueReport() {
-  const response = await fetch(baseUrl + endpoints.revenue, {
+  const token = localStorage.getItem("authToken");
+  const response = await fetch(BASE_URL + endpoints.revenue, {
     headers: {
       Authorization: "bearer " + token,
     },
@@ -52,7 +53,8 @@ export async function getRevenueReport() {
  * @throws {Error} If the network request fails or the response is not OK.
  */
 export async function getRecentTransactions() {
-  const response = await fetch(baseUrl + endpoints.transactions, {
+  const token = localStorage.getItem("authToken");
+  const response = await fetch(BASE_URL + endpoints.transactions, {
     headers: {
       Authorization: "bearer " + token,
     },

@@ -1,7 +1,12 @@
 import { useState, useEffect } from "react";
 import { getUsers } from "../api/userManagementAPI";
 
-export const useUsers = (role = "all") => {
+export const useUsers = (
+  pageSize = 5,
+  page = 1,
+  role = null,
+  searchQuery = null
+) => {
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -11,7 +16,9 @@ export const useUsers = (role = "all") => {
     const fetchUsers = async () => {
       setIsLoading(true);
       try {
-        const allUsers = await getUsers();
+        const data = await getUsers(searchQuery, role, page - 1, pageSize);
+        const allUsers = data.data;
+        setTotalPage(Math.ceil(data.count / pageSize));
         setTimeout(() => {
           // const allUsers = [
           //   {
@@ -51,14 +58,7 @@ export const useUsers = (role = "all") => {
           //   },
           // ];
 
-          const filteredUsers =
-            role === "all"
-              ? allUsers
-              : allUsers.filter(
-                  (user) => user.role.toLowerCase() === role.toLowerCase()
-                );
-
-          setUsers(filteredUsers);
+          setUsers(allUsers);
           setIsLoading(false);
         }, 1000);
       } catch (err) {
@@ -68,7 +68,7 @@ export const useUsers = (role = "all") => {
     };
 
     fetchUsers();
-  }, [role]);
+  }, [page, pageSize, role, searchQuery]);
 
   return { users, isLoading, error, totalPages };
 };

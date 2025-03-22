@@ -145,8 +145,8 @@ const Packages = () => {
         ) : (
           <Card>
             <CardHeader>
-              <CardTitle>{pkg.name}</CardTitle>
-              <CardDescription>{formatCurrency(pkg.price)}</CardDescription>
+              <CardTitle>Nothing here</CardTitle>
+              <CardDescription>There are no package available.</CardDescription>
             </CardHeader>
           </Card>
         )}

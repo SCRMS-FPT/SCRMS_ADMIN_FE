@@ -1,12 +1,12 @@
-const API_CONFIG = {
+export const BASE_URL = "http://localhost:5002";
+
+export const API_CONFIG = {
   login: {
-    baseUrl: "https://localhost:7105",
     endpoints: {
       login: "/api/identity/login",
     },
   },
   dashboard: {
-    baseUrl: "https://localhost:7237",
     endpoints: {
       stats: "/api/admin/dashboard/stats",
       revenue: "/api/admin/reports/revenue",
@@ -14,16 +14,18 @@ const API_CONFIG = {
     },
   },
   userManagement: {
-    baseUrl: "https://localhost:7105",
     endpoints: {
-      list: "/api/users",
+      list: (searchQuery, role, page, pageSize) =>
+        `/api/users?pageIndex=${page}&pageSize=${pageSize}${
+          searchQuery ? `&searchTerm=${encodeURIComponent(searchQuery)}` : ""
+        }${role ? `&role=${encodeURIComponent(role)}` : ""}`,
+      getDetail: (userId) => `/api/users/${userId}/full`,
       updateStatus: (userId) => `/api/users/${userId}/status`,
       deleteUser: (userId) => `/api/users/${userId}`,
       assignRoles: "/api/identity/admin/assign-roles",
     },
   },
   courtManagement: {
-    baseUrl: "https://localhost:7158",
     endpoints: {
       list: "/api/admin/courts",
       details: (courtId) => `/api/courts/${courtId}`,
@@ -32,14 +34,12 @@ const API_CONFIG = {
     },
   },
   coachManagement: {
-    baseUrl: "https://localhost:7237",
     endpoints: {
       list: "/coaches",
       details: (coachId) => `/api/coaches/${coachId}`,
     },
   },
   servicePackageManagement: {
-    baseUrl: "https://localhost:7105",
     endpoints: {
       list: "/api/service-packages",
       details: (packageId) => `/api/service-packages/${packageId}`,
@@ -49,7 +49,6 @@ const API_CONFIG = {
     },
   },
   paymentManagement: {
-    baseUrl: "https://localhost:7107",
     endpoints: {
       transactions: "/api/admin/payments/transactions",
       refund: "/api/admin/payments/refund",
@@ -58,12 +57,9 @@ const API_CONFIG = {
     },
   },
   reviewReportManagement: {
-    baseUrl: "https://localhost:7052",
     endpoints: {
       deleteReview: (reviewId) => `/api/admin/reviews/${reviewId}`,
       listReviews: "/api/review",
     },
   },
 };
-
-export default API_CONFIG;

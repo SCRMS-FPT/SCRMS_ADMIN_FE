@@ -1,6 +1,5 @@
-import API_CONFIG from "./apiPaths";
-const { baseUrl, endpoints } = API_CONFIG.paymentManagement;
-const token = localStorage.getItem("authToken");
+import { API_CONFIG, BASE_URL } from "./apiPaths";
+const { endpoints } = API_CONFIG.paymentManagement;
 
 /**
  * Fetches the list of transactions from the API.
@@ -8,7 +7,8 @@ const token = localStorage.getItem("authToken");
  * @throws {Error} If the network request fails or the response is not OK.
  */
 export async function getTransactions() {
-  const url = baseUrl + endpoints.transactions;
+  const url = BASE_URL + endpoints.transactions;
+  const token = localStorage.getItem("authToken");
   const response = await fetch(url, {
     headers: {
       Authorization: "bearer " + token,
@@ -36,7 +36,8 @@ export async function getTransactionDetails(transactionId) {
     throw new Error("Transaction ID is required to fetch transaction details.");
   }
 
-  const url = baseUrl + endpoints.transactionDetails(transactionId);
+  const url = BASE_URL + endpoints.transactionDetails(transactionId);
+  const token = localStorage.getItem("authToken");
   const response = await fetch(url, {
     headers: {
       Authorization: "bearer " + token,
@@ -55,7 +56,7 @@ export async function getTransactionDetails(transactionId) {
 
 // TODO: Didn't exist
 // export async function refundPayment(refundData) {
-//   const url = baseUrl + endpoints.refund;
+//   const url = BASE_URL + endpoints.refund;
 //   const response = await fetch(url, {
 //     method: "POST",
 //     headers: { "Content-Type": "application/json" },

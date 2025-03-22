@@ -1,6 +1,5 @@
-import API_CONFIG from "./apiPaths";
-const { baseUrl, endpoints } = API_CONFIG.servicePackageManagement;
-const token = localStorage.getItem("authToken");
+import { API_CONFIG, BASE_URL } from "./apiPaths";
+const { endpoints } = API_CONFIG.servicePackageManagement;
 
 /**
  * @typedef {Object} ServicePackage
@@ -20,7 +19,8 @@ const token = localStorage.getItem("authToken");
  * @throws {Error} If the network request fails.
  */
 export async function getServicePackages() {
-  const url = baseUrl + endpoints.list;
+  const url = BASE_URL + endpoints.list;
+  const token = localStorage.getItem("authToken");
   const response = await fetch(url, {
     headers: {
       Authorization: "bearer " + token,
@@ -48,7 +48,8 @@ export async function getServicePackageDetails(packageId) {
     throw new Error("Package ID is required to fetch service package details.");
   }
 
-  const url = baseUrl + endpoints.details(packageId);
+  const url = BASE_URL + endpoints.details(packageId);
+  const token = localStorage.getItem("authToken");
   const response = await fetch(url, {
     headers: {
       Authorization: "bearer " + token,
@@ -74,7 +75,8 @@ export async function getServicePackageDetails(packageId) {
 export async function createServicePackage(packageData) {
   validateServicePackage(packageData, true);
 
-  const url = baseUrl + endpoints.create;
+  const url = BASE_URL + endpoints.create;
+  const token = localStorage.getItem("authToken");
   const response = await fetch(url, {
     method: "POST",
     headers: {
@@ -107,7 +109,8 @@ export async function updateServicePackage(packageId, packageData) {
   }
   validateServicePackage(packageData);
 
-  const url = baseUrl + endpoints.update(packageId);
+  const url = BASE_URL + endpoints.update(packageId);
+  const token = localStorage.getItem("authToken");
   const response = await fetch(url, {
     method: "PUT",
     headers: {
@@ -138,7 +141,8 @@ export async function deleteServicePackage(packageId) {
     throw new Error("Package ID is required to delete service package.");
   }
 
-  const url = baseUrl + endpoints.delete(packageId);
+  const url = BASE_URL + endpoints.delete(packageId);
+  const token = localStorage.getItem("authToken");
   const response = await fetch(url, {
     method: "DELETE",
     headers: {

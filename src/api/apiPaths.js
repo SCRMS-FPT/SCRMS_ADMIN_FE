@@ -8,9 +8,17 @@ export const API_CONFIG = {
   },
   dashboard: {
     endpoints: {
-      stats: "/api/admin/dashboard/stats",
-      revenue: "/api/admin/reports/revenue",
-      transactions: "/api/admin/reports/transactions",
+      coachStats: (startDate, endDate, groupBy) =>
+        `/api/coach/dashboard/stats?${
+          startDate ? `start_date=${startDate}` : ""
+        }${endDate ? `&end_date=${endDate}` : ""}${
+          groupBy ? `&group_by=${groupBy}` : ""
+        }`,
+      identityStats: `/api/admin/dashboard/stats`,
+      courtStats: (startDate, endDate) =>
+        `/api/admin/court-stats?${startDate ? `start_date=${startDate}` : ""}${
+          endDate ? `&end_date=${endDate}` : ""
+        }`,
     },
   },
   userManagement: {
@@ -20,7 +28,7 @@ export const API_CONFIG = {
           searchQuery ? `&searchTerm=${encodeURIComponent(searchQuery)}` : ""
         }${role ? `&role=${encodeURIComponent(role)}` : ""}`,
       getDetail: (userId) => `/api/users/${userId}/full`,
-      updateStatus: (userId) => `/api/users/${userId}/status`,
+      updateProfile: (userId) => `/api/users/${userId}`,
       deleteUser: (userId) => `/api/users/${userId}`,
       assignRoles: "/api/identity/admin/assign-roles",
     },

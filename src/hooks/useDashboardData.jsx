@@ -1,98 +1,83 @@
-"use client";
-
 import { useState, useEffect } from "react";
+import {
+  getCoachStats,
+  getCourtStats,
+  getIdentityStats,
+} from "@/api/dashboardAPI";
 
 export const useDashboardData = () => {
   const [data, setData] = useState({
     totalUsers: 0,
+    totalCourtOwners: 0,
+    totalCoaches: 0,
     totalCourts: 0,
     totalBookings: 0,
     totalRevenue: 0,
-    recentTransactions: [],
-    bookingTrends: [],
-    packageSales: [],
-    notifications: [],
+    revenueData: [],
+    bookingTypeDate: [],
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    function mergeStats(coachStats, courtStats) {
+      return coachStats.map((coachEntry) => {
+        const matchingCourtEntry = courtStats.find((court) => {
+          const courtMonth =
+            new Date(court.data.date_range.start_date).getMonth() + 1; // Extract month (1-based)
+          return courtMonth === coachEntry.month;
+        });
+
+        return {
+          date: `2025-${String(coachEntry.month).padStart(2, "0")}-01`,
+          courtRevenue: matchingCourtEntry
+            ? matchingCourtEntry.data.total_courts_revenue
+            : 0,
+          coachRevenue: coachEntry.data.totalRevenue,
+        };
+      });
+    }
+
     const fetchData = async () => {
       setIsLoading(true);
-
       try {
+        const identityStats = await getIdentityStats();
+        // CALL FROM JANUARY TO CURRENT MONTH
+        const currentYear = new Date().getFullYear();
+        const currentMonth = new Date().getMonth() + 1;
+        const coachStatPerMonth = [];
+        const courtStatsPerMonth = [];
+
+        const courtStats = await getCourtStats();
+        const coachStats = await getCoachStats(undefined, undefined, "year");
+
+        for (let month = 1; month <= currentMonth; month++) {
+          const startDate = `${currentYear}-${month
+            .toString()
+            .padStart(2, "0")}-01`;
+          const endDate = new Date(currentYear, month, 0)
+            .toISOString()
+            .split("T")[0];
+          const coachData = await getCoachStats(startDate, endDate, "month");
+          const courtData = await getCourtStats(startDate, endDate);
+          coachStatPerMonth.push({ month, data: coachData });
+          courtStatsPerMonth.push({ month, data: courtData });
+        }
+
+        var mergeStat = mergeStats(coachStatPerMonth, courtStatsPerMonth);
+
+        setData({
+          totalUsers: identityStats.totalUsers,
+          totalCourtOwners: identityStats.totalCourtOwners,
+          totalCoaches: identityStats.totalCoaches,
+          totalCourts: courtStats.total_courts,
+          totalRevenue:
+            parseFloat(courtStats.total_courts_revenue) +
+            parseFloat(coachStats.totalRevenue),
+          revenueData: mergeStat,
+        });
+
         setTimeout(() => {
-          setData({
-            totalUsers: 2458,
-            totalCourts: 187,
-            totalBookings: 12543,
-            totalRevenue: 458750,
-            recentTransactions: [
-              {
-                id: 1,
-                user: "John Doe",
-                amount: 120,
-                status: "completed",
-                date: "2023-05-12",
-              },
-              {
-                id: 2,
-                user: "Jane Smith",
-                amount: 85,
-                status: "completed",
-                date: "2023-05-11",
-              },
-              {
-                id: 3,
-                user: "Robert Johnson",
-                amount: 200,
-                status: "failed",
-                date: "2023-05-10",
-              },
-              {
-                id: 4,
-                user: "Emily Davis",
-                amount: 150,
-                status: "pending",
-                date: "2023-05-09",
-              },
-            ],
-            bookingTrends: [
-              { date: "Jan", count: 120 },
-              { date: "Feb", count: 150 },
-              { date: "Mar", count: 180 },
-              { date: "Apr", count: 220 },
-              { date: "May", count: 250 },
-              { date: "Jun", count: 280 },
-              { date: "Jul", count: 310 },
-            ],
-            packageSales: [
-              { name: "Basic", sales: 120 },
-              { name: "Standard", sales: 210 },
-              { name: "Premium", sales: 180 },
-              { name: "Elite", sales: 90 },
-            ],
-            notifications: [
-              {
-                id: 1,
-                type: "alert",
-                message: "Failed transaction for user #1245",
-                time: "2 hours ago",
-              },
-              {
-                id: 2,
-                type: "warning",
-                message: "Review violation reported",
-                time: "5 hours ago",
-              },
-              {
-                id: 3,
-                type: "info",
-                message: "New court owner registered",
-                time: "1 day ago",
-              },
-            ],
-          });
           setIsLoading(false);
         }, 1000);
       } catch (err) {

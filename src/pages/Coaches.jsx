@@ -33,7 +33,6 @@ const Coaches = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const { coaches, isLoading, error } = useCoaches();
 
-  // Filter coaches by search term
   const filteredCoaches = searchTerm
     ? coaches.filter(
         (coach) =>

@@ -36,50 +36,50 @@ import PropTypes from "prop-types";
 // Reusable menu items configuration
 const MENU_ITEMS = [
   {
-    group: "Main",
+    group: "Chính ",
     items: [
       {
-        label: "Dashboard",
+        label: "Bảng điều khiển",
         icon: <Home className="h-5 w-5" />,
         section: "dashboard",
       },
       {
-        label: "User Management",
+        label: "Quản lý người dùng",
         icon: <Users className="h-5 w-5" />,
         section: "users",
       },
       {
-        label: "Court Management",
+        label: "Quản lý sân",
         icon: <Building2 className="h-5 w-5" />,
         section: "courts",
       },
       {
-        label: "Coach Management",
+        label: "Quản lý huấn luyện viên",
         icon: <User className="h-5 w-5" />,
         section: "coaches",
       },
     ],
   },
   {
-    group: "Services",
+    group: "Dịch vụ",
     items: [
       {
-        label: "Service Packages",
+        label: "Gói dịch vụ",
         icon: <Package className="h-5 w-5" />,
         section: "packages",
       },
       {
-        label: "Payment Management",
+        label: "Quản lý thanh toán",
         icon: <CreditCard className="h-5 w-5" />,
         section: "payments",
       },
     ],
   },
   {
-    group: "Moderation",
+    group: "Kiểm duyệt",
     items: [
       {
-        label: "Reviews & Reports",
+        label: "Đánh giá & Báo cáo",
         icon: <Star className="h-5 w-5" />,
         section: "reviews",
       },
@@ -121,7 +121,7 @@ const AppSidebar = ({
         <SidebarHeader className="border-b">
           <div className="flex items-center gap-2 px-2 py-3">
             <Activity className="h-6 w-6 text-primary" />
-            <span className="text-xl font-bold">Admin Portal</span>
+            <span className="text-xl font-bold">Trang quản lý website</span>
           </div>
         </SidebarHeader>
         <SidebarContent>
@@ -150,9 +150,9 @@ const AppSidebar = ({
                 <span className="text-sm font-medium">AD</span>
               </div>
               <div>
-                <p className="text-sm font-medium">Admin User</p>
+                <p className="text-sm font-medium">Quản trị viên</p>
                 <p className="text-xs text-muted-foreground">
-                  admin@example.com
+                  hehe@example.com
                 </p>
               </div>
             </div>
@@ -178,7 +178,7 @@ const AppSidebar = ({
           <div className="flex flex-col h-full">
             <div className="border-b p-4 flex items-center gap-2">
               <Activity className="h-6 w-6 text-primary" />
-              <span className="text-xl font-bold">Admin Portal</span>
+              <span className="text-xl font-bold">Trang quản lý website</span>
             </div>
             <ScrollArea className="flex-1">
               <div className="p-4 space-y-4">
@@ -213,7 +213,7 @@ const AppSidebar = ({
                     <span className="text-sm font-medium">AD</span>
                   </div>
                   <div>
-                    <p className="text-sm font-medium">Admin User</p>
+                    <p className="text-sm font-medium">Quản trị viên</p>
                     <p className="text-xs text-muted-foreground">
                       admin@example.com
                     </p>

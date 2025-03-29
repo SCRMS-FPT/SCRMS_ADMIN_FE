@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 const StatCard = ({ title, value, icon: Icon, trend, trendText }) => {
   return (
@@ -10,15 +10,18 @@ const StatCard = ({ title, value, icon: Icon, trend, trendText }) => {
       <CardContent>
         <div className="text-2xl font-bold">{value}</div>
         {trendText && (
-          <p className="text-xs text-muted-foreground">
+          <p
+            className={`text-xs ${
+              trend > 0 ? "text-green-500" : "text-red-500"
+            }`}
+          >
             {trend > 0 ? "+" : ""}
             {trend}% {trendText}
           </p>
         )}
       </CardContent>
     </Card>
-  )
-}
+  );
+};
 
-export default StatCard
-
+export default StatCard;

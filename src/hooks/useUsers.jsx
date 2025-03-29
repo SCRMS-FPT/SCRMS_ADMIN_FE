@@ -1,11 +1,16 @@
 import { useState, useEffect } from "react";
-import { getUsers } from "../api/userManagementAPI";
+import {
+  getUsers,
+  updateUser,
+  assignUserRoles,
+} from "../api/userManagementAPI";
 
-export const useUsers = (
+export const getUsersData = (
   pageSize = 5,
   page = 1,
   role = null,
-  searchQuery = null
+  searchQuery = null,
+  isReload
 ) => {
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -68,7 +73,23 @@ export const useUsers = (
     };
 
     fetchUsers();
-  }, [page, pageSize, role, searchQuery]);
+  }, [page, pageSize, role, searchQuery, isReload]);
 
   return { users, isLoading, error, totalPages };
+};
+
+export const updateUserInfo = async (userId, profileData) => {
+  try {
+    return await updateUser(userId, profileData);
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const assignRoleUser = async (request) => {
+  try {
+    return await assignUserRoles(request.UserId, request.Roles);
+  } catch (error) {
+    throw error;
+  }
 };

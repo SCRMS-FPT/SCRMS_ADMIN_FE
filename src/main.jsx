@@ -8,13 +8,11 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <ThemeProvider defaultTheme="light">
-        <SidebarProvider>
-          <App />
-        </SidebarProvider>
-      </ThemeProvider>
-    </BrowserRouter>
-  </React.StrictMode>
+  <BrowserRouter>
+    <ThemeProvider defaultTheme="light">
+      <SidebarProvider>
+        <App />
+      </SidebarProvider>
+    </ThemeProvider>
+  </BrowserRouter>
 );

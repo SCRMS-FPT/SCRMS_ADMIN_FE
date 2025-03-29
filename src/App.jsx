@@ -1,5 +1,11 @@
-import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import {
+  Routes,
+  Route,
+  Navigate,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
+import { useState, useEffect } from "react";
 import AppSidebar from "@/components/layout/AppSidebar";
 import Header from "@/components/layout/Header";
 import Dashboard from "@/pages/Dashboard";
@@ -23,11 +29,21 @@ const MainLayout = () => {
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("dashboard");
+  const location = useLocation();
 
   const handleSectionChange = (section) => {
     setActiveSection(section);
     navigate(`/${section}`);
   };
+
+  const getActiveSectionFromURL = () => {
+    const path = location.pathname.split("/")[1];
+    return path || "dashboard";
+  };
+
+  useEffect(() => {
+    setActiveSection(getActiveSectionFromURL());
+  }, [location.pathname]);
 
   const toggleMobileMenu = () => setIsMobileMenuOpen((prev) => !prev);
 

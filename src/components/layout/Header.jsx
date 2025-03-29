@@ -15,14 +15,14 @@ import PropTypes from "prop-types";
 
 // Menu titles as a constant to avoid hardcoding in the component
 const SECTION_TITLES = {
-  dashboard: "Dashboard Overview",
-  users: "User Management",
-  courts: "Court Management",
-  coaches: "Coach Management",
-  packages: "Service Package Management",
-  payments: "Payment Management",
-  reviews: "Review & Report Management",
-  settings: "System Settings",
+  dashboard: "Trang tổng quan",
+  users: "Quản lý người dùng",
+  courts: "Quản lý sân",
+  coaches: "Quản lý huấn luyện viên",
+  packages: "Quản lý gói dịch vụ",
+  payments: "Quản lý thanh toán",
+  reviews: "Quản lý đánh giá & báo cáo",
+  settings: "Cài đặt hệ thống",
 };
 
 const Header = ({ activeSection, toggleMobileMenu }) => {
@@ -45,7 +45,7 @@ const Header = ({ activeSection, toggleMobileMenu }) => {
         aria-label="Toggle mobile menu"
       >
         <Menu className="h-5 w-5" />
-        <span className="sr-only">Toggle mobile menu</span>
+        <span className="sr-only">Bật menu cho điện thoại</span>
       </Button>
 
       {/* Section Title */}
@@ -67,7 +67,7 @@ const Header = ({ activeSection, toggleMobileMenu }) => {
         >
           <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
           <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-          <span className="sr-only">Toggle theme</span>
+          <span className="sr-only">Bật chế độ đêm</span>
         </Button>
 
         {/* Notifications Dropdown */}
@@ -135,12 +135,12 @@ const Header = ({ activeSection, toggleMobileMenu }) => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuLabel>Tài khoản</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Settings</DropdownMenuItem>
+            <DropdownMenuItem>Hồ sơ</DropdownMenuItem>
+            <DropdownMenuItem>Cài đặt</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Log out</DropdownMenuItem>
+            <DropdownMenuItem>Thoát</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

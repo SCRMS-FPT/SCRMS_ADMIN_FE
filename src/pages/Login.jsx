@@ -1,4 +1,3 @@
-// AdminLogin.jsx
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -37,7 +36,7 @@ export default function AdminLogin() {
       localStorage.setItem("user", JSON.stringify(result.user));
       navigate("/");
     } catch (err) {
-      toast.error(err.message || "Login failed", {
+      toast.error(err.message || "Đăng nhập thất bại", {
         position: "bottom-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -58,7 +57,7 @@ export default function AdminLogin() {
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-center text-2xl font-bold">
-            Admin Login
+            Đăng nhập quản trị viên
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -78,19 +77,19 @@ export default function AdminLogin() {
             </div>
             <div>
               <Label htmlFor="password" className="block mb-1">
-                Password
+                Mật khẩu
               </Label>
               <Input
                 id="password"
                 type="password"
-                placeholder="Your secure password"
+                placeholder="Mật khẩu bảo mật"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
             </div>
             <Button type="submit" disabled={loading} className="w-full">
-              {loading ? "Logging in..." : "Login"}
+              {loading ? "Đang đăng nhập..." : "Đăng nhập"}
             </Button>
           </form>
         </CardContent>

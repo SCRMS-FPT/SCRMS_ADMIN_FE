@@ -50,6 +50,7 @@ export async function getUser(id) {
   const url = BASE_URL + endpoints.getDetail(id);
   const token = localStorage.getItem("authToken");
   const response = await fetch(url, {
+    mode: "cors",
     headers: {
       Authorization: "bearer " + token,
     },
@@ -74,12 +75,16 @@ export async function getUser(id) {
  */
 export async function updateUser(userId, profileData) {
   if (!userId) {
-    throw new Error("User ID is required to update user profile.");
+    throw new Error("ID người dùng là bắt buộc.");
   }
   validateProfileData(profileData);
+  // Convert to variable that postgresql accept
+  profileData.BirthDate = new Date(
+    profileData.BirthDate + "T00:00:00Z"
+  ).toISOString();
 
   const token = localStorage.getItem("authToken");
-  const url = BASE_URL + endpoints.updateStatus(userId);
+  const url = BASE_URL + endpoints.updateProfile(userId);
   const response = await fetch(url, {
     method: "PUT",
     headers: {
@@ -137,6 +142,9 @@ export async function assignUserRoles(userId, roleData) {
       message: response.statusText,
     };
   }
+  if (response.status === 204) {
+    return null;
+  }
 
   return response.json();
 }
@@ -177,33 +185,30 @@ export async function deleteUser(userId) {
  * @throws {Error} If any required field is missing or invalid.
  */
 function validateProfileData(profileData) {
-  if (!profileData.UserId) {
-    throw new Error("User ID is required.");
-  }
   if (
     !profileData.FirstName ||
     typeof profileData.FirstName !== "string" ||
     !profileData.FirstName.trim()
   ) {
-    throw new Error("First name is required and must be a valid string.");
+    throw new Error("Tên là bắt buộc và phải là một chuỗi hợp lệ.");
   }
   if (
     !profileData.LastName ||
     typeof profileData.LastName !== "string" ||
     !profileData.LastName.trim()
   ) {
-    throw new Error("Last name is required and must be a valid string.");
+    throw new Error("Họ là bắt buộc và phải là một chuỗi hợp lệ.");
   }
   if (
     !profileData.Phone ||
     typeof profileData.Phone !== "string" ||
     !/^\+?[0-9\s-]+$/.test(profileData.Phone)
   ) {
-    throw new Error("Phone number is required and must be a valid format.");
+    throw new Error("Số điện thoại là bắt buộc và phải có định dạng hợp lệ.");
   }
   if (!profileData.BirthDate || isNaN(Date.parse(profileData.BirthDate))) {
     throw new Error(
-      "Birth date is required and must be a valid ISO 8601 date string."
+      "Ngày sinh là bắt buộc và phải là một chuỗi ngày hợp lệ theo chuẩn ISO 8601."
     );
   }
   if (
@@ -211,12 +216,12 @@ function validateProfileData(profileData) {
     typeof profileData.Gender !== "string" ||
     !profileData.Gender.trim()
   ) {
-    throw new Error("Gender is required and must be a valid string.");
+    throw new Error("Giới tính là bắt buộc và phải là một chuỗi hợp lệ.");
   }
   if (
     profileData.SelfIntroduction !== null &&
     typeof profileData.SelfIntroduction !== "string"
   ) {
-    throw new Error("Self Introduction must be a string if provided.");
+    throw new Error("Giới thiệu bản thân phải là một chuỗi nếu được cung cấp.");
   }
 }

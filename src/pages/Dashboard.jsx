@@ -1,5 +1,11 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { Users, Building2, BarChart3, DollarSign } from "lucide-react";
+import {
+  Users,
+  Building2,
+  BarChart3,
+  DollarSign,
+  Calendar,
+} from "lucide-react";
 import {
   Card,
   CardHeader,
@@ -19,23 +25,58 @@ import {
 import CardSkeleton from "@/components/ui/CardSkeleton";
 import StatCard from "@/components/ui/StatCard";
 import StatusBadge from "@/components/ui/StatusBadge";
-import RevenueChart from "../components/charts/RevenueChart";
-import BookingChart from "../components/charts/BookingChart";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { formatCurrency } from "@/lib/utils";
+import ReusableChart from "@/components/charts/reusable-chart";
+import { showToast, logoutUser } from "@/lib/utils";
 
 const Dashboard = () => {
-  const { data: dashboardData, isLoading } = useDashboardData();
+  const { data: dashboardData, isLoading, error } = useDashboardData();
 
-  // Revenue chart data
-  const revenueData = [
-    { date: "2024-01-01", revenue: 25000 },
-    { date: "2024-02-01", revenue: 35000 },
-    { date: "2024-03-01", revenue: 32000 },
-    { date: "2024-04-01", revenue: 40000 },
-    { date: "2024-05-01", revenue: 45000 },
-    { date: "2024-06-01", revenue: 48000 },
-    { date: "2024-07-01", revenue: 52000 },
+  if (error) {
+    switch (error.status) {
+      case 401: {
+        logoutUser();
+        return null;
+      }
+      default: {
+        showToast(`Error: ${error.message}`, "error");
+        console.log(error);
+      }
+    }
+  }
+  const lines = [
+    { dataKey: "courtRevenue", label: "Doanh thu Sân", color: "#4F46E5" }, // Purple
+    {
+      dataKey: "coachRevenue",
+      label: "Doanh thu Huấn luyện viên",
+      color: "#E11D48",
+    },
+  ];
+  // Dữ liệu biểu đồ doanh thu
+  const sampleData = [
+    { date: "2024-01-01", coachRevenue: 25000000, courtRevenue: 20000000 },
+    { date: "2024-02-01", coachRevenue: 27000000, courtRevenue: 22000000 },
+    { date: "2024-03-01", coachRevenue: 23000000, courtRevenue: 21000000 },
+    { date: "2024-04-01", coachRevenue: 29000000, courtRevenue: 24000000 },
+    { date: "2024-05-01", coachRevenue: 31000000, courtRevenue: 26000000 },
+    { date: "2024-06-01", coachRevenue: 28000000, courtRevenue: 25000000 },
+    { date: "2024-07-01", coachRevenue: 30000000, courtRevenue: 27000000 },
+    { date: "2024-08-01", coachRevenue: 32000000, courtRevenue: 29000000 },
+    { date: "2024-09-01", coachRevenue: 31000000, courtRevenue: 28000000 },
+    { date: "2024-10-01", coachRevenue: 33000000, courtRevenue: 30000000 },
+    { date: "2024-11-01", coachRevenue: 34000000, courtRevenue: 31000000 },
+    { date: "2024-12-01", coachRevenue: 36000000, courtRevenue: 32000000 },
+  ];
+
+  const bookingData = [
+    { date: "2024-01-01", booking: 125 },
+    { date: "2024-02-01", booking: 400 },
+    { date: "2024-03-01", booking: 800 },
+    { date: "2024-04-01", booking: 600 },
+    { date: "2024-05-01", booking: 658 },
+    { date: "2024-06-01", booking: 785 },
+    { date: "2024-07-01", booking: 657 },
   ];
 
   return (
@@ -63,80 +104,77 @@ const Dashboard = () => {
         </>
       ) : (
         <>
-          {/* Stats Overview */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <StatCard
-              title="Total Users"
-              value={dashboardData.totalUsers.toLocaleString()}
+              title="Tổng số người dùng"
+              value={dashboardData.totalUsers}
               icon={Users}
-              trend={12}
-              trendText="from last month"
             />
             <StatCard
-              title="Total Courts"
-              value={dashboardData.totalCourts.toLocaleString()}
+              title="Tổng số chủ sân"
+              value={dashboardData.totalCourtOwners}
+              icon={Users}
+            />
+            <StatCard
+              title="Tổng số huấn luyện viên"
+              value={dashboardData.totalCoaches}
+              icon={Users}
+            />
+            <StatCard
+              title="Tổng số sân"
+              value={dashboardData.totalCourts}
               icon={Building2}
-              trend={5}
-              trendText="from last month"
             />
-            <StatCard
-              title="Total Bookings"
-              value={dashboardData.totalBookings.toLocaleString()}
+            {/* <StatCard
+              title="Tổng số lượt đặt sân"
+              value={dashboardData.totalBookings}
               icon={BarChart3}
-              trend={18}
-              trendText="from last month"
-            />
+            /> */}
             <StatCard
-              title="Total Revenue"
+              title="Tổng doanh thu"
               value={formatCurrency(dashboardData.totalRevenue)}
               icon={DollarSign}
-              trend={15}
-              trendText="from last month"
             />
           </div>
-
-          {/* Charts */}
-          <div className="grid gap-4 md:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Revenue Trend</CardTitle>
-                <p className="text-sm text-muted-foreground">
-                  Monthly revenue for the current year
-                </p>
-              </CardHeader>
-              <CardContent className="h-[300px]">
-                <RevenueChart data={revenueData} />
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle>Booking Trends</CardTitle>
-                <p className="text-sm text-muted-foreground">
-                  Monthly booking count
-                </p>
-              </CardHeader>
-              <CardContent className="h-[300px]">
-                <BookingChart data={dashboardData.bookingTrends} />
-              </CardContent>
-            </Card>
+          <div className="space-y-8 py-8">
+            <ReusableChart
+              // data={dashboardData.revenueData}
+              data={sampleData}
+              margin={{ top: 20, right: 40, left: 40, bottom: 20 }}
+              lines={lines}
+              title="Xu hướng doanh thu"
+              description="Doanh thu hàng tháng trong năm hiện tại"
+              icon={<DollarSign className="h-4 w-4 text-primary" />}
+              valuePrefix=""
+              valueSuffix="đ"
+              color="hsl(var(--primary))"
+            />
+            {/* <ReusableChart
+              data={bookingData}
+              dataKey="booking"
+              title="Xu hướng đặt sân"
+              description="Số lượt đặt sân theo tháng"
+              icon={<Calendar className="h-4 w-4 text-blue-500" />}
+              valuePrefix=""
+              valueSuffix=" lượt"
+              color="hsl(215, 90%, 50%)"
+            /> */}
           </div>
-
-          {/* Recent Transactions */}
-          <Card>
+          {/* <Card>
             <CardHeader>
-              <CardTitle>Recent Transactions</CardTitle>
+              <CardTitle>Giao dịch gần đây</CardTitle>
               <p className="text-sm text-muted-foreground">
-                Latest payment activities across the platform
+                Hoạt động thanh toán mới nhất trên hệ thống
               </p>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>User</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Date</TableHead>
+                    <TableHead>Người dùng</TableHead>
+                    <TableHead>Số tiền</TableHead>
+                    <TableHead>Trạng thái</TableHead>
+                    <TableHead>Ngày</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -157,10 +195,10 @@ const Dashboard = () => {
             </CardContent>
             <CardFooter className="flex justify-end">
               <Button variant="outline" size="sm">
-                View All Transactions
+                Xem tất cả giao dịch
               </Button>
             </CardFooter>
-          </Card>
+          </Card> */}
         </>
       )}
     </div>

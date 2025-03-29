@@ -48,7 +48,6 @@ const Reviews = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-medium">Reported Reviews</h3>
         <Select defaultValue="all">
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Filter by status" />
@@ -128,7 +127,7 @@ const Reviews = () => {
                   ) : (
                     <TableRow>
                       <TableCell colSpan="5" className="text-center">
-                        No reviews available
+                        Không có nhận xét nào...
                       </TableCell>
                     </TableRow>
                   )}
@@ -136,16 +135,16 @@ const Reviews = () => {
               </Table>
               <div className="flex justify-end mt-4">
                 <Button disabled={page === 1} onClick={() => setPage(page - 1)}>
-                  Previous
+                  Trước
                 </Button>
                 <span className="mx-4">
-                  Page {page} of {totalPages}
+                  Trang {page} trên {totalPages}
                 </span>
                 <Button
                   disabled={page === totalPages}
                   onClick={() => setPage(page + 1)}
                 >
-                  Next
+                  Kế tiếp
                 </Button>
               </div>
             </>

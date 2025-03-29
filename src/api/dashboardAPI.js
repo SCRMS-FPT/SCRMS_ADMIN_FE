@@ -1,15 +1,49 @@
-import { API_CONFIG, BASE_URL } from "./apiPaths";
+import { API_CONFIG, BASE_URL } from "@/api/apiPaths";
 
 const { endpoints } = API_CONFIG.dashboard;
+
 /**
- * Fetches dashboard statistics from the API.
- * @returns {Promise<Object>} A promise that resolves to the JSON response containing dashboard statistics.
- * @throws {Error} If the network request fails or the response is not OK.
- */
-export async function getDashboardStats() {
+ * Fetches user statistics
+ *
+ * @returns {Promise<Object>} - A promise resolving to the user statistics data.
+ * @throws {Object} - An error object containing the HTTP status and message if the request fails.
+ **/
+export async function getIdentityStats() {
+  const url = BASE_URL + endpoints.identityStats;
   const token = localStorage.getItem("authToken");
-  const response = await fetch(BASE_URL + endpoints.stats, {
+  const response = await fetch(url, {
+    method: "GET",
     headers: {
+      Authorization: "bearer " + token,
+    },
+  });
+
+  if (!response.ok) {
+    throw {
+      status: response.status,
+      message: response.statusText,
+    };
+  }
+
+  return response.json();
+}
+/**
+ * Fetches coach statistics for a given date range and grouping parameter.
+ *
+ * @param {Date} startDate - The start date for the statistics.
+ * @param {Date} endDate - The end date for the statistics.
+ * @param {string} groupBy - The grouping parameter (e.g., daily, weekly, monthly).
+ * @returns {Promise<Object>} - A promise resolving to the coach statistics data.
+ * @throws {Object} - An error object containing the HTTP status and message if the request fails.
+ */
+export async function getCoachStats(startDate, endDate, groupBy) {
+  const url = BASE_URL + endpoints.coachStats(startDate, endDate, groupBy);
+  const token = localStorage.getItem("authToken");
+
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
       Authorization: "bearer " + token,
     },
   });
@@ -25,37 +59,21 @@ export async function getDashboardStats() {
 }
 
 /**
- * Fetches the revenue report from the API.
- * @returns {Promise<Object>} A promise that resolves to the JSON response containing revenue data.
- * @throws {Error} If the network request fails or the response is not OK.
+ * Fetches court statistics for a given date range.
+ *
+ * @param {Date} startDate - The start date for the statistics.
+ * @param {Date} endDate - The end date for the statistics.
+ * @returns {Promise<Object>} - A promise resolving to the court statistics data.
+ * @throws {Object} - An error object containing the HTTP status and message if the request fails.
  */
-export async function getRevenueReport() {
+export async function getCourtStats(startDate, endDate) {
+  const url = BASE_URL + endpoints.courtStats(startDate, endDate);
   const token = localStorage.getItem("authToken");
-  const response = await fetch(BASE_URL + endpoints.revenue, {
+
+  const response = await fetch(url, {
+    method: "GET",
     headers: {
-      Authorization: "bearer " + token,
-    },
-  });
-
-  if (!response.ok) {
-    throw {
-      status: response.status,
-      message: response.statusText,
-    };
-  }
-
-  return response.json();
-}
-
-/**
- * Fetches the recent transactions from the API.
- * @returns {Promise<Object>} A promise that resolves to the JSON response containing recent transaction details.
- * @throws {Error} If the network request fails or the response is not OK.
- */
-export async function getRecentTransactions() {
-  const token = localStorage.getItem("authToken");
-  const response = await fetch(BASE_URL + endpoints.transactions, {
-    headers: {
+      "Content-Type": "application/json",
       Authorization: "bearer " + token,
     },
   });

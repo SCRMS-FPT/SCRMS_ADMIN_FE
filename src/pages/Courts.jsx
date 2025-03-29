@@ -1,13 +1,24 @@
-"use client"
-
-import { useState } from "react"
-import { ChevronDown } from "lucide-react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Skeleton } from "@/components/ui/skeleton"
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Dialog,
   DialogContent,
@@ -16,31 +27,31 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import StatusBadge from "@/components/ui/StatusBadge"
-import { useCourts } from "@/hooks/useCourts"
+} from "@/components/ui/dropdown-menu";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import StatusBadge from "@/components/ui/StatusBadge";
+import { useCourts } from "@/hooks/useCourts";
 
 const Courts = () => {
-  const [searchTerm, setSearchTerm] = useState("")
-  const { courts, isLoading } = useCourts()
+  const [searchTerm, setSearchTerm] = useState("");
+  const { courts, isLoading } = useCourts();
 
   // Filter courts by search term
   const filteredCourts = searchTerm
     ? courts.filter(
         (court) =>
           court.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          court.cluster.toLowerCase().includes(searchTerm.toLowerCase()),
+          court.cluster.toLowerCase().includes(searchTerm.toLowerCase())
       )
-    : courts
+    : courts;
 
   return (
     <div className="space-y-6">
@@ -71,7 +82,9 @@ const Courts = () => {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Add New Court</DialogTitle>
-              <DialogDescription>Create a new court with the following details.</DialogDescription>
+              <DialogDescription>
+                Create a new court with the following details.
+              </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
@@ -153,7 +166,9 @@ const Courts = () => {
                           <DropdownMenuItem>Edit Court</DropdownMenuItem>
                           <DropdownMenuItem>Change Status</DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-destructive">Delete Court</DropdownMenuItem>
+                          <DropdownMenuItem className="text-destructive">
+                            Delete Court
+                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -165,8 +180,7 @@ const Courts = () => {
         </CardContent>
       </Card>
     </div>
-  )
-}
+  );
+};
 
-export default Courts
-
+export default Courts;

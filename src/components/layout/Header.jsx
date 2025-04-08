@@ -23,6 +23,7 @@ const SECTION_TITLES = {
   payments: "Quản lý thanh toán",
   reviews: "Quản lý đánh giá & báo cáo",
   settings: "Cài đặt hệ thống",
+  sportcenters: "Quản lý cụm sân",
 };
 
 const Header = ({ activeSection, toggleMobileMenu }) => {

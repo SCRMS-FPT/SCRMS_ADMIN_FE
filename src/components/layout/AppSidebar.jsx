@@ -6,8 +6,10 @@ import {
   Building2,
   User,
   Package,
+  Landmark,
   CreditCard,
   Star,
+  LayoutGrid,
   Settings,
   LogOut,
 } from "lucide-react";
@@ -49,9 +51,9 @@ const MENU_ITEMS = [
         section: "users",
       },
       {
-        label: "Quản lý sân",
-        icon: <Building2 className="h-5 w-5" />,
-        section: "courts",
+        label: "Quản lý cụm sân",
+        icon: <Landmark className="h-5 w-5" />,
+        section: "sportcenters",
       },
       {
         label: "Quản lý huấn luyện viên",

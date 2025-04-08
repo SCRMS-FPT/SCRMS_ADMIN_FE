@@ -18,6 +18,8 @@ import Reviews from "@/pages/Reviews";
 import Login from "@/pages/Login";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import SportCentersPage from "./pages/SportCenter";
+import SportCenterDetailPage from "./pages/SportCenterDetail";
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("authToken");
@@ -41,8 +43,18 @@ const MainLayout = () => {
     return path || "dashboard";
   };
 
+  const getSideURL = () => {
+    try {
+      const path = location.pathname.split("/")[2];
+      return path || undefined;
+    } catch {
+      return undefined;
+    }
+  };
+
   useEffect(() => {
-    setActiveSection(getActiveSectionFromURL());
+    const mainPath = getActiveSectionFromURL();
+    setActiveSection(mainPath);
   }, [location.pathname]);
 
   const toggleMobileMenu = () => setIsMobileMenuOpen((prev) => !prev);
@@ -76,6 +88,15 @@ const MainLayout = () => {
             <Route path="/packages" element={<Packages />} />
             <Route path="/payments" element={<Payments />} />
             <Route path="/reviews" element={<Reviews />} />
+            <Route path="/sportcenters" element={<SportCentersPage />} />
+            <Route
+              path="/sportcenters/:id"
+              element={<SportCenterDetailPage />}
+            />
+            <Route
+              path="/sportcenters/create"
+              element={<SportCenterDetailPage />}
+            />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </main>

@@ -50,7 +50,6 @@ export async function getUser(id) {
   const url = BASE_URL + endpoints.getDetail(id);
   const token = localStorage.getItem("authToken");
   const response = await fetch(url, {
-    mode: "cors",
     headers: {
       Authorization: "bearer " + token,
     },

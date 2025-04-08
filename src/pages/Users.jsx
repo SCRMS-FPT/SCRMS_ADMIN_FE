@@ -77,6 +77,7 @@ const Users = () => {
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
+      setPage(1);
     }, 500);
 
     return () => clearTimeout(handler);

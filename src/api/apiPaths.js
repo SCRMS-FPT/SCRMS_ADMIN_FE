@@ -14,7 +14,7 @@ export const API_CONFIG = {
         }${endDate ? `&end_date=${endDate}` : ""}${
           groupBy ? `&group_by=${groupBy}` : ""
         }`,
-      identityStats: `/api/admin/dashboard/stats`,
+      identityStats: `/api/admin/dashboard/stats/`,
       courtStats: (startDate, endDate) =>
         `/api/admin/court-stats?${startDate ? `start_date=${startDate}` : ""}${
           endDate ? `&end_date=${endDate}` : ""
@@ -35,10 +35,39 @@ export const API_CONFIG = {
   },
   courtManagement: {
     endpoints: {
-      list: "/api/admin/courts",
-      details: (courtId) => `/api/courts/${courtId}`,
-      update: (courtId) => `/api/admin/courts/${courtId}`,
-      delete: (courtId) => `/api/admin/courts/${courtId}`,
+      list: (sportCenterId, sportId, courtType) =>
+        `/api/courts?${sportCenterId ? `sportCenterId=${sportCenterId}` : ""}${
+          sportId ? `&sportId=${sportId}` : ""
+        }${courtType ? `courtType=${courtType}` : ""}`,
+      detail: (courtId) => `/api/courts/${courtId ? courtId : ""}`,
+      update: (courtId) => `/api/courts/${courtId}`,
+      delete: (courtId) => `/api/courts/${courtId}`,
+      getAvailable: (courtId, startDate, endDate) =>
+        `api/courts/${courtId}/availability${
+          startDate ? `?startDate=${startDate}` : ""
+        }${endDate ? `&endDate=${endDate}` : ""}`,
+      create: "/api/courts",
+    },
+  },
+  sportManagement: {
+    endpoints: {
+      list: "/api/sports",
+      create: "/api/sports",
+      detail: (id) => `/api/sports/${id}`,
+      update: (id) => `/api/sports/${id}`,
+      delete: (id) => `/api/sports/${id}`,
+    },
+  },
+  sportCenterManagement: {
+    endpoints: {
+      list: (page, limit, city, name) =>
+        `/api/sportcenters?${page ? `page=${page}` : ""}${
+          limit ? `&limit=${limit}` : ""
+        }${city ? `&city=${city}` : ""}${name ? `&name=${name}` : ""}`,
+      getPersonalCourts: (centerId) => `/api/sportcenters/${centerId}/courts`,
+      detail: (id) => `/api/sportcenters/${id}`,
+      create: "/api/sportcenters",
+      edit: (id) => `/api/sportcenters/${id}`,
     },
   },
   coachManagement: {

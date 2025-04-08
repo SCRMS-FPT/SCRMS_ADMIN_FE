@@ -15,6 +15,7 @@ export async function getIdentityStats() {
     method: "GET",
     headers: {
       Authorization: "bearer " + token,
+      Accept: "application/json",
     },
   });
 

@@ -20,8 +20,13 @@ export async function login(loginData) {
   });
 
   if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error("Sai mật khẩu hoặc tài khoản không tồn tại");
+    }
     const errorData = await response.json();
-    throw new Error(errorData.message || "Login failed");
+    throw new Error(
+      errorData.message || "Đăng nhập thất bại, vui lòng thử lại sau"
+    );
   }
 
   return response.json();

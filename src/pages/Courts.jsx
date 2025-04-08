@@ -58,7 +58,7 @@ const Courts = () => {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2">
           <Input
-            placeholder="Search courts..."
+            placeholder="Tìm tên sân..."
             className="w-full sm:w-[300px]"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -68,54 +68,67 @@ const Courts = () => {
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="maintenance">Maintenance</SelectItem>
-              <SelectItem value="inactive">Inactive</SelectItem>
+              <SelectItem value="all">Tất cả</SelectItem>
+              <SelectItem value="Open">Mở</SelectItem>
+              <SelectItem value="Closed">Đóng</SelectItem>
+              <SelectItem value="Maintenance">Bảo trì</SelectItem>
             </SelectContent>
           </Select>
         </div>
         <Dialog>
           <DialogTrigger asChild>
-            <Button>Add Court</Button>
+            <Button>Tạo sân</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Add New Court</DialogTitle>
+              <DialogTitle>Tạo sân mới</DialogTitle>
               <DialogDescription>
-                Create a new court with the following details.
+                Tạo sân với các chi tiết được liệt kê.
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
-                <Label htmlFor="court-name">Court Name</Label>
-                <Input id="court-name" placeholder="Enter court name" />
+                <Label htmlFor="court-name">Tên Sân</Label>
+                <Input id="court-name" placeholder="Nhập tên sân" />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="cluster">Cluster</Label>
-                <Input id="cluster" placeholder="Enter cluster name" />
+                <Label htmlFor="sportId">Môn thể thao</Label>
+                <Select>
+                  <SelectTrigger id="sportId">
+                    <SelectValue placeholder="Chọn môn thể thao" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Open">Mở</SelectItem>
+                    <SelectItem value="Closed">Đóng</SelectItem>
+                    <SelectItem value="Maintenance">Bảo trì</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="address">Address</Label>
-                <Textarea id="address" placeholder="Enter full address" />
+                <Label htmlFor="sportCenterId">Cụm Sân</Label>
+                <Input id="sportCenterId" placeholder="Nhập tên cụm sân" />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="address">Địa Chỉ</Label>
+                <Textarea id="address" placeholder="Nhập địa chỉ đầy đủ" />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="court-status">Status</Label>
                 <Select>
                   <SelectTrigger id="court-status">
-                    <SelectValue placeholder="Select status" />
+                    <SelectValue placeholder="Chọn trạng thái" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="maintenance">Maintenance</SelectItem>
-                    <SelectItem value="inactive">Inactive</SelectItem>
+                    <SelectItem value="Open">Mở</SelectItem>
+                    <SelectItem value="Closed">Đóng</SelectItem>
+                    <SelectItem value="Maintenance">Bảo trì</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline">Cancel</Button>
-              <Button>Create Court</Button>
+              <Button variant="outline">Hủy</Button>
+              <Button>Tạo sân</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -125,7 +138,7 @@ const Courts = () => {
         <CardContent className="p-0">
           {isLoading ? (
             <div className="p-6 space-y-4">
-              {[...Array(4)].map((_, i) => (
+              {[...Array(5)].map((_, i) => (
                 <div key={i} className="space-y-2">
                   <Skeleton className="h-5 w-[300px]" />
                   <Skeleton className="h-4 w-[250px]" />
@@ -137,43 +150,55 @@ const Courts = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Cluster</TableHead>
-                  <TableHead>Address</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead>Tên sân</TableHead>
+                  <TableHead>Môn thể thao</TableHead>
+                  <TableHead>Tên trung tâm thể thao</TableHead>
+                  <TableHead>Trạng thái</TableHead>
+                  <TableHead className="text-right">Thao tác</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredCourts.map((court) => (
-                  <TableRow key={court.id}>
-                    <TableCell className="font-medium">{court.name}</TableCell>
-                    <TableCell>{court.cluster}</TableCell>
-                    <TableCell>{court.address}</TableCell>
-                    <TableCell>
-                      <StatusBadge status={court.status} />
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <ChevronDown className="h-4 w-4" />
-                            <span className="sr-only">Actions</span>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>View Details</DropdownMenuItem>
-                          <DropdownMenuItem>Edit Court</DropdownMenuItem>
-                          <DropdownMenuItem>Change Status</DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-destructive">
-                            Delete Court
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                {filteredCourts &&
+                Array.isArray(filteredCourts) &&
+                filteredCourts.length > 0 ? (
+                  filteredCourts.map((court) => (
+                    <TableRow key={court.id}>
+                      <TableCell className="font-medium">
+                        {court.name}
+                      </TableCell>
+                      <TableCell>{court.cluster}</TableCell>
+                      <TableCell>{court.address}</TableCell>
+                      <TableCell>
+                        <StatusBadge status={court.status} />
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                              <ChevronDown className="h-4 w-4" />
+                              <span className="sr-only">Actions</span>
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem>Xem chi tiết</DropdownMenuItem>
+                            <DropdownMenuItem>Chỉnh sửa</DropdownMenuItem>
+                            <DropdownMenuItem>Đổi trạng thái</DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem className="text-destructive">
+                              Xóa
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan="5" className="text-center">
+                      Không có sân nào khả dụng.
                     </TableCell>
                   </TableRow>
-                ))}
+                )}
               </TableBody>
             </Table>
           )}

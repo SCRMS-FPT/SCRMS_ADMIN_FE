@@ -10,7 +10,6 @@ import AppSidebar from "@/components/layout/AppSidebar";
 import Header from "@/components/layout/Header";
 import Dashboard from "@/pages/Dashboard";
 import Users from "@/pages/Users";
-import Courts from "@/pages/Courts";
 import Coaches from "@/pages/Coaches";
 import Packages from "@/pages/Packages";
 import Payments from "@/pages/Payments";
@@ -83,7 +82,6 @@ const MainLayout = () => {
           <Routes>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/users" element={<Users />} />
-            <Route path="/courts" element={<Courts />} />
             <Route path="/coaches" element={<Coaches />} />
             <Route path="/packages" element={<Packages />} />
             <Route path="/payments" element={<Payments />} />

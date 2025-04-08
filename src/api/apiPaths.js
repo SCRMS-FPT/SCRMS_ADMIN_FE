@@ -19,6 +19,10 @@ export const API_CONFIG = {
         `/api/admin/court-stats?${startDate ? `start_date=${startDate}` : ""}${
           endDate ? `&end_date=${endDate}` : ""
         }`,
+      paymentStats: (startDate, endDate) =>
+        `/api/admin/reports/revenue?${
+          startDate ? `start_date=${startDate}` : ""
+        }${endDate ? `&end_date=${endDate}` : ""}`,
     },
   },
   userManagement: {
@@ -68,12 +72,20 @@ export const API_CONFIG = {
       detail: (id) => `/api/sportcenters/${id}`,
       create: "/api/sportcenters",
       edit: (id) => `/api/sportcenters/${id}`,
+      delete: (id) => `/api/sportcenters/${id}`,
     },
   },
   coachManagement: {
     endpoints: {
-      list: "/coaches",
-      details: (coachId) => `/api/coaches/${coachId}`,
+      list: (name, sportId, minPrice, maxPrice) =>
+        `/coaches?${name ? `name=${name}` : ""}${
+          sportId ? `&sportId=${sportId}` : ""
+        }${minPrice ? `&minPrice=${minPrice}` : ""}${
+          maxPrice ? `&maxPrice=${maxPrice}` : ""
+        }`,
+      details: (coachId) => `/coaches/${coachId}`,
+      delete: (coachId) => `/coaches/${coachId}`,
+      update: (coachId) => `/coaches/${coachId}`,
     },
   },
   servicePackageManagement: {

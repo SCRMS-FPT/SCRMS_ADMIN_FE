@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo } from "react";
 import {
   LineChart,
   Line,
@@ -10,9 +10,15 @@ import {
   Legend,
   ReferenceLine,
 } from "recharts";
-import { format, Locale } from "date-fns";
+import {
+  format,
+  parseISO,
+  differenceInDays,
+  differenceInMonths,
+  differenceInYears,
+} from "date-fns";
 import { vi } from "date-fns/locale";
-import { ArrowUpRight, ArrowDownRight, BarChart } from "lucide-react";
+import { BarChart } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -34,31 +40,28 @@ interface LineConfig {
 
 interface ReusableChartProps {
   data: DataItem[];
-  lines: LineConfig[]; // Array of dataKeys with labels
+  lines: LineConfig[];
   title: string;
   description?: string;
   icon?: React.ReactNode;
   valuePrefix?: string;
   valueSuffix?: string;
-  dateFormat?: string;
-  dateLocale?: Locale;
   showAverage?: boolean;
+  locale?: Locale;
 }
 
-// Custom Tooltip to handle multiple lines dynamically
 const CustomTooltip = ({
   active,
   payload,
   label,
   valuePrefix,
   valueSuffix,
+  labelFormatter,
 }: any) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-background border rounded-lg shadow-lg p-4">
-        <p className="font-medium">
-          {format(new Date(label), "'Tháng' MM 'năm' yyyy", { locale: vi })}
-        </p>
+        <p className="font-medium">{labelFormatter(new Date(label))}</p>
         {payload.map((entry: any, index: number) => (
           <div key={index} className="flex items-center mt-2">
             <div
@@ -89,22 +92,47 @@ export default function ReusableChart({
   icon = <BarChart className="h-4 w-4 text-primary" />,
   valuePrefix = "$",
   valueSuffix = "",
-  dateFormat = "MMM",
-  dateLocale = vi,
   showAverage = true,
+  locale = vi,
 }: ReusableChartProps) {
+  const sortedData = useMemo(
+    () =>
+      [...data].sort(
+        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+      ),
+    [data]
+  );
+
+  const dateRange = useMemo(() => {
+    const first = parseISO(sortedData[0]?.date);
+    const last = parseISO(sortedData[sortedData.length - 1]?.date);
+    return {
+      days: differenceInDays(last, first),
+      months: differenceInMonths(last, first),
+      years: differenceInYears(last, first),
+    };
+  }, [sortedData]);
+
+  const xLabelFormat = useMemo(() => {
+    if (dateRange.years >= 1) return "yyyy";
+    if (dateRange.months >= 1) return "MMM yyyy";
+    return "dd MMM";
+  }, [dateRange]);
+
+  const labelFormatter = (date: Date) => {
+    if (dateRange.years >= 1) return format(date, "'Năm' yyyy", { locale });
+    if (dateRange.months >= 1)
+      return format(date, "'Tháng' MM 'năm' yyyy", { locale });
+    return format(date, "dd MMM yyyy", { locale });
+  };
+
   const totalValues = lines.map((line) =>
-    data.reduce((sum, item) => sum + (item[line.dataKey] || 0), 0)
+    sortedData.reduce((sum, item) => sum + (item[line.dataKey] || 0), 0)
   );
 
-  const averageValues = lines.map((total) => total / data.length);
+  const averageValues = totalValues.map((total) => total / sortedData.length);
 
-  const totalValue = data.reduce(
-    (sum, item) =>
-      sum +
-      lines.reduce((lineSum, line) => lineSum + (item[line.dataKey] ?? 0), 0),
-    0
-  );
+  const totalValue = totalValues.reduce((sum, value) => sum + value, 0);
 
   return (
     <Card className="w-full">
@@ -114,7 +142,7 @@ export default function ReusableChart({
             <CardTitle>{title}</CardTitle>
             <CardDescription>{description}</CardDescription>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex flex-wrap gap-2 items-center">
             {lines.map((line, index) => (
               <div
                 key={index}
@@ -147,23 +175,17 @@ export default function ReusableChart({
         <div className="h-[400px]">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
-              data={data}
+              data={sortedData}
               margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
             >
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" />
               <XAxis
                 dataKey="date"
                 tickFormatter={(date) =>
-                  format(new Date(date), dateFormat, { locale: dateLocale })
+                  format(new Date(date), xLabelFormat, { locale })
                 }
                 stroke="hsl(var(--foreground))"
               />
-              {/* <YAxis
-                tickFormatter={(value) =>
-                  `${valuePrefix}${value.toLocaleString()}${valueSuffix}`
-                }
-                stroke="hsl(var(--foreground))"
-              /> */}
               <YAxis
                 domain={[0, "auto"]}
                 tickFormatter={(value) => {
@@ -174,12 +196,12 @@ export default function ReusableChart({
                 }}
                 stroke="hsl(var(--foreground))"
               />
-
               <Tooltip
                 content={
                   <CustomTooltip
                     valuePrefix={valuePrefix}
                     valueSuffix={valueSuffix}
+                    labelFormatter={labelFormatter}
                   />
                 }
               />
@@ -189,7 +211,6 @@ export default function ReusableChart({
                   <ReferenceLine
                     key={index}
                     y={averageValues[index]}
-                    label={`${line.label} Avg`}
                     stroke="hsl(var(--muted-foreground))"
                     strokeDasharray="3 3"
                   />

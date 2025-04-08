@@ -1,21 +1,20 @@
 import { useEffect, useState, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, redirect } from "react-router-dom";
 import {
   ArrowLeft,
   Phone,
   MapPin,
   Tag,
   Clock,
-  Edit,
   Trash2,
   Plus,
   XCircle,
   Info,
-  X,
   ImagePlus,
   Calendar,
-  Shield,
   AlertTriangle,
+  Loader,
+  CheckCircle,
 } from "lucide-react";
 import {
   Card,
@@ -60,7 +59,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import StatusBadge from "@/components/ui/StatusBadge";
-import { getDetails } from "@/hooks/useSportCenter";
+import {
+  getDetails,
+  useDeleteSportCenter,
+  useDeleteCourt,
+} from "@/hooks/useSportCenter";
 import { showToast, logoutUser } from "@/lib/utils";
 import {
   Tooltip,
@@ -69,139 +72,7 @@ import {
   TooltipProvider,
 } from "@/components/ui/tooltip";
 import { listProvinces, showAllDivisions } from "@/api/vnPublicAPI";
-import { cn } from "@/lib/utils";
-
-const sportCenter = {
-  id: "1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p",
-  name: "Downtown Sports Complex",
-  phoneNumber: "+1 (555) 123-4567",
-  sportNames: ["Tennis", "Basketball", "Swimming"],
-  address: "123 Main Street, Downtown, City",
-  description:
-    "A premium sports facility offering multiple courts and professional training services. Our facility includes state-of-the-art equipment, professional coaching staff, and amenities for athletes of all levels. We host regular tournaments and events for the community.",
-  avatar: "/placeholder.svg?height=100&width=100",
-  imageUrl: [
-    "https://letsenhance.io/static/73136da51c245e80edc6ccfe44888a99/1015f/MainBefore.jpg",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtnvAOajH9gS4C30cRF7rD_voaTAKly2Ntaw&s",
-    "https://www.simplilearn.com/ice9/free_resources_article_thumb/what_is_image_Processing.jpg",
-  ],
-};
-
-// Mock data for courts
-const courts = [
-  {
-    id: "1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p",
-    courtName: "Tennis Court A",
-    sportId: "2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q",
-    sportCenterId: "1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p",
-    description: "Professional hard court with lighting for evening play.",
-    facilities: [
-      { id: "1", name: "Lighting", description: "LED court lighting" },
-      {
-        id: "2",
-        name: "Seating",
-        description: "Spectator seating for 20 people",
-      },
-      {
-        id: "3",
-        name: "Equipment Rental",
-        description: "Rackets and balls available",
-      },
-    ],
-    slotDuration: "01:00:00",
-    status: "Available",
-    courtType: "Outdoor",
-    minDepositPercentage: 20,
-    sportName: "Tennis",
-    sportCenterName: "Downtown Sports Complex",
-    createdAt: "2023-01-15T10:30:00Z",
-    lastModified: "2023-06-20T14:45:00Z",
-  },
-  {
-    id: "2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q",
-    courtName: "Tennis Court B",
-    sportId: "2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q",
-    sportCenterId: "1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p",
-    description: "Clay court with professional maintenance.",
-    facilities: [
-      { id: "1", name: "Lighting", description: "LED court lighting" },
-      {
-        id: "4",
-        name: "Water Station",
-        description: "Free water refill station",
-      },
-    ],
-    slotDuration: "01:00:00",
-    status: "Available",
-    courtType: "Outdoor",
-    minDepositPercentage: 20,
-    sportName: "Tennis",
-    sportCenterName: "Downtown Sports Complex",
-    createdAt: "2023-01-15T10:30:00Z",
-    lastModified: "2023-06-20T14:45:00Z",
-  },
-  {
-    id: "3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8r",
-    courtName: "Basketball Court 1",
-    sportId: "3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8r",
-    sportCenterId: "1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p",
-    description:
-      "Full-size indoor basketball court with professional flooring.",
-    facilities: [
-      {
-        id: "2",
-        name: "Seating",
-        description: "Spectator seating for 50 people",
-      },
-      { id: "5", name: "Scoreboard", description: "Electronic scoreboard" },
-      {
-        id: "6",
-        name: "Locker Room",
-        description: "Access to locker rooms and showers",
-      },
-    ],
-    slotDuration: "01:30:00",
-    status: "Maintenance",
-    courtType: "Indoor",
-    minDepositPercentage: 25,
-    sportName: "Basketball",
-    sportCenterName: "Downtown Sports Complex",
-    createdAt: "2023-02-10T09:15:00Z",
-    lastModified: "2023-07-05T11:30:00Z",
-  },
-  {
-    id: "4d5e6f7g-8h9i-0j1k-2l3m-4n5o6p7q8r9s",
-    courtName: "Swimming Lane 1-4",
-    sportId: "4d5e6f7g-8h9i-0j1k-2l3m-4n5o6p7q8r9s",
-    sportCenterId: "1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p",
-    description: "Olympic-sized swimming pool with 4 lanes.",
-    facilities: [
-      {
-        id: "6",
-        name: "Locker Room",
-        description: "Access to locker rooms and showers",
-      },
-      {
-        id: "7",
-        name: "Lifeguard",
-        description: "Professional lifeguard on duty",
-      },
-      {
-        id: "8",
-        name: "Equipment",
-        description: "Swimming equipment available",
-      },
-    ],
-    slotDuration: "02:00:00",
-    status: "Unavailable",
-    courtType: "Indoor",
-    minDepositPercentage: 30,
-    sportName: "Swimming",
-    sportCenterName: "Downtown Sports Complex",
-    createdAt: "2023-03-05T13:45:00Z",
-    lastModified: "2023-08-12T16:20:00Z",
-  },
-];
+import { StatusPopup } from "@/components/ui/status-popup";
 
 const formatTime = (timeSpan) => {
   const [hours, minutes] = timeSpan.split(":");
@@ -235,6 +106,9 @@ const SportCenterDetailPage = () => {
   const [currentWard, setCurrentWard] = useState(null);
   const [courtToDelete, setCourtToDelete] = useState(null);
   const [editingCourt, setEditingCourt] = useState(null);
+  const [deleteCenter, setDeleteCenter] = useState(null);
+  const [deleteCourt, setDeleteCourt] = useState(null);
+  const [isSending, setIsSending] = useState(false);
 
   const addFacility = () => {
     setCustomFacilities([...customFacilities, { name: "", description: "" }]);
@@ -243,7 +117,6 @@ const SportCenterDetailPage = () => {
   useEffect(() => {
     showAllDivisions(3).then(setDivision);
   }, []);
-
   const updateFacility = (index, field, value) => {
     const updatedFacilities = [...customFacilities];
     updatedFacilities[index][field] = value;
@@ -289,10 +162,8 @@ const SportCenterDetailPage = () => {
   const handleSaveCourt = () => {
     if (editingCourt) {
       console.log("Updating court:", editingCourt);
-      // Add logic to update the court
     } else {
       console.log("Creating new court");
-      // Add logic to create a new court
     }
     closeCourtCreateDialog();
   };
@@ -308,16 +179,91 @@ const SportCenterDetailPage = () => {
     }
   };
 
-  const handleDeleteCourt = (courtId) => {
-    console.log("Deleting court:", courtId);
+  const handleDeleteCourt = async (courtId) => {
+    try {
+      setIsSending(true);
+      await useDeleteCourt(courtId);
+      setIsSending(false);
+      const response = {
+        status: "success",
+        showStatus: true,
+        message: "Xóa sân thành công",
+      };
+      setDeleteCourt(response);
+    } catch (error) {
+      setIsSending(false);
+      const err = {
+        status: "error",
+        showStatus: true,
+        message: "Xóa sân thất bại",
+      };
+      setDeleteCourt(err);
+    }
+  };
+
+  const tryDeleteSportCenter = async () => {
+    try {
+      setIsSending(true);
+      await useDeleteSportCenter(id);
+      setIsSending(false);
+      const response = {
+        status: "success",
+        showStatus: true,
+        message: "Xóa cụm sân thành công",
+      };
+      setDeleteCenter(response);
+    } catch (error) {
+      setIsSending(false);
+      const err = {
+        status: "error",
+        showStatus: true,
+        message: "Xóa cụm sân thất bại",
+      };
+      setDeleteCenter(err);
+    }
   };
 
   return (
     <div className="container mx-auto py-6 space-y-6">
-      {isLoading ? (
-        <p className="text-center text-muted-foreground">Đang tải...</p>
-      ) : centerDetail ? (
+      {isLoading || isSending ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="flex flex-col items-center">
+            <Loader className="h-12 w-12 text-white animate-spin" />
+            <p className="text-white mt-4">Đang xử lý...</p>
+          </div>
+        </div>
+      ) : // <p className="text-center text-muted-foreground">Đang tải...</p>
+      centerDetail ? (
         <>
+          {/* Popup for delete sport center */}
+          <StatusPopup
+            isOpen={deleteCenter?.showStatus || false}
+            type={deleteCenter?.status || "error"}
+            message={deleteCenter?.message || "Your action was completed fail!"}
+            closeText="Đóng"
+            onClose={() => {
+              if (deleteCenter.status == "success") {
+                redirect("/sport-centers");
+              }
+              setDeleteCenter(null);
+            }}
+            autoCloseTime={5000}
+          />
+
+          <StatusPopup
+            isOpen={deleteCourt?.showStatus || false}
+            type={deleteCourt?.status || "error"}
+            message={deleteCourt?.message || "Your action was completed fail!"}
+            closeText="Đóng"
+            onClose={() => {
+              if (deleteCourt.status == "success") {
+                window.location.reload();
+              }
+              setDeleteCourt(null);
+            }}
+            autoCloseTime={5000}
+          />
+
           <div className="flex justify-between items-center">
             <Button variant="ghost" onClick={() => navigate(-1)}>
               <ArrowLeft className="mr-2 h-4 w-4" /> Quay trở lại trang thông
@@ -329,12 +275,12 @@ const SportCenterDetailPage = () => {
                 onOpenChange={setIsEditDialogOpen}
               >
                 <DialogTrigger asChild>
-                  <Button
+                  {/* <Button
                     variant="outline"
                     className="transition-all hover:bg-primary/10"
                   >
                     <Edit className="mr-2 h-4 w-4" /> Chỉnh sửa
-                  </Button>
+                  </Button> */}
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[650px] max-h-[100vh] p-0 overflow-hidden">
                   <DialogHeader className="px-6 pt-6 pb-2">
@@ -613,7 +559,7 @@ const SportCenterDetailPage = () => {
                           </div>
 
                           <div className="grid grid-cols-3 gap-3">
-                            {sportCenter.imageUrl.map((url, index) => (
+                            {centerDetail.imageUrls.map((url, index) => (
                               <div
                                 key={index}
                                 className="group relative aspect-square rounded-md overflow-hidden border"
@@ -683,7 +629,12 @@ const SportCenterDetailPage = () => {
                     <AlertDialogCancel className="transition-all hover:bg-muted">
                       Hủy
                     </AlertDialogCancel>
-                    <AlertDialogAction className="bg-destructive text-destructive-foreground transition-all hover:bg-destructive/90">
+                    <AlertDialogAction
+                      onClick={() => {
+                        tryDeleteSportCenter();
+                      }}
+                      className="bg-destructive text-destructive-foreground transition-all hover:bg-destructive/90"
+                    >
                       <Trash2 className="mr-2 h-4 w-4" /> Xóa vĩnh viễn
                     </AlertDialogAction>
                   </AlertDialogFooter>
@@ -751,19 +702,6 @@ const SportCenterDetailPage = () => {
                     <MapPin className="mr-2 h-4 w-4 text-muted-foreground shrink-0 mt-1" />
                     <span>{centerDetail.addressLine}</span>
                   </div>
-                  {/* TODO: You must query all the sport in court */}
-                  {/* <div className="flex flex-wrap gap-1">
-                    {sportCenter.sportNames.map((sport) => (
-                      <Badge
-                        key={sport}
-                        variant="secondary"
-                        className="flex items-center"
-                      >
-                        <Tag className="mr-1 h-3 w-3" />
-                        {sport}
-                      </Badge>
-                    ))}
-                  </div> */}
                 </CardContent>
               </Card>
             </div>
@@ -798,9 +736,9 @@ const SportCenterDetailPage = () => {
             <TabsContent value="courts" className="space-y-6">
               <div className="flex justify-between items-center">
                 <h2 className="text-2xl font-bold">Tổng thể các sân</h2>
-                <Button onClick={() => openCourtDialog()}>
+                {/* <Button onClick={() => openCourtDialog()}>
                   <Plus className="mr-2 h-4 w-4" /> Thêm sân
-                </Button>
+                </Button> */}
                 <Dialog
                   open={isCreateCourtDialogOpen}
                   onOpenChange={setIsCreateCourtDialogOpen}
@@ -877,7 +815,11 @@ const SportCenterDetailPage = () => {
                           <div className="space-y-2">
                             <Label htmlFor="courtType">Loại sân</Label>
                             <Select
-                              defaultValue={editingCourt?.courtType || ""}
+                              defaultValue={
+                                editingCourt
+                                  ? String(editingCourt.courtType)
+                                  : ""
+                              }
                               name="courtType"
                             >
                               <SelectTrigger id="courtType">
@@ -892,14 +834,19 @@ const SportCenterDetailPage = () => {
                           </div>
                           <div className="space-y-2">
                             <Label htmlFor="status">Trạng thái</Label>
-                            <Select defaultValue={editingCourt?.status || ""}>
+                            <Select
+                              defaultValue={
+                                editingCourt ? String(editingCourt.status) : ""
+                              }
+                              name="status"
+                            >
                               <SelectTrigger id="status">
                                 <SelectValue placeholder="Chọn trạng thái" />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value={0}>Đang mở</SelectItem>
-                                <SelectItem value={1}>Đã đóng</SelectItem>
-                                <SelectItem value={2}>Bảo trì</SelectItem>
+                                <SelectItem value="0">Đang mở</SelectItem>
+                                <SelectItem value="1">Đã đóng</SelectItem>
+                                <SelectItem value="2">Bảo trì</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
@@ -961,15 +908,15 @@ const SportCenterDetailPage = () => {
                             <div className="space-y-2">
                               {[
                                 {
-                                  name: "Lighting",
+                                  name: "Sáng",
                                   description: "Hệ thống chiếu sáng đầy đủ",
                                 },
                                 {
-                                  name: "Seating",
+                                  name: "Ghế ngồi",
                                   description: "Ghế ngồi thoải mái",
                                 },
                                 {
-                                  name: "Equipment Rental",
+                                  name: "Dụng cụ thể thao",
                                   description: "Cho thuê dụng cụ thể thao",
                                 },
                                 {
@@ -1071,7 +1018,6 @@ const SportCenterDetailPage = () => {
                 </Dialog>
               </div>
 
-              {/* Courts by sport */}
               {courtsBySport.length < 0 ? (
                 <p>Không có bất kì sân nào</p>
               ) : (
@@ -1137,28 +1083,36 @@ const SportCenterDetailPage = () => {
                                   </p>
                                   <div className="flex flex-wrap gap-1.5">
                                     {court.facilities.map((facility) => (
-                                      <TooltipProvider key={facility.name}>
-                                        <Tooltip>
-                                          <TooltipTrigger asChild>
-                                            <Badge
-                                              variant="outline"
-                                              className="text-xs py-1 px-2 transition-colors hover:bg-primary/10 hover:text-primary cursor-help"
+                                      <Tooltip key={facility.name}>
+                                        <TooltipTrigger asChild>
+                                          <div className="flex items-center gap-2 bg-gradient-to-r from-green-400 to-green-600 text-white px-3 py-2 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer">
+                                            <svg
+                                              xmlns="http://www.w3.org/2000/svg"
+                                              className="h-5 w-5 text-white"
+                                              fill="none"
+                                              viewBox="0 0 24 24"
+                                              stroke="currentColor"
+                                              strokeWidth={2}
                                             >
+                                              <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z"
+                                              />
+                                            </svg>
+                                            <span className="font-medium">
                                               {facility.name}
-                                            </Badge>
-                                          </TooltipTrigger>
-                                          <TooltipContent
-                                            portal
-                                            side="top"
-                                            align="center"
-                                          >
-                                            <p>
-                                              {facility.description ||
-                                                "Không có mô tả"}
-                                            </p>
-                                          </TooltipContent>
-                                        </Tooltip>
-                                      </TooltipProvider>
+                                            </span>
+                                          </div>
+                                        </TooltipTrigger>
+                                        <TooltipContent
+                                          side="top"
+                                          align="start"
+                                          className="text-sm"
+                                        >
+                                          {facility.description}
+                                        </TooltipContent>
+                                      </Tooltip>
                                     ))}
                                   </div>
                                 </div>
@@ -1174,7 +1128,7 @@ const SportCenterDetailPage = () => {
 
                           {/* Card Footer */}
                           <CardFooter className="flex justify-between pt-2 gap-2">
-                            <Button
+                            {/* <Button
                               variant="outline"
                               size="sm"
                               className="flex-1 hover:bg-primary/10 hover:text-primary transition-colors"
@@ -1182,7 +1136,7 @@ const SportCenterDetailPage = () => {
                             >
                               <Edit className="mr-1 h-3 w-3" />
                               Chỉnh sửa
-                            </Button>
+                            </Button> */}
                             <AlertDialog
                               open={courtToDelete === court.id}
                               onOpenChange={(open) =>

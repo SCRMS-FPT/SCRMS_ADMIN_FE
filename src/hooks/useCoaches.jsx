@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { getCoaches, getCoachDetails } from "../api/coachManagementAPI";
 
-export const useCoaches = () => {
+export const useCoaches = (name, minPrice, maxPrice, sportId) => {
   const [coaches, setCoaches] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -11,7 +11,7 @@ export const useCoaches = () => {
       setIsLoading(true);
 
       try {
-        const list = await getCoaches();
+        const list = await getCoaches(name, minPrice, maxPrice, sportId);
         setTimeout(() => {
           setCoaches(list);
           setIsLoading(false);
@@ -23,7 +23,7 @@ export const useCoaches = () => {
     };
 
     fetchCoaches();
-  }, []);
+  }, [name, minPrice, maxPrice, sportId]);
 
   return { coaches, isLoading, error };
 };

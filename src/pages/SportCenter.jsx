@@ -14,10 +14,19 @@ import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useSportCenter } from "@/hooks/useSportCenter";
 import { showToast, logoutUser } from "@/lib/utils";
+import {
+  Select,
+  SelectItem,
+  SelectContent,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { listProvinces } from "@/api/vnPublicAPI";
 
 export default function SportCentersPage() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchCity, setSearchCity] = useState("");
+  const [searchCity, setSearchCity] = useState("all");
+  const [provinces, setProvinces] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
   const navigate = useNavigate();
@@ -26,7 +35,7 @@ export default function SportCentersPage() {
     currentPage,
     itemsPerPage,
     searchTerm,
-    searchCity
+    searchCity === "all" ? "" : searchCity
   );
 
   if (error) {
@@ -48,6 +57,13 @@ export default function SportCentersPage() {
   }, 500);
 
   useEffect(() => {
+    const fetchProvinces = async () => {
+      const data = await listProvinces();
+      setProvinces(data);
+    };
+
+    fetchProvinces();
+
     return () => updateSearchTerm.cancel();
   }, []);
 
@@ -71,9 +87,19 @@ export default function SportCentersPage() {
             onChange={(e) => updateSearchTerm(e.target.value)}
           />
         </div>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" /> Thêm Trung tâm thể thao
-        </Button>
+        <Select onValueChange={setSearchCity} value={searchCity}>
+          <SelectTrigger id="city-select" className="w-full sm:w-1/3">
+            <SelectValue placeholder="Chọn thành phố" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Tất cả</SelectItem>
+            {provinces.map((province) => (
+              <SelectItem key={province.code} value={province.name}>
+                {province.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {isLoading ? (

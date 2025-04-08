@@ -7,7 +7,7 @@ const { endpoints } = API_CONFIG.coachManagement;
  */
 export async function getCoaches() {
   const token = localStorage.getItem("authToken");
-  const url = BASE_URL + endpoints.list;
+  const url = BASE_URL + endpoints.list();
   const response = await fetch(url, {
     headers: {
       Authorization: "bearer " + token,
@@ -34,6 +34,43 @@ export async function getCoachDetails(coachId) {
     headers: {
       Authorization: "bearer " + token,
     },
+  });
+  if (!response.ok) {
+    throw {
+      status: response.status,
+      message: response.statusText,
+    };
+  }
+  return response.json();
+}
+
+export async function deleteCoaches(coachId) {
+  const token = localStorage.getItem("authToken");
+  const url = BASE_URL + endpoints.delete(coachId);
+  const response = await fetch(url, {
+    headers: {
+      Authorization: "bearer " + token,
+    },
+  });
+  if (!response.ok) {
+    throw {
+      status: response.status,
+      message: response.statusText,
+    };
+  }
+  return response.json();
+}
+
+export async function updateCoach(coachId, data) {
+  const token = localStorage.getItem("authToken");
+  const url = BASE_URL + endpoints.update(coachId);
+  const response = await fetch(url, {
+    method: "PUT",
+    headers: {
+      Authorization: "bearer " + token,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
   });
   if (!response.ok) {
     throw {

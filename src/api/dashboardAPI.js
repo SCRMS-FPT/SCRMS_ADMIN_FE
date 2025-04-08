@@ -88,3 +88,25 @@ export async function getCourtStats(startDate, endDate) {
 
   return response.json();
 }
+
+export async function getPaymentStats(startDate, endDate) {
+  const url = BASE_URL + endpoints.paymentStats(startDate, endDate);
+  const token = localStorage.getItem("authToken");
+
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "bearer " + token,
+    },
+  });
+
+  if (!response.ok) {
+    throw {
+      status: response.status,
+      message: response.statusText,
+    };
+  }
+
+  return response.json();
+}

@@ -123,3 +123,26 @@ export const getSportCenterCourts = async (centerId) => {
   }
   return response.json();
 };
+
+export const deleteSportCenter = async (centerId) => {
+  const url = `${BASE_URL}${endpoints.delete(centerId)}`;
+  const response = await fetch(url, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({
+      message: "Failed to delete sport center",
+      status: response.status,
+      statusText: response.statusText,
+    }));
+    throw {
+      status: response.status,
+      message: error.message || response.statusText,
+    };
+  }
+  return response.json();
+};

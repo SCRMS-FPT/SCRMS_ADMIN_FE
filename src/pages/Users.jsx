@@ -90,7 +90,7 @@ const Users = () => {
 
   const availableRoles = [
     { Key: "Admin", Display: "Admin" },
-    { Key: "User", Display: "Người dùng" },
+    // { Key: "User", Display: "Người dùng" },
     { Key: "CourtOwner", Display: "Chủ sân" },
     { Key: "Coach", Display: "Huấn luyện viên" },
   ];
@@ -402,7 +402,7 @@ const Users = () => {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem>Xem chi tiết</DropdownMenuItem>
+                              {/* <DropdownMenuItem>Xem chi tiết</DropdownMenuItem> */}
                               <DropdownMenuItem
                                 onClick={() => openDialog(user)}
                               >

@@ -1,7 +1,9 @@
+import { deleteCourt } from "@/api/courtManagementAPI";
 import {
   fetchSportCenters,
   getSportCenterCourts,
   getSportCenterDetails,
+  deleteSportCenter,
 } from "@/api/sportCenterManagementAPI";
 import { fetchSports } from "@/api/sportManagementAPI";
 import { useState, useEffect } from "react";
@@ -54,7 +56,7 @@ export const getDetails = (sportCenterId) => {
         const { courts } = await getSportCenterCourts(sportCenterId);
         const { sports } = await fetchSports();
         const combinedData = { ...response, courts, sports };
-        console.log(combinedData);
+
         setTimeout(() => {
           setCenterDetail(combinedData);
           setIsLoading(false);
@@ -67,4 +69,24 @@ export const getDetails = (sportCenterId) => {
     fetchDetailData();
   }, [sportCenterId]);
   return { isLoading, centerDetail, error };
+};
+
+export const useDeleteSportCenter = async (sportCenterId) => {
+  try {
+    const response = await deleteSportCenter(sportCenterId);
+    return response;
+  } catch (error) {
+    console.error("Error deleting sport center:", error);
+    throw error;
+  }
+};
+
+export const useDeleteCourt = async (courtId) => {
+  try {
+    const response = await deleteCourt(courtId);
+    return response;
+  } catch (error) {
+    console.error("Error deleting court:", error);
+    throw error;
+  }
 };

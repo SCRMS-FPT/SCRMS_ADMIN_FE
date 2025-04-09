@@ -15,6 +15,7 @@ import Packages from "@/pages/Packages";
 import Payments from "@/pages/Payments";
 import Reviews from "@/pages/Reviews";
 import Login from "@/pages/Login";
+import WithdrawalRequests from "@/pages/WithdrawalRequests"; // Add this import
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SportCentersPage from "./pages/SportCenter";
@@ -93,6 +94,10 @@ const MainLayout = () => {
             <Route
               path="/sportcenters/create"
               element={<SportCenterDetailPage />}
+            />
+            <Route
+              path="/withdrawalrequests"
+              element={<WithdrawalRequests />}
             />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>

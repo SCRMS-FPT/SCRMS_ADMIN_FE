@@ -75,6 +75,11 @@ const MENU_ITEMS = [
         icon: <CreditCard className="h-5 w-5" />,
         section: "payments",
       },
+      {
+        label: "Yêu cầu rút tiền",
+        icon: <CreditCard className="h-5 w-5" />,
+        section: "withdrawalrequests",
+      },
     ],
   },
   {

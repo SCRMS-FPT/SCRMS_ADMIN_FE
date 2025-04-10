@@ -77,11 +77,13 @@ export const API_CONFIG = {
   },
   coachManagement: {
     endpoints: {
-      list: (name, sportId, minPrice, maxPrice) =>
+      list: (name, sportId, minPrice, maxPrice, page, limit) =>
         `/coaches?${name ? `name=${name}` : ""}${
           sportId ? `&sportId=${sportId}` : ""
         }${minPrice ? `&minPrice=${minPrice}` : ""}${
           maxPrice ? `&maxPrice=${maxPrice}` : ""
+        }${page ? `&pageIndex=${page}` : ""}${
+          limit ? `&pageSize=${limit}` : ""
         }`,
       details: (coachId) => `/coaches/${coachId}`,
       delete: (coachId) => `/coaches/${coachId}`,

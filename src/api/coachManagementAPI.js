@@ -2,12 +2,26 @@ import { API_CONFIG, BASE_URL } from "./apiPaths";
 const { endpoints } = API_CONFIG.coachManagement;
 
 /**
- * Get the list of coach
- * @returns the list of coach
+ *
+ * @param {*} name
+ * @param {*} minPrice
+ * @param {*} maxPrice
+ * @param {*} sportId
+ * @param {*} page
+ * @param {*} limit
+ * @returns the pagination result of coaches list
  */
-export async function getCoaches() {
+export async function getCoaches(
+  name,
+  minPrice,
+  maxPrice,
+  sportId,
+  page,
+  limit
+) {
   const token = localStorage.getItem("authToken");
-  const url = BASE_URL + endpoints.list();
+  const url =
+    BASE_URL + endpoints.list(name, sportId, minPrice, maxPrice, page, limit);
   const response = await fetch(url, {
     headers: {
       Authorization: "bearer " + token,

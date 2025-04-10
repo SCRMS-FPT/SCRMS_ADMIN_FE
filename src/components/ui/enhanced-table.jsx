@@ -43,26 +43,38 @@ export function EnhancedTable({
   filterOptions = [],
   onFilterChange = () => {},
   currentFilter = "all",
+  // Server pagination props
+  serverPagination = false,
+  totalItems = 0,
+  currentPage = 1,
+  onPageChange = () => {},
+  onSearchChange = () => {},
+  onPageSizeChange = () => {},
 }) {
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(currentPage);
   const [filteredData, setFilteredData] = useState(data || []);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState({
     key: null,
     direction: null,
   });
-
-  const totalPages = Math.ceil(filteredData.length / pageSize);
+  // For client-side pagination
+  const totalPages = serverPagination
+    ? Math.ceil(totalItems / pageSize)
+    : Math.ceil(filteredData.length / pageSize);
   const startIndex = (page - 1) * pageSize;
-  const paginatedData = filteredData.slice(startIndex, startIndex + pageSize);
+  const paginatedData = serverPagination
+    ? data
+    : filteredData.slice(startIndex, startIndex + pageSize);
 
   useEffect(() => {
-    setFilteredData(data || []);
-    setPage(1);
-  }, [data]);
+    if (serverPagination) {
+      setPage(currentPage);
+    }
+  }, [currentPage, serverPagination]);
 
   useEffect(() => {
-    if (searchTerm) {
+    if (!serverPagination && searchTerm) {
       const lowercasedSearch = searchTerm.toLowerCase();
       const filtered = data.filter((item) => {
         return Object.values(item).some((value) => {
@@ -72,12 +84,43 @@ export function EnhancedTable({
       });
       setFilteredData(filtered);
       setPage(1);
-    } else {
+    } else if (!serverPagination) {
       setFilteredData(data || []);
     }
-  }, [searchTerm, data]);
+  }, [searchTerm, data, serverPagination]);
 
+  // Handle search for server-side pagination
+  const handleSearch = (value) => {
+    setSearchTerm(value);
+    if (serverPagination) {
+      // Debounce search for server-side
+      const timeoutId = setTimeout(() => {
+        onSearchChange(value);
+      }, 500);
+      return () => clearTimeout(timeoutId);
+    }
+  };
+
+  // Handle page change for server-side pagination
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+    if (serverPagination) {
+      onPageChange(newPage);
+    }
+  };
+
+  // Handle page size change for server-side pagination
+  const handlePageSizeChange = (newSize) => {
+    if (serverPagination) {
+      onPageSizeChange(Number.parseInt(newSize));
+    }
+    setPage(1);
+  };
+
+  // Client-side sorting
   const handleSort = (key) => {
+    if (serverPagination) return; // Disable client-side sorting when using server pagination
+
     let direction = "asc";
 
     if (sortConfig.key === key) {
@@ -131,7 +174,7 @@ export function EnhancedTable({
               <Input
                 placeholder={searchPlaceholder}
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => handleSearch(e.target.value)}
                 className="pl-8 w-full"
               />
             </div>
@@ -160,13 +203,7 @@ export function EnhancedTable({
         </div>
 
         <div className="flex items-center gap-2 justify-end">
-          <Select
-            defaultValue={String(pageSize)}
-            onValueChange={(value) => {
-              pageSize = Number(value);
-              setPage(1);
-            }}
-          >
+          <Select value={String(pageSize)} onValueChange={handlePageSizeChange}>
             <SelectTrigger className="w-[120px]">
               <SelectValue placeholder="10 hàng" />
             </SelectTrigger>
@@ -190,18 +227,23 @@ export function EnhancedTable({
                     key={column.accessorKey}
                     className="font-semibold text-slate-700"
                     onClick={() =>
-                      column.enableSorting && handleSort(column.accessorKey)
+                      column.enableSorting &&
+                      !serverPagination &&
+                      handleSort(column.accessorKey)
                     }
                   >
                     <div
                       className={cn(
                         "flex items-center",
                         column.enableSorting &&
+                          !serverPagination &&
                           "cursor-pointer hover:text-violet-600 transition-colors"
                       )}
                     >
                       {column.header}
-                      {column.enableSorting && getSortIcon(column.accessorKey)}
+                      {column.enableSorting &&
+                        !serverPagination &&
+                        getSortIcon(column.accessorKey)}{" "}
                     </div>
                   </TableHead>
                 ))}
@@ -262,18 +304,29 @@ export function EnhancedTable({
         {totalPages > 1 && (
           <div className="flex items-center justify-between px-4 py-3 border-t bg-gradient-to-b from-slate-50 to-white">
             <div className="text-sm text-slate-500">
-              Hiển thị <span className="font-medium">{startIndex + 1}</span> đến{" "}
+              Hiển thị{" "}
               <span className="font-medium">
-                {Math.min(startIndex + pageSize, filteredData.length)}
+                {serverPagination
+                  ? (currentPage - 1) * pageSize + 1
+                  : startIndex + 1}
+              </span>{" "}
+              đến{" "}
+              <span className="font-medium">
+                {serverPagination
+                  ? Math.min(currentPage * pageSize, totalItems)
+                  : Math.min(startIndex + pageSize, filteredData.length)}
               </span>{" "}
               trong tổng số{" "}
-              <span className="font-medium">{filteredData.length}</span> kết quả
+              <span className="font-medium">
+                {serverPagination ? totalItems : filteredData.length}
+              </span>{" "}
+              kết quả
             </div>
             <div className="flex items-center space-x-2">
               <Button
                 variant="outline"
                 size="icon"
-                onClick={() => setPage(1)}
+                onClick={() => handlePageChange(1)}
                 disabled={page === 1}
                 className="h-8 w-8"
               >
@@ -282,7 +335,7 @@ export function EnhancedTable({
               <Button
                 variant="outline"
                 size="icon"
-                onClick={() => setPage(page - 1)}
+                onClick={() => handlePageChange(page - 1)}
                 disabled={page === 1}
                 className="h-8 w-8"
               >
@@ -294,7 +347,7 @@ export function EnhancedTable({
               <Button
                 variant="outline"
                 size="icon"
-                onClick={() => setPage(page + 1)}
+                onClick={() => handlePageChange(page + 1)}
                 disabled={page === totalPages}
                 className="h-8 w-8"
               >
@@ -303,7 +356,7 @@ export function EnhancedTable({
               <Button
                 variant="outline"
                 size="icon"
-                onClick={() => setPage(totalPages)}
+                onClick={() => handlePageChange(totalPages)}
                 disabled={page === totalPages}
                 className="h-8 w-8"
               >

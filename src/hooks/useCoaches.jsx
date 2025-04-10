@@ -1,7 +1,14 @@
 import { useState, useEffect } from "react";
 import { getCoaches, getCoachDetails } from "../api/coachManagementAPI";
 
-export const useCoaches = (name, minPrice, maxPrice, sportId) => {
+export const useCoaches = (
+  name,
+  minPrice,
+  maxPrice,
+  sportId,
+  page = 1,
+  pageSize = 10
+) => {
   const [coaches, setCoaches] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -11,9 +18,16 @@ export const useCoaches = (name, minPrice, maxPrice, sportId) => {
       setIsLoading(true);
 
       try {
-        const list = await getCoaches(name, minPrice, maxPrice, sportId);
+        const list = await getCoaches(
+          name,
+          minPrice,
+          maxPrice,
+          sportId,
+          page - 1,
+          pageSize
+        );
+        setCoaches(list);
         setTimeout(() => {
-          setCoaches(list);
           setIsLoading(false);
         }, 1000);
       } catch (err) {
@@ -23,7 +37,29 @@ export const useCoaches = (name, minPrice, maxPrice, sportId) => {
     };
 
     fetchCoaches();
-  }, [name, minPrice, maxPrice, sportId]);
+  }, [name, minPrice, maxPrice, sportId, page, pageSize]);
 
-  return { coaches, isLoading, error };
+  const mutate = async () => {
+    try {
+      setIsLoading(true);
+      const response = await getCoaches(
+        name,
+        minPrice,
+        maxPrice,
+        sportId,
+        page,
+        pageSize
+      );
+      if (response && Array.isArray(response)) {
+        setCoaches(response);
+      } else {
+        setCoaches([]);
+      }
+    } catch (err) {
+      setError(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  return { coaches, isLoading, error, mutate };
 };

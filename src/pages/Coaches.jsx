@@ -34,12 +34,37 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
+function useDebounce(value, delay) {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
 const Coaches = () => {
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [totalItems, setTotalItems] = useState(0);
+
+  // Search and filter state
   const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
   const [specializationFilter, setSpecializationFilter] = useState("all");
   const [listSpecialization, setListSpecialization] = useState([]);
-  const [selectedCoach, setSelectedCoach] = useState(null);
 
+  // Dialog state
+  const [selectedCoach, setSelectedCoach] = useState(null);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -51,10 +76,12 @@ const Coaches = () => {
     error,
     mutate,
   } = useCoaches(
+    debouncedSearchTerm,
     null,
     null,
-    null,
-    specializationFilter !== "all" ? specializationFilter : null
+    specializationFilter !== "all" ? specializationFilter : null,
+    currentPage,
+    pageSize
   );
 
   useEffect(() => {
@@ -74,7 +101,29 @@ const Coaches = () => {
         showToast(`Lỗi: ${error.message}`, "error");
     }
   }
+  // Handle page change
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
 
+  // Handle search change
+  const handleSearchChange = (term) => {
+    setSearchTerm(term);
+    setCurrentPage(1); // Reset to first page on new search
+  };
+
+  // Handle page size change
+  const handlePageSizeChange = (size) => {
+    setPageSize(size);
+    setCurrentPage(1); // Reset to first page on page size change
+  };
+
+  // Handle filter change
+  const handleFilterChange = (filter) => {
+    setSpecializationFilter(filter);
+    setCurrentPage(1); // Reset to first page on filter change
+  };
+  // Handle view, edit, and delete actions
   const handleViewCoach = async (id) => {
     try {
       setIsLoading(true);
@@ -251,18 +300,25 @@ const Coaches = () => {
         </CardHeader>
         <CardContent className="p-0">
           <EnhancedTable
-            data={coaches || []}
+            data={coaches.data || []}
             columns={columns}
             isLoading={isCoachesLoading}
             onRowClick={handleRowClick}
             searchPlaceholder="Tìm kiếm huấn luyện viên..."
             noDataMessage="Không tồn tại một HLV nào."
-            pageSize={10}
+            pageSize={pageSize}
             searchable={true}
             filterable={true}
             filterOptions={filterOptions}
-            onFilterChange={setSpecializationFilter}
+            onFilterChange={handleFilterChange}
             currentFilter={specializationFilter}
+            // Server pagination props
+            serverPagination={true}
+            totalItems={coaches.count}
+            currentPage={currentPage}
+            onPageChange={handlePageChange}
+            onSearchChange={handleSearchChange}
+            onPageSizeChange={handlePageSizeChange}
           />
         </CardContent>
       </Card>

@@ -15,7 +15,8 @@ import Packages from "@/pages/Packages";
 import Payments from "@/pages/Payments";
 import Reviews from "@/pages/Reviews";
 import Login from "@/pages/Login";
-import WithdrawalRequests from "@/pages/WithdrawalRequests"; // Add this import
+import WithdrawalRequests from "@/pages/WithdrawalRequests";
+import FlaggedReviews from "@/pages/FlaggedReviews"; // Add this line
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SportCentersPage from "./pages/SportCenter";
@@ -86,6 +87,8 @@ const MainLayout = () => {
             <Route path="/packages" element={<Packages />} />
             <Route path="/payments" element={<Payments />} />
             <Route path="/reviews" element={<Reviews />} />
+            <Route path="/flaggedreviews" element={<FlaggedReviews />} />{" "}
+            {/* Add this line */}
             <Route path="/sportcenters" element={<SportCentersPage />} />
             <Route
               path="/sportcenters/:id"

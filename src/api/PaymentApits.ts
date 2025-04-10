@@ -182,6 +182,83 @@ export class Client {
         }
         return Promise.resolve<void>(null as any);
     }
+    /**
+     * @return OK
+     */
+    adminDeleteReview(reviewId: string): Promise<void> {
+        let url_ = this.baseUrl + "/api/admin/reviews/{reviewId}";
+        if (reviewId === undefined || reviewId === null)
+            throw new Error("The parameter 'reviewId' must be defined.");
+        url_ = url_.replace("{reviewId}", encodeURIComponent("" + reviewId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "DELETE",
+            headers: this.getAuthHeaders() // Add auth headers
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processAdminDeleteReview(_response);
+        });
+    }
+
+    protected processAdminDeleteReview(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.json();
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
+
+ /**
+     * @param status (optional) 
+     * @param page (optional) 
+     * @param limit (optional) 
+     * @return OK
+     */
+ getReviewFlags(status: string | undefined, page: number | undefined, limit: number | undefined): Promise<void> {
+    let url_ = this.baseUrl + "/api/admin/reviews/flags?";
+    if (status === null)
+        throw new Error("The parameter 'status' cannot be null.");
+    else if (status !== undefined)
+        url_ += "status=" + encodeURIComponent("" + status) + "&";
+    if (page === null)
+        throw new Error("The parameter 'page' cannot be null.");
+    else if (page !== undefined)
+        url_ += "page=" + encodeURIComponent("" + page) + "&";
+    if (limit === null)
+        throw new Error("The parameter 'limit' cannot be null.");
+    else if (limit !== undefined)
+        url_ += "limit=" + encodeURIComponent("" + limit) + "&";
+    url_ = url_.replace(/[?&]$/, "");
+
+    let options_: RequestInit = {
+        method: "GET",
+        headers: this.getAuthHeaders()
+    };
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+        return this.processGetReviewFlags(_response);
+    });
+}
+
+protected processGetReviewFlags(response: Response): Promise<void> {
+    const status = response.status;
+    let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+    if (status === 200) {
+        return response.json();
+    } else if (status !== 200 && status !== 204) {
+        return response.text().then((_responseText) => {
+        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        });
+    }
+    return Promise.resolve<void>(null as any);
+}
 
  /**
      * @return OK

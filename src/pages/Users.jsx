@@ -1,9 +1,19 @@
+"use client";
+
 import { useState, useEffect } from "react";
-import { ChevronDown, UserMinus, UserPen, UserSquare2 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  UserMinus,
+  PenIcon as UserPen,
+  UserCog,
+  Users2,
+  Calendar,
+  Search,
+  Filter,
+} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "../components/ui/textarea";
+import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
@@ -12,15 +22,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   Dialog,
   DialogContent,
@@ -48,7 +49,15 @@ import {
 } from "@/hooks/useUsers";
 import { showToast, logoutUser } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Filter, Search, UserCog, Users2 } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Users = () => {
   const pageSize = 10;
@@ -59,20 +68,23 @@ const Users = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
   const [changeRoleUser, setChangeRoleUser] = useState(null);
-  const [gender, setGender] = useState(editingUser?.gender || "");
+  const [gender, setGender] = useState("");
   const [isReload, setReload] = useState(false);
   const [deleteUser, selectDeleteUser] = useState(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [open, setOpen] = useState(false);
   const [selectedRoles, setSelectedRoles] = useState([]);
-  const { users, isLoading, error, totalPages } = getUsersData(
+
+  //Move getUsersData hook outside conditional statement
+  const usersData = getUsersData(
     pageSize,
     page,
     userRole === "all" ? "" : userRole,
     debouncedSearchTerm,
     isReload
   );
+  const { users, isLoading, error, totalPages } = usersData;
 
   if (error) {
     switch (error.status) {
@@ -142,13 +154,15 @@ const Users = () => {
 
   const closeChangeRole = () => {
     setChangeRoleUser(null);
-    setSelectedRoles(null);
+    setSelectedRoles([]);
     setOpen(false);
   };
 
   const openDialog = (user = null) => {
     if (user != null) {
       setGender(user.gender);
+    } else {
+      setGender("");
     }
     setEditingUser(user);
     setIsDialogOpen(true);
@@ -178,7 +192,6 @@ const Users = () => {
       } catch (err) {
         showToast(`Lỗi khi tải dữ liệu người dùng`, "error");
       }
-    } else {
     }
     closeDialog();
   };
@@ -194,7 +207,7 @@ const Users = () => {
       return;
     }
     const getUser = localStorage.getItem("user");
-    if (getUser.id === deleteUser.id) {
+    if (getUser && getUser.id === deleteUser.id) {
       showToast(`Bạn không thể xóa chính bản thân mình`, "error");
       return;
     }
@@ -202,6 +215,7 @@ const Users = () => {
     try {
       await removeUser(deleteUser.id);
       showToast(`Xóa người dùng thành công`, "success");
+      reloadUsers();
     } catch (error) {
       showToast(`Xóa người dùng thất bại`, "error");
     }
@@ -212,37 +226,426 @@ const Users = () => {
 
   return (
     <div className="space-y-6">
-      {/* <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-2">
-          <Input
-            placeholder="Tìm kiếm người dùng thông qua tên..."
-            className="w-full sm:w-[300px]"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          /> */}
-      {/* <Select value={userRole} onValueChange={setUserRole}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Chia theo vai trò" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Tất cả</SelectItem>
-              <SelectItem value="user">Người dùng</SelectItem>
-              <SelectItem value="court owner">Chủ sân</SelectItem>
-              <SelectItem value="coach">Huấn luyện viên</SelectItem>
-            </SelectContent>
-          </Select> */}
-      {/* </div>
-         <Button onClick={() => openDialog()}>Add User</Button> 
-      </div> */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
-            <Users2 className="h-6 w-6 text-violet-500" />
+          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+            <Users2 className="h-6 w-6 text-primary" />
             Người dùng
           </h1>
-          <p className="text-slate-500 mt-1">Quản lý danh sách người dùng</p>
+          <p className="text-muted-foreground mt-1">
+            Quản lý danh sách người dùng
+          </p>
         </div>
       </div>
+
+      <Card>
+        <CardHeader className="bg-muted/30 dark:bg-muted/10 pb-2">
+          <CardTitle className="text-lg font-semibold text-foreground">
+            Danh sách người dùng
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-0">
+          <div className="overflow-hidden rounded-md border">
+            <div className="bg-muted/40 p-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <div className="relative w-full sm:w-[300px]">
+                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Tìm kiếm người dùng..."
+                    className="pl-8 w-full"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+                <Select value={userRole} onValueChange={setUserRole}>
+                  <SelectTrigger className="w-[180px] hidden sm:flex">
+                    <Filter className="mr-2 h-4 w-4" />
+                    <SelectValue placeholder="Lọc vai trò" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Tất cả</SelectItem>
+                    <SelectItem value="Admin">Admin</SelectItem>
+                    <SelectItem value="CourtOwner">Chủ sân</SelectItem>
+                    <SelectItem value="Coach">Huấn luyện viên</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="text-sm text-muted-foreground">
+                Tổng số:{" "}
+                <span className="font-medium">{users?.length || 0}</span> người
+                dùng
+              </div>
+            </div>
+
+            {/* Mobile view */}
+            <div className="md:hidden">
+              {isLoading ? (
+                <div className="p-4 space-y-4">
+                  {Array.from({ length: 3 }).map((_, index) => (
+                    <div
+                      key={index}
+                      className="animate-pulse space-y-2 p-4 border rounded-md"
+                    >
+                      <div className="h-4 bg-muted rounded w-1/3"></div>
+                      <div className="h-6 bg-muted rounded w-3/4"></div>
+                      <div className="h-4 bg-muted rounded w-1/2"></div>
+                      <div className="h-4 bg-muted rounded w-2/3"></div>
+                    </div>
+                  ))}
+                </div>
+              ) : users && Array.isArray(users) && users.length > 0 ? (
+                <div className="divide-y">
+                  {users.map((user, index) => (
+                    <div
+                      key={user.id}
+                      className={`p-4 ${
+                        index % 2 === 0 ? "bg-background" : "bg-muted/20"
+                      }`}
+                    >
+                      <div className="mb-2">
+                        <div className="text-xs font-medium text-muted-foreground mb-1">
+                          Họ và tên
+                        </div>
+                        <div className="text-sm font-medium">
+                          {user.firstName + " " + user.lastName}
+                        </div>
+                      </div>
+                      <div className="mb-2">
+                        <div className="text-xs font-medium text-muted-foreground mb-1">
+                          Email
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          {user.email}
+                        </div>
+                      </div>
+                      <div className="mb-2">
+                        <div className="text-xs font-medium text-muted-foreground mb-1">
+                          Giới tính
+                        </div>
+                        <Badge
+                          variant={
+                            user.gender === "Male"
+                              ? "default"
+                              : user.gender === "Female"
+                              ? "secondary"
+                              : "outline"
+                          }
+                        >
+                          {user.gender === "Male"
+                            ? "Nam"
+                            : user.gender === "Female"
+                            ? "Nữ"
+                            : "Khác"}
+                        </Badge>
+                      </div>
+                      <div className="mb-2">
+                        <div className="text-xs font-medium text-muted-foreground mb-1">
+                          Quyền hạn
+                        </div>
+                        <div className="flex flex-wrap gap-1">
+                          {user.roles.map((role, i) => (
+                            <Badge
+                              key={i}
+                              variant="outline"
+                              className={`
+                                ${
+                                  role === "Admin"
+                                    ? "bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800"
+                                    : ""
+                                }
+                                ${
+                                  role === "CourtOwner"
+                                    ? "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800"
+                                    : ""
+                                }
+                                ${
+                                  role === "Coach"
+                                    ? "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800"
+                                    : ""
+                                }
+                              `}
+                            >
+                              {role === "Coach"
+                                ? "HLV"
+                                : role === "CourtOwner"
+                                ? "Chủ sân"
+                                : "Admin"}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="mb-3">
+                        <div className="text-xs font-medium text-muted-foreground mb-1">
+                          Ngày khởi tạo
+                        </div>
+                        <div className="flex items-center gap-1 text-muted-foreground">
+                          <Calendar className="h-3.5 w-3.5" />
+                          <span>
+                            {new Date(user.createdAt).toLocaleString("vi-VN", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                            })}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="mt-3 pt-2 border-t flex justify-end gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground"
+                          onClick={() => openDialog(user)}
+                          title="Chỉnh sửa"
+                        >
+                          <UserPen className="h-4 w-4" color="blue" />
+                          <span className="sr-only">Chỉnh sửa</span>
+                        </Button>
+
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground"
+                          onClick={() => openAssignRoleDialog(user)}
+                          title="Thay đổi vai trò"
+                        >
+                          <UserCog className="h-4 w-4" color="green" />
+                          <span className="sr-only">Thay đổi vai trò</span>
+                        </Button>
+
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground"
+                          title="Xóa"
+                          onClick={() => openDeleteDialog(user)}
+                        >
+                          <UserMinus className="h-4 w-4" color="red" />
+                          <span className="sr-only">Xóa</span>
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="p-8 text-center">
+                  <div className="flex flex-col items-center justify-center text-muted-foreground">
+                    <Search className="h-8 w-8 mb-2 opacity-40" />
+                    <p>Không có người dùng nào khả dụng.</p>
+                    <p className="text-sm">
+                      Thử thay đổi bộ lọc hoặc tìm kiếm với từ khóa khác.
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Desktop view */}
+            <div className="hidden md:block overflow-x-auto">
+              <Table>
+                <TableHeader className="bg-muted/50">
+                  <TableRow>
+                    <TableHead className="font-semibold">Họ và tên</TableHead>
+                    <TableHead className="font-semibold">Email</TableHead>
+                    <TableHead className="font-semibold">Giới tính</TableHead>
+                    <TableHead className="font-semibold">
+                      Số điện thoại
+                    </TableHead>
+                    <TableHead className="font-semibold">Quyền hạn</TableHead>
+                    <TableHead className="font-semibold">
+                      Ngày khởi tạo
+                    </TableHead>
+                    <TableHead className="text-center font-semibold">
+                      Hành động
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {isLoading ? (
+                    Array(5)
+                      .fill(0)
+                      .map((_, i) => (
+                        <TableRow key={i} className="animate-pulse">
+                          <TableCell colSpan={7}>
+                            <div className="flex items-center gap-4">
+                              <Skeleton className="h-10 w-10 rounded-full" />
+                              <div className="space-y-2 flex-1">
+                                <Skeleton className="h-4 w-[250px]" />
+                                <Skeleton className="h-4 w-[200px]" />
+                              </div>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                  ) : users && Array.isArray(users) && users.length > 0 ? (
+                    users.map((user, index) => (
+                      <TableRow
+                        key={user.id}
+                        className={`group transition-colors ${
+                          index % 2 === 0 ? "bg-background" : "bg-muted/20"
+                        } hover:bg-primary/5`}
+                      >
+                        <TableCell className="font-medium">
+                          {user.firstName + " " + user.lastName}
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {user.email}
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            variant={
+                              user.gender === "Male"
+                                ? "default"
+                                : user.gender === "Female"
+                                ? "secondary"
+                                : "outline"
+                            }
+                          >
+                            {user.gender === "Male"
+                              ? "Nam"
+                              : user.gender === "Female"
+                              ? "Nữ"
+                              : "Khác"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {user.phone ? user.phone : "Không rõ"}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex flex-wrap gap-1">
+                            {user.roles.map((role, i) => (
+                              <Badge
+                                key={i}
+                                variant="outline"
+                                className={`
+                                  ${
+                                    role === "Admin"
+                                      ? "bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800"
+                                      : ""
+                                  }
+                                  ${
+                                    role === "CourtOwner"
+                                      ? "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800"
+                                      : ""
+                                  }
+                                  ${
+                                    role === "Coach"
+                                      ? "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800"
+                                      : ""
+                                  }
+                                `}
+                              >
+                                {role === "Coach"
+                                  ? "HLV"
+                                  : role === "CourtOwner"
+                                  ? "Chủ sân"
+                                  : "Admin"}
+                              </Badge>
+                            ))}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1 text-muted-foreground">
+                            <Calendar className="h-3.5 w-3.5" />
+                            <span>
+                              {new Date(user.createdAt).toLocaleString(
+                                "vi-VN",
+                                {
+                                  day: "2-digit",
+                                  month: "2-digit",
+                                  year: "numeric",
+                                }
+                              )}
+                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <div className="flex justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground"
+                              onClick={() => openDialog(user)}
+                              title="Chỉnh sửa"
+                            >
+                              <UserPen className="h-4 w-4" color="blue" />
+                              <span className="sr-only">Chỉnh sửa</span>
+                            </Button>
+
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground"
+                              onClick={() => openAssignRoleDialog(user)}
+                              title="Thay đổi vai trò"
+                            >
+                              <UserCog className="h-4 w-4" color="green" />
+                              <span className="sr-only">Thay đổi vai trò</span>
+                            </Button>
+
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground"
+                              title="Xóa"
+                              onClick={() => openDeleteDialog(user)}
+                            >
+                              <UserMinus className="h-4 w-4" color="red" />
+                              <span className="sr-only">Xóa</span>
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan="7" className="h-24 text-center">
+                        <div className="flex flex-col items-center justify-center text-muted-foreground">
+                          <Search className="h-8 w-8 mb-2 opacity-40" />
+                          <p>Không có người dùng nào khả dụng.</p>
+                          <p className="text-sm">
+                            Thử thay đổi bộ lọc hoặc tìm kiếm với từ khóa khác.
+                          </p>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+
+            {!isLoading && users && users.length > 0 && (
+              <div className="flex items-center justify-between px-4 py-4 border-t bg-muted/20">
+                <div className="text-sm text-muted-foreground">
+                  Trang <span className="font-medium">{page}</span> trên{" "}
+                  <span className="font-medium">{totalPages}</span>
+                </div>
+                <div className="flex gap-1">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={page === 1}
+                    onClick={() => setPage(page - 1)}
+                    className="h-8"
+                  >
+                    Trước
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={page === totalPages}
+                    onClick={() => setPage(page + 1)}
+                    className="h-8"
+                  >
+                    Kế tiếp
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Edit User Dialog */}
       <Dialog
         id="userDialog"
         open={isDialogOpen}
@@ -359,6 +762,7 @@ const Users = () => {
         </DialogContent>
       </Dialog>
 
+      {/* Role Assignment Dialog */}
       <Dialog id="roleDialog" open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-[400px]">
           <DialogHeader>
@@ -388,10 +792,10 @@ const Users = () => {
                   className={`flex items-center space-x-2 p-3 rounded-md border transition-colors ${
                     selectedRoles.includes(role.Key)
                       ? role.Key === "Admin"
-                        ? "bg-red-50 border-red-200"
+                        ? "bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800"
                         : role.Key === "CourtOwner"
-                        ? "bg-blue-50 border-blue-200"
-                        : "bg-green-50 border-green-200"
+                        ? "bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800"
+                        : "bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800"
                       : "bg-background"
                   }`}
                 >
@@ -411,17 +815,17 @@ const Users = () => {
                         className={`
                           ${
                             role.Key === "Admin"
-                              ? "bg-red-100 text-red-800 border-red-200"
+                              ? "bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800"
                               : ""
                           }
                           ${
                             role.Key === "CourtOwner"
-                              ? "bg-blue-100 text-blue-800 border-blue-200"
+                              ? "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800"
                               : ""
                           }
                           ${
                             role.Key === "Coach"
-                              ? "bg-green-100 text-green-800 border-green-200"
+                              ? "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800"
                               : ""
                           }
                         `}
@@ -442,270 +846,32 @@ const Users = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      <Card>
-        <CardContent className="p-0">
-          <div className="overflow-hidden rounded-md border">
-            <div className="bg-muted/40 p-4 flex flex-col sm:flex-row justify-between items-center gap-4">
-              <div className="flex items-center gap-2 w-full sm:w-auto">
-                <div className="relative w-full sm:w-[300px]">
-                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Tìm kiếm người dùng..."
-                    className="pl-8 w-full"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </div>
-                <Select value={userRole} onValueChange={setUserRole}>
-                  <SelectTrigger className="w-[180px] hidden sm:flex">
-                    <Filter className="mr-2 h-4 w-4" />
-                    <SelectValue placeholder="Lọc vai trò" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Tất cả</SelectItem>
-                    <SelectItem value="Admin">Admin</SelectItem>
-                    <SelectItem value="CourtOwner">Chủ sân</SelectItem>
-                    <SelectItem value="Coach">Huấn luyện viên</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="text-sm text-muted-foreground">
-                Tổng số:{" "}
-                <span className="font-medium">{users?.length || 0}</span> người
-                dùng
-              </div>
-            </div>
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader className="bg-muted/50">
-                  <TableRow>
-                    <TableHead className="font-semibold">Họ và tên</TableHead>
-                    <TableHead className="font-semibold">Email</TableHead>
-                    <TableHead className="font-semibold">Giới tính</TableHead>
-                    <TableHead className="font-semibold">
-                      Số điện thoại
-                    </TableHead>
-                    <TableHead className="font-semibold">Quyền hạn</TableHead>
-                    <TableHead className="font-semibold">
-                      Ngày khởi tạo
-                    </TableHead>
-                    <TableHead className="text-center font-semibold">
-                      Hành động
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {isLoading ? (
-                    Array(5)
-                      .fill(0)
-                      .map((_, i) => (
-                        <TableRow key={i} className="animate-pulse">
-                          <TableCell colSpan={7}>
-                            <div className="flex items-center gap-4">
-                              <Skeleton className="h-10 w-10 rounded-full" />
-                              <div className="space-y-2 flex-1">
-                                <Skeleton className="h-4 w-[250px]" />
-                                <Skeleton className="h-4 w-[200px]" />
-                              </div>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))
-                  ) : users && Array.isArray(users) && users.length > 0 ? (
-                    users.map((user, index) => (
-                      <TableRow
-                        key={user.id}
-                        className={`group transition-colors ${
-                          index % 2 === 0 ? "bg-background" : "bg-muted/20"
-                        } hover:bg-primary/5`}
-                      >
-                        <TableCell className="font-medium">
-                          {user.firstName + " " + user.lastName}
-                        </TableCell>
-                        <TableCell className="text-muted-foreground">
-                          {user.email}
-                        </TableCell>
-                        <TableCell>
-                          <Badge
-                            variant={
-                              user.gender === "Male"
-                                ? "default"
-                                : user.gender === "Female"
-                                ? "secondary"
-                                : "outline"
-                            }
-                          >
-                            {user.gender === "Male"
-                              ? "Nam"
-                              : user.gender === "Female"
-                              ? "Nữ"
-                              : "Khác"}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-muted-foreground">
-                          {user.phone ? user.phone : "Không rõ"}
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex flex-wrap gap-1">
-                            {user.roles.map((role, i) => (
-                              <Badge
-                                key={i}
-                                variant="outline"
-                                className={`
-                                  ${
-                                    role === "Admin"
-                                      ? "bg-red-100 text-red-800 border-red-200"
-                                      : ""
-                                  }
-                                  ${
-                                    role === "CourtOwner"
-                                      ? "bg-blue-100 text-blue-800 border-blue-200"
-                                      : ""
-                                  }
-                                  ${
-                                    role === "Coach"
-                                      ? "bg-green-100 text-green-800 border-green-200"
-                                      : ""
-                                  }
-                                `}
-                              >
-                                {role === "Coach"
-                                  ? "HLV"
-                                  : role === "CourtOwner"
-                                  ? "Chủ sân"
-                                  : "Admin"}
-                              </Badge>
-                            ))}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-1 text-muted-foreground">
-                            <Calendar className="h-3.5 w-3.5" />
-                            <span>
-                              {new Date(user.createdAt).toLocaleString(
-                                "vi-VN",
-                                {
-                                  day: "2-digit",
-                                  month: "2-digit",
-                                  year: "numeric",
-                                }
-                              )}
-                            </span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <div className="flex justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground"
-                              onClick={() => openDialog(user)}
-                              title="Chỉnh sửa"
-                            >
-                              <UserPen className="h-4 w-4" color="blue" />
-                              <span className="sr-only">Chỉnh sửa</span>
-                            </Button>
 
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground"
-                              onClick={() => openAssignRoleDialog(user)}
-                              title="Thay đổi vai trò"
-                            >
-                              <UserCog className="h-4 w-4" color="green" />
-                              <span className="sr-only">Thay đổi vai trò</span>
-                            </Button>
-
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground"
-                              title="Xóa"
-                              onClick={() => openDeleteDialog(user)}
-                            >
-                              <UserMinus className="h-4 w-4" color="red" />
-                              <span className="sr-only">Xóa</span>
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan="7" className="h-24 text-center">
-                        <div className="flex flex-col items-center justify-center text-muted-foreground">
-                          <Search className="h-8 w-8 mb-2 opacity-40" />
-                          <p>Không có người dùng nào khả dụng.</p>
-                          <p className="text-sm">
-                            Thử thay đổi bộ lọc hoặc tìm kiếm với từ khóa khác.
-                          </p>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </div>
-
-            <AlertDialog
-              open={isDeleteDialogOpen}
-              onOpenChange={setIsDeleteDialogOpen}
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Xác nhận xóa người dùng</AlertDialogTitle>
+            <AlertDialogDescription>
+              Bạn có chắc chắn muốn xóa người dùng này? Hành động này không thể
+              hoàn tác.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Hủy</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={tryToDelete}
+              disabled={isDeleting}
+              className="bg-destructive hover:bg-destructive/90"
             >
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Xác nhận xóa người dùng</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Bạn có chắc chắn muốn xóa người dùng này? Hành động này
-                    không thể hoàn tác.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel disabled={isDeleting}>
-                    Hủy
-                  </AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={tryToDelete}
-                    disabled={isDeleting}
-                    className="bg-red-500 hover:bg-red-600"
-                  >
-                    {isDeleting ? "Đang xóa..." : "Xóa"}
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-
-            {!isLoading && users && users.length > 0 && (
-              <div className="flex items-center justify-between px-4 py-4 border-t bg-muted/20">
-                <div className="text-sm text-muted-foreground">
-                  Trang <span className="font-medium">{page}</span> trên{" "}
-                  <span className="font-medium">{totalPages}</span>
-                </div>
-                <div className="flex gap-1">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={page === 1}
-                    onClick={() => setPage(page - 1)}
-                    className="h-8"
-                  >
-                    Trước
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={page === totalPages}
-                    onClick={() => setPage(page + 1)}
-                    className="h-8"
-                  >
-                    Kế tiếp
-                  </Button>
-                </div>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+              {isDeleting ? "Đang xóa..." : "Xóa"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

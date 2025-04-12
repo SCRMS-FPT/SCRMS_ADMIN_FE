@@ -10,7 +10,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useDashboardData } from "@/hooks/useDashboardData";
 import PropTypes from "prop-types";
 
 // Menu titles as a constant to avoid hardcoding in the component
@@ -28,7 +27,6 @@ const SECTION_TITLES = {
 
 const Header = ({ activeSection, toggleMobileMenu }) => {
   const { theme, setTheme } = useTheme();
-  const { data: dashboardData } = useDashboardData();
 
   const getSectionTitle = () => SECTION_TITLES[activeSection] || "Dashboard";
 
@@ -51,9 +49,9 @@ const Header = ({ activeSection, toggleMobileMenu }) => {
 
       {/* Section Title */}
       <div className="flex-1">
-        <h1 className="text-lg font-semibold md:text-xl">
+        {/* <h1 className="text-lg font-semibold md:text-xl">
           {getSectionTitle()}
-        </h1>
+        </h1> */}
       </div>
 
       {/* Right-side Controls */}

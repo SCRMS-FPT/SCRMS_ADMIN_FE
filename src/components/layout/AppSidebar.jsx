@@ -153,9 +153,6 @@ const AppSidebar = ({
               </div>
               <div>
                 <p className="text-sm font-medium">Quản trị viên</p>
-                <p className="text-xs text-muted-foreground">
-                  hehe@example.com
-                </p>
               </div>
             </div>
             <Button
@@ -216,9 +213,6 @@ const AppSidebar = ({
                   </div>
                   <div>
                     <p className="text-sm font-medium">Quản trị viên</p>
-                    <p className="text-xs text-muted-foreground">
-                      admin@example.com
-                    </p>
                   </div>
                 </div>
                 <Button

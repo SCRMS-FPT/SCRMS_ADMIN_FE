@@ -56,7 +56,7 @@ export function CoachViewDialog({ open, onOpenChange, coach, sports }) {
 
   // Get sport names from IDs
   const getSportNames = () => {
-    if (!sports || !coach.sportIds) return [];
+    if (!coach.sportIds) return [];
     return coach.sportIds.map((id) => {
       const sport = sports.find((s) => s.id === id);
       return sport ? sport.name : "Unknown";
@@ -174,6 +174,33 @@ export function CoachViewDialog({ open, onOpenChange, coach, sports }) {
                     </p>
                   </CardContent>
                 </Card>
+
+                {/* <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium text-slate-500">
+                      Chuyên môn
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      {getSportNames().length > 0 ? (
+                        getSportNames().map((sport, index) => (
+                          <div
+                            key={index}
+                            className="flex items-center text-sm"
+                          >
+                            <Dumbbell className="h-4 w-4 mr-2 text-violet-500" />
+                            <span>{sport}</span>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="text-sm text-slate-400">
+                          Chưa có chuyên môn
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card> */}
 
                 {coach.imageUrls && coach.imageUrls.length > 0 && (
                   <Card>

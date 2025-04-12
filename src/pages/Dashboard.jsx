@@ -19,7 +19,6 @@ const Dashboard = () => {
   const { data: dashboardData, isLoading, error } = useDashboardData();
   const [startDate, setStartDate] = useState(""); // Start date state
   const [endDate, setEndDate] = useState(""); // End date state
-
   if (error) {
     switch (error.status) {
       case 401: {
@@ -33,11 +32,15 @@ const Dashboard = () => {
     }
   }
   const lines = [
-    { dataKey: "courtRevenue", label: "Doanh thu Sân", color: "#8b5cf6" }, // Purple
+    {
+      dataKey: "courtRevenue",
+      label: "Doanh thu Sân",
+      color: "hsl(var(--primary))",
+    },
     {
       dataKey: "coachRevenue",
       label: "Doanh thu Huấn luyện viên",
-      color: "#E11D48",
+      color: "hsl(var(--destructive))",
     },
   ];
 
@@ -45,23 +48,71 @@ const Dashboard = () => {
     {
       dataKey: "packageRevenue",
       label: "Doanh thu bán gói",
-      color: "#fdbc00",
+      color: "hsl(var(--warning, 38 92% 50%))",
     },
   ];
   // Dữ liệu biểu đồ doanh thu
   const sampleData = [
-    { date: "2024-01-01", coachRevenue: 25000000, courtRevenue: 20000000 },
-    { date: "2024-02-01", coachRevenue: 27000000, courtRevenue: 22000000 },
-    { date: "2024-03-01", coachRevenue: 23000000, courtRevenue: 21000000 },
-    { date: "2024-04-01", coachRevenue: 29000000, courtRevenue: 24000000 },
-    { date: "2024-05-01", coachRevenue: 31000000, courtRevenue: 26000000 },
-    { date: "2024-06-01", coachRevenue: 28000000, courtRevenue: 25000000 },
-    { date: "2024-07-01", coachRevenue: 30000000, courtRevenue: 27000000 },
-    { date: "2024-08-01", coachRevenue: 32000000, courtRevenue: 29000000 },
-    { date: "2024-09-01", coachRevenue: 31000000, courtRevenue: 28000000 },
-    { date: "2024-10-01", coachRevenue: 33000000, courtRevenue: 30000000 },
-    { date: "2024-11-01", coachRevenue: 34000000, courtRevenue: 31000000 },
-    { date: "2024-12-01", coachRevenue: 36000000, courtRevenue: 32000000 },
+    {
+      date: "2024-01-01",
+      coachRevenue: 25000000,
+      courtRevenue: 20000000,
+    },
+    {
+      date: "2024-02-01",
+      coachRevenue: 27000000,
+      courtRevenue: 22000000,
+    },
+    {
+      date: "2024-03-01",
+      coachRevenue: 23000000,
+      courtRevenue: 21000000,
+    },
+    {
+      date: "2024-04-01",
+      coachRevenue: 29000000,
+      courtRevenue: 24000000,
+    },
+    {
+      date: "2024-05-01",
+      coachRevenue: 31000000,
+      courtRevenue: 26000000,
+    },
+    {
+      date: "2024-06-01",
+      coachRevenue: 28000000,
+      courtRevenue: 25000000,
+    },
+    {
+      date: "2024-07-01",
+      coachRevenue: 30000000,
+      courtRevenue: 27000000,
+    },
+    {
+      date: "2024-08-01",
+      coachRevenue: 32000000,
+      courtRevenue: 29000000,
+    },
+    {
+      date: "2024-09-01",
+      coachRevenue: 31000000,
+      courtRevenue: 28000000,
+    },
+    {
+      date: "2024-10-01",
+      coachRevenue: 33000000,
+      courtRevenue: 30000000,
+    },
+    {
+      date: "2024-11-01",
+      coachRevenue: 34000000,
+      courtRevenue: 31000000,
+    },
+    {
+      date: "2024-12-01",
+      coachRevenue: 36000000,
+      courtRevenue: 32000000,
+    },
   ];
 
   const bookingData = [
@@ -95,7 +146,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="space-y-6 bg-gradient-to-b from-slate-50 to-white">
+    <div className="space-y-6 bg-gradient-to-b from-slate-50 to-white dark:from-background dark:to-background/90">
       {isLoading ? (
         <>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -224,18 +275,20 @@ const Dashboard = () => {
             </Card>
 
             {/* Doanh thu thực tế :  */}
-            <Card className="overflow-hidden border-none shadow-lg">
-              <div className="h-1 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600"></div>
+            <Card className="overflow-hidden border-none shadow-lg ">
+              <div className="h-1 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 dark:bg-amber-600 "></div>
               <ReusableChart
-                data={packageData}
+                data={dashboardData.revenueData}
                 margin={{ top: 20, right: 40, left: 40, bottom: 20 }}
                 lines={adminLines}
                 title="Xu hướng doanh thu"
                 description="Doanh thu theo số lượng thực tế nhận vào"
-                icon={<DollarSign className="h-4 w-4 text-amber-500" />}
+                icon={
+                  <DollarSign className="h-4 w-4 text-amber-500 dark:text-amber-400" />
+                }
                 valuePrefix=""
                 valueSuffix="đ"
-                color="#fdbc00"
+                color="hsl(var(--warning, 38 92% 50%))"
               />
             </Card>
 
@@ -243,7 +296,7 @@ const Dashboard = () => {
             <Card className="overflow-hidden border-none shadow-lg">
               <div className="h-1 bg-gradient-to-r from-violet-400 via-violet-500 to-violet-600"></div>
               <ReusableChart
-                data={sampleData}
+                data={dashboardData.revenueData}
                 margin={{ top: 20, right: 40, left: 40, bottom: 20 }}
                 lines={lines}
                 title="Xu hướng tổng doanh thu theo tháng"
@@ -251,7 +304,7 @@ const Dashboard = () => {
                 icon={<DollarSign className="h-4 w-4 text-violet-500" />}
                 valuePrefix=""
                 valueSuffix="đ"
-                color="#8b5cf6"
+                color="hsl(var(--primary))"
               />
             </Card>
           </div>

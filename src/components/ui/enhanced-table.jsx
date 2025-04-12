@@ -217,15 +217,15 @@ export function EnhancedTable({
         </div>
       </div>
 
-      <div className="rounded-md border overflow-hidden bg-gradient-to-b from-white to-slate-50 shadow-sm">
+      <div className="rounded-md border overflow-hidden bg-card shadow-sm">
         <div className="relative overflow-x-auto">
           <Table>
-            <TableHeader className="bg-gradient-to-r from-violet-50 to-slate-50">
+            <TableHeader className="bg-muted/50 dark:bg-muted/20">
               <TableRow>
                 {columns.map((column) => (
                   <TableHead
                     key={column.accessorKey}
-                    className="font-semibold text-slate-700"
+                    className="font-semibold text-foreground"
                     onClick={() =>
                       column.enableSorting &&
                       !serverPagination &&
@@ -237,7 +237,7 @@ export function EnhancedTable({
                         "flex items-center",
                         column.enableSorting &&
                           !serverPagination &&
-                          "cursor-pointer hover:text-violet-600 transition-colors"
+                          "cursor-pointer hover:text-primary transition-colors"
                       )}
                     >
                       {column.header}
@@ -255,7 +255,7 @@ export function EnhancedTable({
                   <TableRow key={index} className="animate-pulse">
                     {columns.map((column, colIndex) => (
                       <TableCell key={colIndex}>
-                        <div className="h-4 bg-slate-200 rounded w-3/4"></div>
+                        <div className="h-4 bg-muted rounded w-3/4"></div>
                       </TableCell>
                     ))}
                   </TableRow>
@@ -271,8 +271,8 @@ export function EnhancedTable({
                       transition={{ duration: 0.2, delay: index * 0.05 }}
                       className={cn(
                         "border-b transition-colors",
-                        index % 2 === 0 ? "bg-white" : "bg-slate-50/50",
-                        "hover:bg-violet-50/50",
+                        index % 2 === 0 ? "bg-background" : "bg-muted/20",
+                        "hover:bg-accent/30",
                         onRowClick && "cursor-pointer"
                       )}
                       onClick={() => onRowClick && onRowClick(row)}
@@ -302,8 +302,8 @@ export function EnhancedTable({
         </div>
 
         {totalPages > 1 && (
-          <div className="flex items-center justify-between px-4 py-3 border-t bg-gradient-to-b from-slate-50 to-white">
-            <div className="text-sm text-slate-500">
+          <div className="flex items-center justify-between px-4 py-3 border-t bg-card">
+            <div className="text-sm text-muted-foreground">
               Hiển thị{" "}
               <span className="font-medium">
                 {serverPagination

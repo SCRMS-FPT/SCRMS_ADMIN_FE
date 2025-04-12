@@ -47,14 +47,10 @@ export const useCoaches = (
         minPrice,
         maxPrice,
         sportId,
-        page,
+        page - 1,
         pageSize
       );
-      if (response && Array.isArray(response)) {
-        setCoaches(response);
-      } else {
-        setCoaches([]);
-      }
+      setCoaches(response);
     } catch (err) {
       setError(err);
     } finally {

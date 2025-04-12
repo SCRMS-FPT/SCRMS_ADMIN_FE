@@ -32,11 +32,15 @@ const Dashboard = () => {
     }
   }
   const lines = [
-    { dataKey: "courtRevenue", label: "Doanh thu Sân", color: "#8b5cf6" }, // Purple
+    {
+      dataKey: "courtRevenue",
+      label: "Doanh thu Sân",
+      color: "hsl(var(--primary))",
+    },
     {
       dataKey: "coachRevenue",
       label: "Doanh thu Huấn luyện viên",
-      color: "#E11D48",
+      color: "hsl(var(--destructive))",
     },
   ];
 
@@ -44,7 +48,7 @@ const Dashboard = () => {
     {
       dataKey: "packageRevenue",
       label: "Doanh thu bán gói",
-      color: "#fdbc00",
+      color: "hsl(var(--warning, 38 92% 50%))",
     },
   ];
   // Dữ liệu biểu đồ doanh thu
@@ -142,7 +146,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="space-y-6 bg-gradient-to-b from-slate-50 to-white">
+    <div className="space-y-6 bg-gradient-to-b from-slate-50 to-white dark:from-background dark:to-background/90">
       {isLoading ? (
         <>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -271,18 +275,20 @@ const Dashboard = () => {
             </Card>
 
             {/* Doanh thu thực tế :  */}
-            <Card className="overflow-hidden border-none shadow-lg">
-              <div className="h-1 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600"></div>
+            <Card className="overflow-hidden border-none shadow-lg ">
+              <div className="h-1 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 dark:bg-amber-600 "></div>
               <ReusableChart
                 data={dashboardData.revenueData}
                 margin={{ top: 20, right: 40, left: 40, bottom: 20 }}
                 lines={adminLines}
                 title="Xu hướng doanh thu"
                 description="Doanh thu theo số lượng thực tế nhận vào"
-                icon={<DollarSign className="h-4 w-4 text-amber-500" />}
+                icon={
+                  <DollarSign className="h-4 w-4 text-amber-500 dark:text-amber-400" />
+                }
                 valuePrefix=""
                 valueSuffix="đ"
-                color="#fdbc00"
+                color="hsl(var(--warning, 38 92% 50%))"
               />
             </Card>
 
@@ -298,7 +304,7 @@ const Dashboard = () => {
                 icon={<DollarSign className="h-4 w-4 text-violet-500" />}
                 valuePrefix=""
                 valueSuffix="đ"
-                color="#8b5cf6"
+                color="hsl(var(--primary))"
               />
             </Card>
           </div>

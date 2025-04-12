@@ -82,9 +82,8 @@ export async function updateCoach(coachId, data) {
     method: "PUT",
     headers: {
       Authorization: "bearer " + token,
-      "Content-Type": "application/json",
     },
-    body: JSON.stringify(data),
+    body: data,
   });
   if (!response.ok) {
     throw {

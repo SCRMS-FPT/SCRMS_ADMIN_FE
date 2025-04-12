@@ -53,14 +53,3 @@ export async function getTransactionDetails(transactionId) {
 
   return response.json();
 }
-
-// TODO: Didn't exist
-// export async function refundPayment(refundData) {
-//   const url = BASE_URL + endpoints.refund;
-//   const response = await fetch(url, {
-//     method: "POST",
-//     headers: { "Content-Type": "application/json" },
-//     body: JSON.stringify(refundData),
-//   });
-//   return response.json();
-// }

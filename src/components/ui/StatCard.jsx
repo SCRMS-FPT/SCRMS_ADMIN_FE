@@ -37,13 +37,15 @@ const StatCard = ({ title, value, icon: Icon, className, variant }) => {
       )}
     >
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        <CardTitle className="text-sm font-medium dark:text-black">
+          {title}
+        </CardTitle>
         <div className={cn("rounded-full p-2", styles.icon)}>
-          <Icon className="h-4 w-4" />
+          <Icon className="h-4 w-4 dark:text-black" />
         </div>
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
+        <div className="text-2xl font-bold dark:text-black">{value}</div>
       </CardContent>
     </Card>
   );

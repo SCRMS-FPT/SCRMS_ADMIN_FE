@@ -75,8 +75,15 @@ const Users = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [open, setOpen] = useState(false);
   const [selectedRoles, setSelectedRoles] = useState([]);
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    birthDate: "",
+    selfIntroduction: "",
+  });
 
-  //Move getUsersData hook outside conditional statement
   const usersData = getUsersData(
     pageSize,
     page,
@@ -110,7 +117,6 @@ const Users = () => {
 
   const availableRoles = [
     { Key: "Admin", Display: "Admin" },
-    // { Key: "User", Display: "Người dùng" },
     { Key: "CourtOwner", Display: "Chủ sân" },
     { Key: "Coach", Display: "Huấn luyện viên" },
   ];
@@ -165,6 +171,18 @@ const Users = () => {
       setGender("");
     }
     setEditingUser(user);
+    if (user != null) {
+      setFormData({
+        firstName: user.firstName,
+        birthDate: user.birthDate?.split("T")[0] || "",
+        email: user.email,
+        lastName: user.lastName,
+        phone: user.phone,
+        selfIntroduction: user.selfIntroduction,
+      });
+    } else {
+      setFormData();
+    }
     setIsDialogOpen(true);
   };
 
@@ -174,26 +192,48 @@ const Users = () => {
   };
 
   const handleSave = async () => {
+    const { firstName, lastName, email, phone, birthDate, selfIntroduction } =
+      formData;
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^\d{10}$/;
+
+    if (!firstName || !lastName || !email || !birthDate || !gender) {
+      showToast("Vui lòng điền đầy đủ các trường bắt buộc.", "warning");
+      return;
+    }
+
+    if (!emailRegex.test(email)) {
+      showToast("Email không đúng định dạng.", "warning");
+      return;
+    }
+
+    if (!phone || !phoneRegex.test(phone)) {
+      showToast("Số điện thoại phải gồm đúng 10 chữ số.", "warning");
+      return;
+    }
+
     if (editingUser) {
       try {
         const profileData = {
-          FirstName: document.getElementById("firstName").value,
-          LastName: document.getElementById("lastName").value,
-          Email: document.getElementById("email").value,
-          Phone: document.getElementById("phone").value || null,
-          BirthDate: document.getElementById("birthDate").value,
+          FirstName: firstName,
+          LastName: lastName,
+          Email: email,
+          Phone: phone,
+          BirthDate: birthDate,
           Gender: gender,
-          SelfIntroduction:
-            document.getElementById("selfIntroduction").value.trim() || null,
+          SelfIntroduction: selfIntroduction ? selfIntroduction.trim() : null,
         };
         await updateUserInfo(editingUser.id, profileData);
         showToast("Đã thành công chỉnh sửa thông tin", "success");
         reloadUsers();
+        closeDialog();
       } catch (err) {
-        showToast(`Lỗi khi tải dữ liệu người dùng`, "error");
+        showToast(`${err.message}`, "error");
       }
+    } else {
+      // CREATE USER WHICH IS NOT IMPLEMENT
     }
-    closeDialog();
   };
 
   const openDeleteDialog = (user) => {
@@ -224,6 +264,11 @@ const Users = () => {
     setIsDeleteDialogOpen(false);
   };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -239,11 +284,11 @@ const Users = () => {
       </div>
 
       <Card>
-        <CardHeader className="bg-muted/30 dark:bg-muted/10 pb-2">
+        {/* <CardHeader className="bg-muted/30 dark:bg-muted/10 pb-2">
           <CardTitle className="text-lg font-semibold text-foreground">
             Danh sách người dùng
           </CardTitle>
-        </CardHeader>
+        </CardHeader> */}
         <CardContent className="p-0">
           <div className="overflow-hidden rounded-md border">
             <div className="bg-muted/40 p-4 flex flex-col sm:flex-row justify-between items-center gap-4">
@@ -670,8 +715,11 @@ const Users = () => {
                 </Label>
                 <Input
                   id="firstName"
+                  name="firstName"
                   placeholder="Vui lòng nhập họ"
-                  defaultValue={editingUser?.firstName || ""}
+                  // defaultValue={editingUser?.firstName || ""}
+                  value={formData.firstName}
+                  onChange={handleChange}
                   className="h-9"
                 />
               </div>
@@ -681,8 +729,11 @@ const Users = () => {
                 </Label>
                 <Input
                   id="lastName"
+                  name="lastName"
                   placeholder="Vui lòng nhập tên"
-                  defaultValue={editingUser?.lastName || ""}
+                  // defaultValue={editingUser?.lastName || ""}
+                  value={formData.lastName}
+                  onChange={handleChange}
                   className="h-9"
                 />
               </div>
@@ -693,9 +744,12 @@ const Users = () => {
               </Label>
               <Input
                 id="email"
+                name="email"
                 type="email"
                 placeholder="Vui lòng nhập email"
-                defaultValue={editingUser?.email || ""}
+                // defaultValue={editingUser?.email || ""}
+                value={formData.email}
+                onChange={handleChange}
                 className="h-9"
               />
             </div>
@@ -721,9 +775,12 @@ const Users = () => {
                 </Label>
                 <Input
                   id="phone"
+                  name="phone"
                   type="text"
                   placeholder="Vui lòng nhập số điện thoại"
-                  defaultValue={editingUser?.phone || ""}
+                  // defaultValue={editingUser?.phone || ""}
+                  value={formData.phone}
+                  onChange={handleChange}
                   className="h-9"
                 />
               </div>
@@ -734,8 +791,11 @@ const Users = () => {
               </Label>
               <Input
                 id="birthDate"
+                name="birthDate"
                 type="date"
-                defaultValue={editingUser?.birthDate?.split("T")[0] || ""}
+                value={formData.birthDate}
+                onChange={handleChange}
+                // defaultValue={editingUser?.birthDate?.split("T")[0] || ""}
                 className="h-9"
               />
             </div>
@@ -745,8 +805,11 @@ const Users = () => {
               </Label>
               <Textarea
                 id="selfIntroduction"
+                name="selfIntroduction"
                 placeholder="Giới thiệu ngắn gọn về bản thân"
-                defaultValue={editingUser?.selfIntroduction || ""}
+                // defaultValue={editingUser?.selfIntroduction || ""}
+                value={formData.selfIntroduction}
+                onChange={handleChange}
                 className="min-h-[80px]"
               />
             </div>

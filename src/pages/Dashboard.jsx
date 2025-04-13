@@ -17,8 +17,10 @@ import "react-datepicker/dist/react-datepicker.css";
 
 const Dashboard = () => {
   const { data: dashboardData, isLoading, error } = useDashboardData();
-  const [startDate, setStartDate] = useState(""); // Start date state
-  const [endDate, setEndDate] = useState(""); // End date state
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [filteredRevenueData, setFilteredRevenueData] = useState(null);
+
   if (error) {
     switch (error.status) {
       case 401: {
@@ -26,7 +28,7 @@ const Dashboard = () => {
         return null;
       }
       default: {
-        showToast(`Error: ${error.message}`, "error");
+        showToast(`Lỗi: ${error.message}`, "error");
         console.log(error);
       }
     }
@@ -141,8 +143,24 @@ const Dashboard = () => {
   ];
 
   const handleDateRangeChange = async () => {
-    const mergeStat = await filterData(startDate, endDate);
-    console.log("Filtered Data:", mergeStat);
+    if (!startDate || !endDate) {
+      showToast("Vui lòng chọn cả ngày bắt đầu và ngày kết thúc.", "info");
+      return;
+    }
+
+    if (startDate > endDate) {
+      showToast("Ngày bắt đầu không được lớn hơn ngày kết thúc.", "info");
+      return;
+    }
+
+    try {
+      const merged = await filterData(startDate, endDate);
+      setFilteredRevenueData(merged);
+      console.log("Filtered Data:", merged);
+    } catch (error) {
+      showToast("Lỗi khi lọc dữ liệu thống kê", "error");
+      console.error(error);
+    }
   };
 
   return (
@@ -211,7 +229,7 @@ const Dashboard = () => {
           <div className="relative py-6">
             <Separator className="absolute left-0 right-0 border-t-2 border-dashed border-slate-200" />
             <div className="flex justify-center">
-              <span className="relative bg-white px-4 -top-3 text-slate-500 flex items-center gap-2">
+              <span className="relative bg-white px-4 -top-3 text-slate-500 flex items-center gap-2  dark:bg-black">
                 <Calendar className="h-4 w-4" />
                 <span className="font-medium">Thống kê theo thời gian</span>
               </span>
@@ -270,6 +288,18 @@ const Dashboard = () => {
                   >
                     Xem thống kê
                   </Button>
+
+                  <Button
+                    // variant="outline"
+                    className="self-end bg-gradient-to-r from-rose-400 to-pink-500 hover:from-rose-500 hover:to-pink-600 text-white transition-all"
+                    onClick={() => {
+                      setFilteredRevenueData(null);
+                      setStartDate("");
+                      setEndDate("");
+                    }}
+                  >
+                    Đặt lại
+                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -278,7 +308,7 @@ const Dashboard = () => {
             <Card className="overflow-hidden border-none shadow-lg ">
               <div className="h-1 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 dark:bg-amber-600 "></div>
               <ReusableChart
-                data={dashboardData.revenueData}
+                data={filteredRevenueData ?? dashboardData.revenueData}
                 margin={{ top: 20, right: 40, left: 40, bottom: 20 }}
                 lines={adminLines}
                 title="Xu hướng doanh thu"
@@ -296,7 +326,7 @@ const Dashboard = () => {
             <Card className="overflow-hidden border-none shadow-lg">
               <div className="h-1 bg-gradient-to-r from-violet-400 via-violet-500 to-violet-600"></div>
               <ReusableChart
-                data={dashboardData.revenueData}
+                data={filteredRevenueData ?? dashboardData.revenueData}
                 margin={{ top: 20, right: 40, left: 40, bottom: 20 }}
                 lines={lines}
                 title="Xu hướng tổng doanh thu theo tháng"

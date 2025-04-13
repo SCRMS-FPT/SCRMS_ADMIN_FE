@@ -52,6 +52,7 @@ export function CoachEditDialog({ open, onOpenChange, coach, sports, onSave }) {
 
   useEffect(() => {
     if (coach) {
+      setActiveTab("info");
       setFormData({
         FullName: coach.fullName || "",
         Email: coach.email || "",

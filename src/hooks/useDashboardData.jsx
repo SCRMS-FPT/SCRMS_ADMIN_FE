@@ -5,6 +5,7 @@ import {
   getIdentityStats,
   getPaymentStats,
 } from "@/api/dashboardAPI";
+import PropTypes from "prop-types";
 
 export const mergeStatsByUnit = (
   coachStats,
@@ -44,7 +45,7 @@ export const mergeStatsByUnit = (
       date: key,
       coachRevenue: coach?.data?.totalRevenue || 0,
       courtRevenue: court?.data?.total_courts_revenue || 0,
-      serviceRevenue: service?.data?.totalServicePackageRevenue || 0,
+      packageRevenue: service?.data?.totalServicePackageRevenue || 0,
     };
   });
 
@@ -259,18 +260,37 @@ export const filterData = async (start, end) => {
         dayStart.toISOString(),
         dayEnd.toISOString()
       );
-      courtStat.push({
-        date: current.toISOString(),
-        data: courtStats,
-      });
+      // courtStat.push({
+      //   date: current.toISOString(),
+      //   data: courtStats,
+      // });
       coachStat.push({
-        date: current.toISOString(),
-        data: coachStats,
+        data: {
+          ...coachStats,
+          date_range: { start_date: current.toISOString().split("T")[0] },
+        },
+      });
+      courtStat.push({
+        data: {
+          ...courtStats,
+          date_range: { start_date: current.toISOString().split("T")[0] },
+        },
       });
       paymentStat.push({
-        date: current.toISOString(),
-        data: paymentStats,
+        data: {
+          ...paymentStats,
+          date_range: { start_date: current.toISOString().split("T")[0] },
+        },
       });
+
+      // coachStat.push({
+      //   date: current.toISOString(),
+      //   data: coachStats,
+      // });
+      // paymentStat.push({
+      //   date: current.toISOString(),
+      //   data: paymentStats,
+      // });
       mergeStat = mergeStatsByUnit(coachStat, courtStat, paymentStat, "day");
 
       current.setDate(current.getDate() + 1);

@@ -76,7 +76,6 @@ const Users = () => {
   const [open, setOpen] = useState(false);
   const [selectedRoles, setSelectedRoles] = useState([]);
 
-  //Move getUsersData hook outside conditional statement
   const usersData = getUsersData(
     pageSize,
     page,
@@ -110,7 +109,6 @@ const Users = () => {
 
   const availableRoles = [
     { Key: "Admin", Display: "Admin" },
-    // { Key: "User", Display: "Người dùng" },
     { Key: "CourtOwner", Display: "Chủ sân" },
     { Key: "Coach", Display: "Huấn luyện viên" },
   ];
@@ -189,11 +187,11 @@ const Users = () => {
         await updateUserInfo(editingUser.id, profileData);
         showToast("Đã thành công chỉnh sửa thông tin", "success");
         reloadUsers();
+        closeDialog();
       } catch (err) {
-        showToast(`Lỗi khi tải dữ liệu người dùng`, "error");
+        showToast(`${err.message}`, "error");
       }
     }
-    closeDialog();
   };
 
   const openDeleteDialog = (user) => {
@@ -239,11 +237,11 @@ const Users = () => {
       </div>
 
       <Card>
-        <CardHeader className="bg-muted/30 dark:bg-muted/10 pb-2">
+        {/* <CardHeader className="bg-muted/30 dark:bg-muted/10 pb-2">
           <CardTitle className="text-lg font-semibold text-foreground">
             Danh sách người dùng
           </CardTitle>
-        </CardHeader>
+        </CardHeader> */}
         <CardContent className="p-0">
           <div className="overflow-hidden rounded-md border">
             <div className="bg-muted/40 p-4 flex flex-col sm:flex-row justify-between items-center gap-4">

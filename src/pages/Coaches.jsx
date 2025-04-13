@@ -31,6 +31,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { removeUserRole } from "@/api/userManagementAPI";
 
 function useDebounce(value, delay) {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -63,6 +64,7 @@ const Coaches = () => {
 
   // Dialog state
   const [selectedCoach, setSelectedCoach] = useState(null);
+  const [selectedDelete, setSelectedDelete] = useState(null);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -150,17 +152,25 @@ const Coaches = () => {
   };
 
   const handleDeleteCoach = (id) => {
-    setSelectedCoach({ id });
+    // setSelectedCoach({ id });
+    setSelectedDelete(id);
     setDeleteDialogOpen(true);
   };
 
   const confirmDeleteCoach = async () => {
     try {
       setIsLoading(true);
-      await deleteCoaches(selectedCoach.id);
+      if (!selectedDelete) {
+        showToast("Không thể xóa HLV không tồn tại.", "error");
+        return;
+      }
+      await removeUserRole(selectedDelete, "coach");
+      await deleteCoaches(selectedDelete);
       showToast("Huấn luyện viên đã được xóa thành công!", "success");
+      setSelectedDelete(null);
       mutate();
     } catch (error) {
+      console.log(error);
       showToast(
         "Không thể xóa huấn luyện viên này. Vui lòng thử lại sau.",
         "error"
@@ -289,7 +299,10 @@ const Coaches = () => {
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={() => handleDeleteCoach(row.id)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDeleteCoach(row.id);
+                }}
                 className="text-destructive"
               >
                 Xóa huấn luyện viên

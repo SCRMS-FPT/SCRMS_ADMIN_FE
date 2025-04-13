@@ -62,6 +62,7 @@ export async function deleteCoaches(coachId) {
   const token = localStorage.getItem("authToken");
   const url = BASE_URL + endpoints.delete(coachId);
   const response = await fetch(url, {
+    method: "DELETE",
     headers: {
       Authorization: "bearer " + token,
     },

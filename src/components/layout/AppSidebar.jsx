@@ -9,6 +9,7 @@ import {
   Landmark,
   CreditCard,
   Star,
+  Flag,
   LayoutGrid,
   Settings,
   LogOut,
@@ -75,15 +76,25 @@ const MENU_ITEMS = [
         icon: <CreditCard className="h-5 w-5" />,
         section: "payments",
       },
+      {
+        label: "Yêu cầu rút tiền",
+        icon: <CreditCard className="h-5 w-5" />,
+        section: "withdrawalrequests",
+      },
     ],
   },
   {
     group: "Kiểm duyệt",
     items: [
       {
-        label: "Đánh giá & Báo cáo",
+        label: "Đánh giá",
         icon: <Star className="h-5 w-5" />,
         section: "reviews",
+      },
+      {
+        label: "Báo cáo đánh giá",
+        icon: <Flag className="h-5 w-5" />,
+        section: "flaggedreviews",
       },
     ],
   },

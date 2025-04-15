@@ -16,6 +16,8 @@ import Packages from "@/pages/Packages";
 import Payments from "@/pages/Payments";
 import Reviews from "@/pages/Reviews";
 import Login from "@/pages/Login";
+import WithdrawalRequests from "@/pages/WithdrawalRequests";
+import FlaggedReviews from "@/pages/FlaggedReviews"; // Add this line
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SportCentersPage from "@/pages/SportCenter";
@@ -69,6 +71,30 @@ const MainLayout = () => {
           onLogout={handleLogout}
         />
         <main className="flex-1 overflow-auto p-4 md:p-6">
+          <Routes>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/users" element={<Users />} />
+            <Route path="/coaches" element={<Coaches />} />
+            <Route path="/packages" element={<Packages />} />
+            <Route path="/payments" element={<Payments />} />
+            <Route path="/reviews" element={<Reviews />} />
+            <Route path="/flaggedreviews" element={<FlaggedReviews />} />{" "}
+            {/* Add this line */}
+            <Route path="/sportcenters" element={<SportCentersPage />} />
+            <Route
+              path="/sportcenters/:id"
+              element={<SportCenterDetailPage />}
+            />
+            <Route
+              path="/sportcenters/create"
+              element={<SportCenterDetailPage />}
+            />
+            <Route
+              path="/withdrawalrequests"
+              element={<WithdrawalRequests />}
+            />
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          </Routes>
           <Outlet />
         </main>
       </div>

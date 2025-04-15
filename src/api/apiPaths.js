@@ -1,4 +1,6 @@
-export const BASE_URL = "http://localhost:5002";
+import { API_IDENTITY_URL } from "./config";
+
+export const BASE_URL = API_IDENTITY_URL;
 
 export const API_CONFIG = {
   login: {

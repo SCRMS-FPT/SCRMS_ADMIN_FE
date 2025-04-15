@@ -1076,19 +1076,19 @@ const SportCenterDetailPage = () => {
                             {/* Facilities Section */}
                             {court.facilities &&
                               court.facilities.length > 0 && (
-                                <div className="space-y-2">
-                                  <p className="text-sm font-medium flex items-center">
-                                    <Info className="mr-1 h-3.5 w-3.5 text-primary/70" />
+                                <div className="space-y-1">
+                                  <p className="text-xs font-semibold flex items-center">
+                                    <Info className="mr-1 h-3.5 w-3.5 text-blue-600" />
                                     Tiện nghi:
                                   </p>
-                                  <div className="flex flex-wrap gap-1.5">
+                                  <div className="flex flex-wrap gap-1">
                                     {court.facilities.map((facility) => (
                                       <Tooltip key={facility.name}>
                                         <TooltipTrigger asChild>
-                                          <div className="flex items-center gap-2 bg-gradient-to-r from-green-400 to-green-600 text-white px-3 py-2 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer">
+                                          <div className="flex items-center gap-1 bg-gradient-to-r from-blue-600 to-blue-500 text-white px-2 py-1 rounded shadow-sm hover:shadow-md transition duration-200 cursor-pointer">
                                             <svg
                                               xmlns="http://www.w3.org/2000/svg"
-                                              className="h-5 w-5 text-white"
+                                              className="h-4 w-4"
                                               fill="none"
                                               viewBox="0 0 24 24"
                                               stroke="currentColor"
@@ -1097,18 +1097,18 @@ const SportCenterDetailPage = () => {
                                               <path
                                                 strokeLinecap="round"
                                                 strokeLinejoin="round"
-                                                d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z"
+                                                d="M5 13l4 4L19 7"
                                               />
                                             </svg>
-                                            <span className="font-medium">
+                                            <span className="text-xs font-medium">
                                               {facility.name}
                                             </span>
                                           </div>
                                         </TooltipTrigger>
                                         <TooltipContent
                                           side="top"
-                                          align="start"
-                                          className="text-sm"
+                                          align="center"
+                                          className="text-xs font-light"
                                         >
                                           {facility.description}
                                         </TooltipContent>

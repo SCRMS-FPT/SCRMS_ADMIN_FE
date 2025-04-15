@@ -95,6 +95,22 @@ export default function ReusableChart({
   showAverage = true,
   locale = vi,
 }: ReusableChartProps) {
+  if (!Array.isArray(data) || data.length === 0) {
+    return (
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle>{title}</CardTitle>
+          <CardDescription>{description}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[400px] flex items-center justify-center text-muted-foreground">
+            Không có dữ liệu để hiển thị.
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   const sortedData = useMemo(
     () =>
       [...data].sort(

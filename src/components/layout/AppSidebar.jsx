@@ -13,6 +13,7 @@ import {
   LayoutGrid,
   Settings,
   LogOut,
+  Volleyball,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -60,6 +61,12 @@ const MENU_ITEMS = [
         label: "Quản lý huấn luyện viên",
         icon: <User className="h-5 w-5" />,
         section: "coaches",
+      },
+      ,
+      {
+        label: "Quản lý các môn thể thao",
+        icon: <Volleyball className="h-5 w-5" />,
+        section: "sports",
       },
     ],
   },

@@ -23,6 +23,7 @@ import "react-toastify/dist/ReactToastify.css";
 import SportCentersPage from "@/pages/SportCenter";
 import SportCenterDetailPage from "@/pages/SportCenterDetail";
 import NotFound from "@/pages/NotFoundPage";
+import Sports from "./pages/Sports";
 
 // Protect routes by checking for token
 const ProtectedRoute = ({ children }) => {
@@ -71,30 +72,6 @@ const MainLayout = () => {
           onLogout={handleLogout}
         />
         <main className="flex-1 overflow-auto p-4 md:p-6">
-          <Routes>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/users" element={<Users />} />
-            <Route path="/coaches" element={<Coaches />} />
-            <Route path="/packages" element={<Packages />} />
-            <Route path="/payments" element={<Payments />} />
-            <Route path="/reviews" element={<Reviews />} />
-            <Route path="/flaggedreviews" element={<FlaggedReviews />} />{" "}
-            {/* Add this line */}
-            <Route path="/sportcenters" element={<SportCentersPage />} />
-            <Route
-              path="/sportcenters/:id"
-              element={<SportCenterDetailPage />}
-            />
-            <Route
-              path="/sportcenters/create"
-              element={<SportCenterDetailPage />}
-            />
-            <Route
-              path="/withdrawalrequests"
-              element={<WithdrawalRequests />}
-            />
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
-          </Routes>
           <Outlet />
         </main>
       </div>
@@ -120,7 +97,7 @@ const App = () => (
     >
       <Route index element={<Dashboard />} />
       <Route path="dashboard" element={<Dashboard />} />
-
+      <Route path="sports" element={<Sports />} />
       <Route path="users" element={<Users />} />
       <Route path="coaches" element={<Coaches />} />
       <Route path="packages" element={<Packages />} />
@@ -129,6 +106,8 @@ const App = () => (
       <Route path="sportcenters" element={<SportCentersPage />} />
       <Route path="sportcenters/:id" element={<SportCenterDetailPage />} />
       <Route path="sportcenters/create" element={<SportCenterDetailPage />} />
+      <Route path="withdrawalrequests" element={<WithdrawalRequests />} />
+      <Route path="flaggedreviews" element={<FlaggedReviews />} />
     </Route>
 
     <Route path="*" element={<NotFound />} />

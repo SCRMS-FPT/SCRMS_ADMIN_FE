@@ -62,6 +62,15 @@ const statusColors = {
   Cancelled: "default",
 };
 
+// Thay đổi nhãn trạng thái sang tiếng Việt
+const statusLabels = {
+  Pending: "Chờ duyệt",
+  Approved: "Đã duyệt",
+  Rejected: "Từ chối",
+  Completed: "Hoàn tất",
+  Cancelled: "Đã hủy",
+};
+
 const WithdrawalRequests = () => {
   // States
   const [requests, setRequests] = useState([]);
@@ -201,16 +210,16 @@ const WithdrawalRequests = () => {
             component="h1"
             className="text-gray-800 font-bold"
           >
-            Withdrawal Requests
+            Yêu cầu rút tiền
           </Typography>
           <Typography variant="body1" className="text-gray-600 mt-1">
-            Manage withdrawal requests from users
+            Quản lý các yêu cầu rút tiền từ người dùng
           </Typography>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
           <TextField
-            placeholder="Search by name or account..."
+            placeholder="Tìm kiếm theo tên hoặc tài khoản..."
             size="small"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -225,16 +234,16 @@ const WithdrawalRequests = () => {
           />
 
           <FormControl size="small" className="min-w-[150px]">
-            <InputLabel>Status</InputLabel>
+            <InputLabel>Trạng thái</InputLabel>
             <Select
-              label="Status"
+              label="Trạng thái"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
             >
-              <MenuItem value="">All Status</MenuItem>
-              <MenuItem value="Pending">Pending</MenuItem>
-              <MenuItem value="Approved">Approved</MenuItem>
-              <MenuItem value="Rejected">Rejected</MenuItem>
+              <MenuItem value="">Tất cả</MenuItem>
+              <MenuItem value="Pending">Chờ duyệt</MenuItem>
+              <MenuItem value="Approved">Đã duyệt</MenuItem>
+              <MenuItem value="Rejected">Từ chối</MenuItem>
             </Select>
           </FormControl>
 
@@ -243,7 +252,7 @@ const WithdrawalRequests = () => {
             startIcon={<ReloadOutlined />}
             onClick={fetchRequests}
           >
-            Refresh
+            Làm mới
           </Button>
         </div>
       </div>
@@ -253,13 +262,15 @@ const WithdrawalRequests = () => {
           <Table sx={{ minWidth: 650 }}>
             <TableHead>
               <TableRow className="bg-gray-50">
-                <TableCell className="font-semibold">User</TableCell>
-                <TableCell className="font-semibold">Amount</TableCell>
-                <TableCell className="font-semibold">Bank Info</TableCell>
-                <TableCell className="font-semibold">Status</TableCell>
-                <TableCell className="font-semibold">Created Date</TableCell>
+                <TableCell className="font-semibold">Người dùng</TableCell>
+                <TableCell className="font-semibold">Số tiền</TableCell>
+                <TableCell className="font-semibold">
+                  Thông tin ngân hàng
+                </TableCell>
+                <TableCell className="font-semibold">Trạng thái</TableCell>
+                <TableCell className="font-semibold">Ngày tạo</TableCell>
                 <TableCell className="font-semibold text-center">
-                  Actions
+                  Thao tác
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -302,14 +313,14 @@ const WithdrawalRequests = () => {
                   >
                     <div className="flex flex-col items-center">
                       <CloseCircleOutlined className="text-3xl mb-2" />
-                      <Typography>Error: {error}</Typography>
+                      <Typography>Lỗi: {error}</Typography>
                       <Button
                         variant="outlined"
                         onClick={fetchRequests}
                         className="mt-4"
                         startIcon={<ReloadOutlined />}
                       >
-                        Try Again
+                        Thử lại
                       </Button>
                     </div>
                   </TableCell>
@@ -323,15 +334,15 @@ const WithdrawalRequests = () => {
                         variant="h6"
                         className="text-gray-500 font-medium"
                       >
-                        No withdrawal requests found
+                        Không có yêu cầu rút tiền nào
                       </Typography>
                       <Typography
                         variant="body2"
                         className="text-gray-400 mb-4"
                       >
                         {searchTerm || statusFilter
-                          ? "Try adjusting your search or filter criteria"
-                          : "All withdrawal requests will appear here when users make requests"}
+                          ? "Hãy thử thay đổi điều kiện tìm kiếm hoặc bộ lọc"
+                          : "Tất cả yêu cầu rút tiền sẽ hiển thị tại đây khi người dùng gửi yêu cầu"}
                       </Typography>
                       {(searchTerm || statusFilter) && (
                         <Button
@@ -341,7 +352,7 @@ const WithdrawalRequests = () => {
                             setStatusFilter("");
                           }}
                         >
-                          Clear Filters
+                          Xóa bộ lọc
                         </Button>
                       )}
                     </div>
@@ -382,13 +393,13 @@ const WithdrawalRequests = () => {
                           {request.bankName}
                         </Typography>
                         <Typography variant="body2" className="text-gray-500">
-                          Acc: {request.accountNumber}
+                          STK: {request.accountNumber}
                         </Typography>
                       </div>
                     </TableCell>
                     <TableCell>
                       <Chip
-                        label={request.status}
+                        label={statusLabels[request.status] || request.status}
                         color={statusColors[request.status] || "default"}
                         size="small"
                         className="font-medium"
@@ -401,7 +412,7 @@ const WithdrawalRequests = () => {
                     </TableCell>
                     <TableCell>
                       <div className="flex justify-center gap-2">
-                        <Tooltip title="View Details">
+                        <Tooltip title="Xem chi tiết">
                           <motion.div whileHover={{ scale: 1.05 }}>
                             <Button
                               variant="outlined"
@@ -409,7 +420,7 @@ const WithdrawalRequests = () => {
                               onClick={() => openDetailsModal(request)}
                               startIcon={<EyeOutlined />}
                             >
-                              Details
+                              Chi tiết
                             </Button>
                           </motion.div>
                         </Tooltip>
@@ -425,8 +436,8 @@ const WithdrawalRequests = () => {
         {!isLoading && requests.length > 0 && (
           <div className="flex justify-between items-center px-4 py-3 border-t border-gray-200">
             <div className="text-sm text-gray-500">
-              Showing {(page - 1) * pageSize + 1} to{" "}
-              {Math.min(page * pageSize, totalCount)} of {totalCount} entries
+              Hiển thị {(page - 1) * pageSize + 1} đến{" "}
+              {Math.min(page * pageSize, totalCount)} trên {totalCount} dòng
             </div>
             <div className="flex items-center gap-2">
               <Button
@@ -436,7 +447,7 @@ const WithdrawalRequests = () => {
                 onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
                 startIcon={<ArrowLeftOutlined />}
               >
-                Previous
+                Trước
               </Button>
 
               <div className="flex items-center gap-1">
@@ -476,7 +487,7 @@ const WithdrawalRequests = () => {
                 }
                 endIcon={<ArrowRightOutlined />}
               >
-                Next
+                Sau
               </Button>
             </div>
           </div>
@@ -496,10 +507,12 @@ const WithdrawalRequests = () => {
       >
         <DialogTitle className="bg-gray-50 border-b">
           <div className="flex justify-between items-center">
-            <Typography variant="h6">Withdrawal Request Details</Typography>
+            <Typography variant="h6">Chi tiết yêu cầu rút tiền</Typography>
             {selectedRequest && (
               <Chip
-                label={selectedRequest.status}
+                label={
+                  statusLabels[selectedRequest.status] || selectedRequest.status
+                }
                 color={statusColors[selectedRequest.status] || "default"}
                 className="font-medium"
               />
@@ -510,7 +523,7 @@ const WithdrawalRequests = () => {
           {isLoadingDetails ? (
             <div className="flex flex-col items-center justify-center py-8">
               <CircularProgress size={40} className="mb-4" />
-              <Typography>Loading details...</Typography>
+              <Typography>Đang tải chi tiết...</Typography>
             </div>
           ) : selectedRequest ? (
             <Grid container spacing={4}>
@@ -521,13 +534,13 @@ const WithdrawalRequests = () => {
                     variant="h6"
                     className="mb-4 flex items-center gap-2"
                   >
-                    <MoneyCollectOutlined /> Request Information
+                    <MoneyCollectOutlined /> Thông tin yêu cầu
                   </Typography>
 
                   <div className="space-y-4">
                     <div>
                       <Typography variant="body2" className="text-gray-500">
-                        Amount
+                        Số tiền
                       </Typography>
                       <Typography
                         variant="h5"
@@ -539,7 +552,7 @@ const WithdrawalRequests = () => {
 
                     <div>
                       <Typography variant="body2" className="text-gray-500">
-                        Bank Information
+                        Thông tin ngân hàng
                       </Typography>
                       <div className="bg-gray-50 p-3 rounded-lg mt-1">
                         <div className="flex items-center gap-2 mb-1">
@@ -550,14 +563,12 @@ const WithdrawalRequests = () => {
                         </div>
                         <div className="ml-6 space-y-1">
                           <Typography variant="body2">
-                            <span className="text-gray-500">
-                              Account Number:
-                            </span>{" "}
+                            <span className="text-gray-500">Số tài khoản:</span>{" "}
                             {selectedRequest.accountNumber}
                           </Typography>
                           <Typography variant="body2">
                             <span className="text-gray-500">
-                              Account Holder:
+                              Chủ tài khoản:
                             </span>{" "}
                             {selectedRequest.accountHolderName}
                           </Typography>
@@ -567,7 +578,7 @@ const WithdrawalRequests = () => {
 
                     <div>
                       <Typography variant="body2" className="text-gray-500">
-                        Date Requested
+                        Ngày yêu cầu
                       </Typography>
                       <div className="flex items-center gap-2 mt-1">
                         <CalendarOutlined className="text-gray-400" />
@@ -579,7 +590,7 @@ const WithdrawalRequests = () => {
 
                     <div>
                       <Typography variant="body2" className="text-gray-500">
-                        Request ID
+                        Mã yêu cầu
                       </Typography>
                       <Typography
                         variant="body2"
@@ -599,7 +610,7 @@ const WithdrawalRequests = () => {
                     variant="h6"
                     className="mb-4 flex items-center gap-2"
                   >
-                    <UserOutlined /> User Information
+                    <UserOutlined /> Thông tin người dùng
                   </Typography>
 
                   {userDetails ? (
@@ -626,7 +637,7 @@ const WithdrawalRequests = () => {
 
                       <div>
                         <Typography variant="body2" className="text-gray-500">
-                          Current Wallet Balance
+                          Số dư ví hiện tại
                         </Typography>
                         <div className="flex items-center gap-2 mt-1">
                           <WalletOutlined className="text-blue-500" />
@@ -636,18 +647,20 @@ const WithdrawalRequests = () => {
                           >
                             {userBalance
                               ? formatCurrency(userBalance.balance)
-                              : "N/A"}
+                              : "Không có"}
                           </Typography>
                         </div>
                       </div>
 
                       <div>
                         <Typography variant="body2" className="text-gray-500">
-                          Membership Status
+                          Trạng thái tài khoản
                         </Typography>
                         <div className="flex items-center gap-2 mt-1">
                           <Tag color={!userDetails.IsDeleted ? "green" : "red"}>
-                            {!userDetails.IsDeleted ? "Active" : "Inactive"}
+                            {!userDetails.IsDeleted
+                              ? "Hoạt động"
+                              : "Ngưng hoạt động"}
                           </Tag>
                           <Typography variant="body2">
                             {userDetails.roles?.join(", ")}
@@ -657,7 +670,7 @@ const WithdrawalRequests = () => {
 
                       <div>
                         <Typography variant="body2" className="text-gray-500">
-                          User ID
+                          Mã người dùng
                         </Typography>
                         <Typography
                           variant="body2"
@@ -670,7 +683,7 @@ const WithdrawalRequests = () => {
                   ) : (
                     <div className="text-center py-4">
                       <Typography className="text-gray-500">
-                        User details unavailable
+                        Không có thông tin người dùng
                       </Typography>
                     </div>
                   )}
@@ -680,7 +693,7 @@ const WithdrawalRequests = () => {
           ) : (
             <div className="text-center py-4">
               <Typography className="text-gray-500">
-                Request details unavailable
+                Không có thông tin yêu cầu
               </Typography>
             </div>
           )}
@@ -688,7 +701,7 @@ const WithdrawalRequests = () => {
         <DialogActions className="bg-gray-50 border-t px-4 py-3">
           <div className="flex gap-2 w-full justify-between">
             <Button variant="outlined" onClick={() => setIsModalOpen(false)}>
-              Close
+              Đóng
             </Button>
 
             {selectedRequest && selectedRequest.status === "Pending" && (
@@ -699,7 +712,7 @@ const WithdrawalRequests = () => {
                   startIcon={<CloseCircleOutlined />}
                   onClick={() => openProcessModal("Rejected")}
                 >
-                  Reject
+                  Từ chối
                 </Button>
                 <Button
                   variant="contained"
@@ -707,7 +720,7 @@ const WithdrawalRequests = () => {
                   startIcon={<CheckCircleOutlined />}
                   onClick={() => openProcessModal("Approved")}
                 >
-                  Approve
+                  Duyệt
                 </Button>
               </div>
             )}
@@ -728,20 +741,20 @@ const WithdrawalRequests = () => {
       >
         <DialogTitle className="bg-gray-50 border-b">
           <Typography variant="h6">
-            {processForm.status === "Approved" ? "Approve" : "Reject"}{" "}
-            Withdrawal Request
+            {processForm.status === "Approved" ? "Duyệt" : "Từ chối"} yêu cầu
+            rút tiền
           </Typography>
         </DialogTitle>
         <DialogContent className="p-6">
           <div className="py-2">
             <Typography variant="body2" className="mb-4">
               {processForm.status === "Approved"
-                ? "Please confirm that you want to approve this withdrawal request. Add any notes about the transaction."
-                : "Please provide a reason for rejection so the user understands why their request was rejected."}
+                ? "Vui lòng xác nhận bạn muốn duyệt yêu cầu rút tiền này. Thêm ghi chú nếu cần."
+                : "Vui lòng nhập lý do từ chối để người dùng hiểu lý do bị từ chối."}
             </Typography>
 
             <TextField
-              label="Admin Note"
+              label="Ghi chú quản trị viên"
               multiline
               rows={4}
               value={processForm.adminNote}
@@ -752,8 +765,8 @@ const WithdrawalRequests = () => {
               required
               placeholder={
                 processForm.status === "Approved"
-                  ? "E.g., Approved and processed via bank transfer on April 9, 2023"
-                  : "E.g., Insufficient information provided, please provide correct account details."
+                  ? "VD: Đã duyệt và chuyển khoản ngày 9/4/2023"
+                  : "VD: Thông tin tài khoản không hợp lệ, vui lòng cung cấp lại."
               }
               variant="outlined"
               className="mt-2"
@@ -773,7 +786,7 @@ const WithdrawalRequests = () => {
             onClick={() => !isProcessing && setIsProcessModalOpen(false)}
             disabled={isProcessing}
           >
-            Cancel
+            Hủy
           </Button>
           <Button
             variant="contained"
@@ -791,10 +804,10 @@ const WithdrawalRequests = () => {
             }
           >
             {isProcessing
-              ? "Processing..."
+              ? "Đang xử lý..."
               : processForm.status === "Approved"
-              ? "Confirm Approval"
-              : "Confirm Rejection"}
+              ? "Xác nhận duyệt"
+              : "Xác nhận từ chối"}
           </Button>
         </DialogActions>
       </Dialog>

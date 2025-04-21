@@ -5,13 +5,20 @@ import {
   getIdentityStats,
   getPaymentStats,
 } from "@/api/dashboardAPI";
-import { set } from "date-fns";
+import PropTypes from "prop-types";
 
-export const mergeStatsByUnit = (coachStats, courtStats, unit) => {
+export const mergeStatsByUnit = (
+  coachStats,
+  courtStats,
+  serviceStats,
+  unit
+) => {
   const getKey = (entry) => {
     const dateStr =
       entry?.data?.date_range?.start_date ||
+      entry?.data?.dateRange?.startDate ||
       `2025-${String(entry.month).padStart(2, "0")}-01`;
+
     const date = new Date(dateStr);
 
     if (unit === "year") return `${date.getFullYear()}`;
@@ -23,20 +30,26 @@ export const mergeStatsByUnit = (coachStats, courtStats, unit) => {
     return date.toISOString().split("T")[0];
   };
 
-  const result = coachStats.map((coachEntry) => {
-    const key = getKey(coachEntry);
-    const matchingCourt = courtStats.find(
-      (courtEntry) => getKey(courtEntry) === key
-    );
+  const allKeys = new Set([
+    ...coachStats.map(getKey),
+    ...courtStats.map(getKey),
+    ...serviceStats.map(getKey),
+  ]);
+
+  const merged = Array.from(allKeys).map((key) => {
+    const coach = coachStats.find((e) => getKey(e) === key);
+    const court = courtStats.find((e) => getKey(e) === key);
+    const service = serviceStats.find((e) => getKey(e) === key);
 
     return {
       date: key,
-      courtRevenue: matchingCourt ? matchingCourt.data.total_courts_revenue : 0,
-      coachRevenue: coachEntry?.data?.totalRevenue || 0,
+      coachRevenue: coach?.data?.totalRevenue || 0,
+      courtRevenue: court?.data?.total_courts_revenue || 0,
+      packageRevenue: service?.data?.totalServicePackageRevenue || 0,
     };
   });
 
-  return result;
+  return merged.sort((a, b) => new Date(a.date) - new Date(b.date));
 };
 
 export const useDashboardData = () => {
@@ -83,27 +96,26 @@ export const useDashboardData = () => {
           courtStatsPerMonth.push({ month, data: courtData });
         }
 
-        // TODO: Error in API
-        // for (let month = 1; month <= currentMonth; month++) {
-        //   const startDate = `${currentYear}-${month
-        //     .toString()
-        //     .padStart(2, "0")}-01T00:00:00`; // Start of the day
-        //   const endDate =
-        //     new Date(currentYear, month, 0).toISOString().split("T")[0] +
-        //     "T23:59:59";
-        //   const paymentData = await getPaymentStats(startDate, endDate);
-        //   paymentStatPerMonth.push({
-        //     month,
-        //     data: paymentData,
-        //   });
-        // }
+        for (let month = 1; month <= currentMonth; month++) {
+          const startDate = `${currentYear}-${month
+            .toString()
+            .padStart(2, "0")}-01T00:00:00`; // Start of the day
+          const endDate =
+            new Date(currentYear, month, 0).toISOString().split("T")[0] +
+            "T23:59:59";
+          const paymentData = await getPaymentStats(startDate, endDate);
+          paymentStatPerMonth.push({
+            month,
+            data: paymentData,
+          });
+        }
 
         var mergeStat = mergeStatsByUnit(
           coachStatPerMonth,
           courtStatsPerMonth,
+          paymentStatPerMonth,
           "month"
         );
-        // mergeStat = mergeStatsByUnit(mergeStat, paymentStatPerMonth, "month");
 
         setData({
           totalUsers: identityStats.totalUsers,
@@ -162,10 +174,10 @@ export const filterData = async (start, end) => {
         "year"
       );
 
-      // const responsePayment = await getPaymentStats(
-      //   yearStart.toISOString(),
-      //   yearEnd.toISOString()
-      // );
+      const responsePayment = await getPaymentStats(
+        yearStart.toISOString(),
+        yearEnd.toISOString()
+      );
 
       courtStat.push({
         year: current.getFullYear(),
@@ -177,13 +189,12 @@ export const filterData = async (start, end) => {
         data: responseCoach,
       });
 
-      // paymentStat.push({
-      //   year: current.getFullYear(),
-      //   data: responsePayment,
-      // });
+      paymentStat.push({
+        year: current.getFullYear(),
+        data: responsePayment,
+      });
 
-      mergeStat = mergeStatsByUnit(coachStat, courtStat, "year");
-      // mergeStat = mergeStatsByUnit(mergedStat, paymentStat, "year");
+      mergeStat = mergeStatsByUnit(coachStat, courtStat, paymentStat, "year");
 
       current.setFullYear(current.getFullYear() + 1);
     }
@@ -207,10 +218,10 @@ export const filterData = async (start, end) => {
         monthEnd.toISOString().split("T")[0],
         "month"
       );
-      // const paymentStats = await getPaymentStats(
-      //   monthStart.toISOString(),
-      //   monthEnd.toISOString()
-      // );
+      const paymentStats = await getPaymentStats(
+        monthStart.toISOString(),
+        monthEnd.toISOString()
+      );
 
       courtStat.push({
         month: current.getMonth() + 1,
@@ -220,13 +231,12 @@ export const filterData = async (start, end) => {
         month: current.getMonth() + 1,
         data: responseCoach,
       });
-      // paymentStat.push({
-      //   month: current.getMonth() + 1,
-      //   data: paymentStats,
-      // });
+      paymentStat.push({
+        month: current.getMonth() + 1,
+        data: paymentStats,
+      });
 
-      mergeStat = mergeStatsByUnit(coachStat, courtStat, "month");
-      // mergeStat = mergeStatsByUnit(mergeStat, paymentStat, "month");
+      mergeStat = mergeStatsByUnit(coachStat, courtStat, paymentStat, "month");
 
       current.setMonth(current.getMonth() + 1);
     }
@@ -246,24 +256,43 @@ export const filterData = async (start, end) => {
         dayEnd.toISOString().split("T")[0],
         "day"
       );
-      // const paymentStats = await getPaymentStats(
-      //   dayStart.toISOString(),
-      //   dayEnd.toISOString()
-      // );
-      courtStat.push({
-        date: current.toISOString(),
-        data: courtStats,
-      });
+      const paymentStats = await getPaymentStats(
+        dayStart.toISOString(),
+        dayEnd.toISOString()
+      );
+      // courtStat.push({
+      //   date: current.toISOString(),
+      //   data: courtStats,
+      // });
       coachStat.push({
-        date: current.toISOString(),
-        data: coachStats,
+        data: {
+          ...coachStats,
+          date_range: { start_date: current.toISOString().split("T")[0] },
+        },
       });
+      courtStat.push({
+        data: {
+          ...courtStats,
+          date_range: { start_date: current.toISOString().split("T")[0] },
+        },
+      });
+      paymentStat.push({
+        data: {
+          ...paymentStats,
+          date_range: { start_date: current.toISOString().split("T")[0] },
+        },
+      });
+
+      // coachStat.push({
+      //   date: current.toISOString(),
+      //   data: coachStats,
+      // });
       // paymentStat.push({
       //   date: current.toISOString(),
       //   data: paymentStats,
       // });
-      mergeStat = mergeStatsByUnit(coachStat, courtStat, "day");
-      // mergeStat =  mergeStatsByUnit(mergeStat, paymentStat, "day");
+      mergeStat = mergeStatsByUnit(coachStat, courtStat, paymentStat, "day");
+
       current.setDate(current.getDate() + 1);
     }
   }

@@ -10,7 +10,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useDashboardData } from "@/hooks/useDashboardData";
 import PropTypes from "prop-types";
 
 // Menu titles as a constant to avoid hardcoding in the component
@@ -26,16 +25,15 @@ const SECTION_TITLES = {
   sportcenters: "Quản lý cụm sân",
 };
 
-const Header = ({ activeSection, toggleMobileMenu }) => {
+const Header = ({ activeSection, toggleMobileMenu, onLogout }) => {
   const { theme, setTheme } = useTheme();
-  const { data: dashboardData } = useDashboardData();
 
   const getSectionTitle = () => SECTION_TITLES[activeSection] || "Dashboard";
 
   const handleThemeToggle = () => setTheme(theme === "dark" ? "light" : "dark");
 
   return (
-    <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
+    <header className="sticky top-0 z-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
       {/* Mobile Menu Toggle */}
       <Button
         variant="ghost"
@@ -51,9 +49,9 @@ const Header = ({ activeSection, toggleMobileMenu }) => {
 
       {/* Section Title */}
       <div className="flex-1">
-        <h1 className="text-lg font-semibold md:text-xl">
+        {/* <h1 className="text-lg font-semibold md:text-xl">
           {getSectionTitle()}
-        </h1>
+        </h1> */}
       </div>
 
       {/* Right-side Controls */}
@@ -138,10 +136,12 @@ const Header = ({ activeSection, toggleMobileMenu }) => {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Tài khoản</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Hồ sơ</DropdownMenuItem>
-            <DropdownMenuItem>Cài đặt</DropdownMenuItem>
+            {/* <DropdownMenuItem>Hồ sơ</DropdownMenuItem>
+            <DropdownMenuItem>Cài đặt</DropdownMenuItem> */}
+            <DropdownMenuItem onClick={() => onLogout()}>
+              Thoát
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Thoát</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -152,6 +152,7 @@ const Header = ({ activeSection, toggleMobileMenu }) => {
 Header.propTypes = {
   activeSection: PropTypes.string.isRequired,
   toggleMobileMenu: PropTypes.func.isRequired,
+  onLogout: PropTypes.func.isRequired,
 };
 
 export default Header;

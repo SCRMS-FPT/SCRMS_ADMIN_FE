@@ -38,31 +38,32 @@ export function CoachEditDialog({ open, onOpenChange, coach, sports, onSave }) {
 
   // Form state
   const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    phone: "",
-    bio: "",
-    ratePerHour: 0,
-    sportIds: [],
-    newAvatarFile: null,
-    newImageFiles: [],
-    existingImageUrls: [],
-    imagesToDelete: [],
+    FullName: "",
+    Email: "",
+    Phone: "",
+    Bio: "",
+    RatePerHour: 0,
+    ListSport: [],
+    NewAvatar: null,
+    NewImages: [],
+    ExistingImageUrls: [],
+    ImagesToDelete: [],
   });
 
   useEffect(() => {
     if (coach) {
+      setActiveTab("info");
       setFormData({
-        fullName: coach.fullName || "",
-        email: coach.email || "",
-        phone: coach.phone || "",
-        bio: coach.bio || "",
-        ratePerHour: coach.ratePerHour || 0,
-        sportIds: coach.sportIds || [],
-        newAvatarFile: null,
-        newImageFiles: [],
-        existingImageUrls: coach.imageUrls || [],
-        imagesToDelete: [],
+        FullName: coach.fullName || "",
+        Email: coach.email || "",
+        Phone: coach.phone || "",
+        Bio: coach.bio || "",
+        RatePerHour: coach.ratePerHour || 0,
+        ListSport: coach.sportIds || [],
+        NewAvatar: null,
+        NewImages: [],
+        ExistingImageUrls: coach.imageUrls || [],
+        ImagesToDelete: [],
       });
       setAvatarPreview(coach.avatar || "");
     }
@@ -95,7 +96,7 @@ export function CoachEditDialog({ open, onOpenChange, coach, sports, onSave }) {
     if (file) {
       setFormData((prev) => ({
         ...prev,
-        newAvatarFile: file,
+        NewAvatar: file,
       }));
 
       // Create preview
@@ -113,7 +114,7 @@ export function CoachEditDialog({ open, onOpenChange, coach, sports, onSave }) {
     if (files.length > 0) {
       setFormData((prev) => ({
         ...prev,
-        newImageFiles: [...prev.newImageFiles, ...files],
+        NewImages: [...prev.NewImages, ...files],
       }));
     }
   };
@@ -122,8 +123,8 @@ export function CoachEditDialog({ open, onOpenChange, coach, sports, onSave }) {
   const handleImageDelete = (url) => {
     setFormData((prev) => ({
       ...prev,
-      existingImageUrls: prev.existingImageUrls.filter((item) => item !== url),
-      imagesToDelete: [...prev.imagesToDelete, url],
+      ExistingImageUrls: prev.ExistingImageUrls.filter((item) => item !== url),
+      ImagesToDelete: [...prev.ImagesToDelete, url],
     }));
   };
 
@@ -131,22 +132,22 @@ export function CoachEditDialog({ open, onOpenChange, coach, sports, onSave }) {
   const handleNewImageDelete = (index) => {
     setFormData((prev) => ({
       ...prev,
-      newImageFiles: prev.newImageFiles.filter((_, i) => i !== index),
+      NewImages: prev.NewImages.filter((_, i) => i !== index),
     }));
   };
 
   // Handle sport selection
   const handleSportToggle = (sportId) => {
     setFormData((prev) => {
-      if (prev.sportIds.includes(sportId)) {
+      if (prev.ListSport.includes(sportId)) {
         return {
           ...prev,
-          sportIds: prev.sportIds.filter((id) => id !== sportId),
+          ListSport: prev.ListSport.filter((id) => id !== sportId),
         };
       } else {
         return {
           ...prev,
-          sportIds: [...prev.sportIds, sportId],
+          ListSport: [...prev.ListSport, sportId],
         };
       }
     });
@@ -175,14 +176,14 @@ export function CoachEditDialog({ open, onOpenChange, coach, sports, onSave }) {
   };
 
   // Create image previews for new images
-  const newImagePreviews = formData.newImageFiles.map((file, index) => {
+  const newImagePreviews = formData.NewImages.map((file, index) => {
     const url = URL.createObjectURL(file);
     return { url, index, isNew: true };
   });
 
   // Combine existing and new images for display
   const allImages = [
-    ...formData.existingImageUrls.map((url) => ({ url, isNew: false })),
+    ...formData.ExistingImageUrls.map((url) => ({ url, isNew: false })),
     ...newImagePreviews,
   ];
 
@@ -228,10 +229,10 @@ export function CoachEditDialog({ open, onOpenChange, coach, sports, onSave }) {
                       >
                         <AvatarImage
                           src={avatarPreview}
-                          alt={formData.fullName}
+                          alt={formData.FullName}
                         />
                         <AvatarFallback className="text-3xl bg-violet-100 text-violet-500">
-                          {formData.fullName?.substring(0, 2).toUpperCase() ||
+                          {formData.FullName?.substring(0, 2).toUpperCase() ||
                             "HLV"}
                         </AvatarFallback>
                         <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -261,8 +262,8 @@ export function CoachEditDialog({ open, onOpenChange, coach, sports, onSave }) {
                           <Label htmlFor="fullName">Họ và tên</Label>
                           <Input
                             id="fullName"
-                            name="fullName"
-                            value={formData.fullName}
+                            name="FullName"
+                            value={formData.FullName}
                             onChange={handleInputChange}
                             placeholder="Nhập họ và tên"
                           />
@@ -275,9 +276,9 @@ export function CoachEditDialog({ open, onOpenChange, coach, sports, onSave }) {
                               <Mail className="h-4 w-4 mr-2 self-center text-slate-400" />
                               <Input
                                 id="email"
-                                name="email"
+                                name="Email"
                                 type="email"
-                                value={formData.email}
+                                value={formData.Email}
                                 onChange={handleInputChange}
                                 placeholder="Nhập email"
                               />
@@ -285,13 +286,13 @@ export function CoachEditDialog({ open, onOpenChange, coach, sports, onSave }) {
                           </div>
 
                           <div className="grid gap-2">
-                            <Label htmlFor="phone">Số điện thoại</Label>
+                            <Label htmlFor="Phone">Số điện thoại</Label>
                             <div className="flex">
                               <Phone className="h-4 w-4 mr-2 self-center text-slate-400" />
                               <Input
-                                id="phone"
-                                name="phone"
-                                value={formData.phone}
+                                id="Phone"
+                                name="Phone"
+                                value={formData.Phone}
                                 onChange={handleInputChange}
                                 placeholder="Nhập số điện thoại"
                               />
@@ -300,14 +301,14 @@ export function CoachEditDialog({ open, onOpenChange, coach, sports, onSave }) {
                         </div>
 
                         <div className="grid gap-2">
-                          <Label htmlFor="ratePerHour">
+                          <Label htmlFor="RatePerHour">
                             Giá theo giờ (VNĐ)
                           </Label>
                           <Input
-                            id="ratePerHour"
-                            name="ratePerHour"
+                            id="RatePerHour"
+                            name="RatePerHour"
                             type="number"
-                            value={formData.ratePerHour}
+                            value={formData.RatePerHour}
                             onChange={handleNumberChange}
                             placeholder="Nhập giá theo giờ"
                           />
@@ -329,7 +330,7 @@ export function CoachEditDialog({ open, onOpenChange, coach, sports, onSave }) {
                   <Textarea
                     id="bio"
                     name="bio"
-                    value={formData.bio}
+                    value={formData.Bio}
                     onChange={handleInputChange}
                     placeholder="Nhập thông tin giới thiệu về huấn luyện viên"
                     className="min-h-[150px]"
@@ -354,7 +355,7 @@ export function CoachEditDialog({ open, onOpenChange, coach, sports, onSave }) {
                         >
                           <Checkbox
                             id={`sport-${sport.id}`}
-                            checked={formData.sportIds.includes(sport.id)}
+                            checked={formData.ListSport.includes(sport.id)}
                             onCheckedChange={() => handleSportToggle(sport.id)}
                           />
                           <label

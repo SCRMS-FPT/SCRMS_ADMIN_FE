@@ -76,8 +76,7 @@ export async function updateUser(userId, profileData) {
   if (!userId) {
     throw new Error("ID người dùng là bắt buộc.");
   }
-  validateProfileData(profileData);
-  // Convert to variable that postgresql accept
+
   profileData.BirthDate = new Date(
     profileData.BirthDate + "T00:00:00Z"
   ).toISOString();
@@ -178,49 +177,41 @@ export async function deleteUser(userId) {
   return response.json();
 }
 
-/**
- * Validates profile data before updating.
- * @param {ProfileData} profileData - The profile data to validate.
- * @throws {Error} If any required field is missing or invalid.
- */
-function validateProfileData(profileData) {
-  if (
-    !profileData.FirstName ||
-    typeof profileData.FirstName !== "string" ||
-    !profileData.FirstName.trim()
-  ) {
-    throw new Error("Tên là bắt buộc và phải là một chuỗi hợp lệ.");
+export async function removeUserRole(userId, roleData) {
+  if (!userId) {
+    throw new Error("User ID is required to assign roles.");
   }
+
   if (
-    !profileData.LastName ||
-    typeof profileData.LastName !== "string" ||
-    !profileData.LastName.trim()
+    !Array.isArray(roleData) ||
+    roleData.length === 0 ||
+    roleData.some((role) => typeof role !== "string" || !role.trim())
   ) {
-    throw new Error("Họ là bắt buộc và phải là một chuỗi hợp lệ.");
-  }
-  if (
-    !profileData.Phone ||
-    typeof profileData.Phone !== "string" ||
-    !/^\+?[0-9\s-]+$/.test(profileData.Phone)
-  ) {
-    throw new Error("Số điện thoại là bắt buộc và phải có định dạng hợp lệ.");
-  }
-  if (!profileData.BirthDate || isNaN(Date.parse(profileData.BirthDate))) {
     throw new Error(
-      "Ngày sinh là bắt buộc và phải là một chuỗi ngày hợp lệ theo chuẩn ISO 8601."
+      "Role data must be a non-empty array of valid role strings."
     );
   }
-  if (
-    !profileData.Gender ||
-    typeof profileData.Gender !== "string" ||
-    !profileData.Gender.trim()
-  ) {
-    throw new Error("Giới tính là bắt buộc và phải là một chuỗi hợp lệ.");
+
+  const token = localStorage.getItem("authToken");
+  const url = BASE_URL + endpoints.removeRoles;
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "bearer " + token,
+    },
+    body: JSON.stringify({ userId, roles: roleData }),
+  });
+
+  if (!response.ok) {
+    throw {
+      status: response.status,
+      message: response.statusText,
+    };
   }
-  if (
-    profileData.SelfIntroduction !== null &&
-    typeof profileData.SelfIntroduction !== "string"
-  ) {
-    throw new Error("Giới thiệu bản thân phải là một chuỗi nếu được cung cấp.");
+  if (response.status === 204) {
+    return null;
   }
+
+  return response.json();
 }

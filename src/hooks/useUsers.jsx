@@ -3,6 +3,7 @@ import {
   getUsers,
   updateUser,
   assignUserRoles,
+  deleteUser,
 } from "../api/userManagementAPI";
 
 export const getUsersData = (
@@ -89,6 +90,14 @@ export const updateUserInfo = async (userId, profileData) => {
 export const assignRoleUser = async (request) => {
   try {
     return await assignUserRoles(request.UserId, request.Roles);
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const removeUser = async (userId) => {
+  try {
+    return await deleteUser(userId);
   } catch (error) {
     throw error;
   }

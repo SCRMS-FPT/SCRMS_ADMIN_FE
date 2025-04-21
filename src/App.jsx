@@ -2,6 +2,7 @@ import {
   Routes,
   Route,
   Navigate,
+  Outlet,
   useNavigate,
   useLocation,
 } from "react-router-dom";
@@ -19,42 +20,31 @@ import WithdrawalRequests from "@/pages/WithdrawalRequests";
 import FlaggedReviews from "@/pages/FlaggedReviews"; // Add this line
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import SportCentersPage from "./pages/SportCenter";
-import SportCenterDetailPage from "./pages/SportCenterDetail";
+import SportCentersPage from "@/pages/SportCenter";
+import SportCenterDetailPage from "@/pages/SportCenterDetail";
+import NotFound from "@/pages/NotFoundPage";
 
+// Protect routes by checking for token
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("authToken");
   return token ? children : <Navigate to="/login" replace />;
 };
 
+// Layout with Sidebar + Header
 const MainLayout = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("dashboard");
-  const location = useLocation();
 
   const handleSectionChange = (section) => {
     setActiveSection(section);
     navigate(`/${section}`);
   };
 
-  const getActiveSectionFromURL = () => {
-    const path = location.pathname.split("/")[1];
-    return path || "dashboard";
-  };
-
-  const getSideURL = () => {
-    try {
-      const path = location.pathname.split("/")[2];
-      return path || undefined;
-    } catch {
-      return undefined;
-    }
-  };
-
   useEffect(() => {
-    const mainPath = getActiveSectionFromURL();
-    setActiveSection(mainPath);
+    const mainPath = location.pathname.split("/")[1];
+    setActiveSection(mainPath || "dashboard");
   }, [location.pathname]);
 
   const toggleMobileMenu = () => setIsMobileMenuOpen((prev) => !prev);
@@ -78,6 +68,7 @@ const MainLayout = () => {
         <Header
           activeSection={activeSection}
           toggleMobileMenu={toggleMobileMenu}
+          onLogout={handleLogout}
         />
         <main className="flex-1 overflow-auto p-4 md:p-6">
           <Routes>
@@ -104,23 +95,43 @@ const MainLayout = () => {
             />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
+          <Outlet />
         </main>
       </div>
     </div>
   );
 };
 
+// Main App Routes
 const App = () => (
   <Routes>
+    {/* Public routes */}
     <Route path="/login" element={<Login />} />
+    <Route path="/notfound" element={<NotFound />} />
+
+    {/* Protected routes with layout */}
     <Route
-      path="/*"
+      path="/"
       element={
         <ProtectedRoute>
           <MainLayout />
         </ProtectedRoute>
       }
-    />
+    >
+      <Route index element={<Dashboard />} />
+      <Route path="dashboard" element={<Dashboard />} />
+
+      <Route path="users" element={<Users />} />
+      <Route path="coaches" element={<Coaches />} />
+      <Route path="packages" element={<Packages />} />
+      <Route path="payments" element={<Payments />} />
+      <Route path="reviews" element={<Reviews />} />
+      <Route path="sportcenters" element={<SportCentersPage />} />
+      <Route path="sportcenters/:id" element={<SportCenterDetailPage />} />
+      <Route path="sportcenters/create" element={<SportCenterDetailPage />} />
+    </Route>
+
+    <Route path="*" element={<NotFound />} />
   </Routes>
 );
 

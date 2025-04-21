@@ -37,6 +37,7 @@ export const API_CONFIG = {
       updateProfile: (userId) => `/api/users/${userId}`,
       deleteUser: (userId) => `/api/users/${userId}`,
       assignRoles: "/api/identity/admin/assign-roles",
+      removeRoles: "/api/identity/admin/remove-roles",
     },
   },
   courtManagement: {
@@ -79,15 +80,17 @@ export const API_CONFIG = {
   },
   coachManagement: {
     endpoints: {
-      list: (name, sportId, minPrice, maxPrice) =>
+      list: (name, sportId, minPrice, maxPrice, page, limit) =>
         `/coaches?${name ? `name=${name}` : ""}${
           sportId ? `&sportId=${sportId}` : ""
         }${minPrice ? `&minPrice=${minPrice}` : ""}${
           maxPrice ? `&maxPrice=${maxPrice}` : ""
+        }${page ? `&pageIndex=${page}` : ""}${
+          limit ? `&pageSize=${limit}` : ""
         }`,
       details: (coachId) => `/coaches/${coachId}`,
       delete: (coachId) => `/coaches/${coachId}`,
-      update: (coachId) => `/coaches/${coachId}`,
+      update: (coachId) => `/api/coach/${coachId}`,
     },
   },
   servicePackageManagement: {

@@ -20,8 +20,13 @@ import {
   Typography,
   Box,
 } from "@mui/material";
-import { Icon } from '@iconify/react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
+import { Icon } from "@iconify/react";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../components/ui/tabs";
 import {
   Tooltip as ShadcnTooltip,
   TooltipContent,
@@ -67,7 +72,7 @@ const Packages = () => {
     setIsLoading(true);
     try {
       const statusFilter = activeTab !== "all" ? activeTab : "";
-      
+
       const response = await API_CLIENT.servicePackages(
         currentPage - 1, // API is 0-indexed
         ITEMS_PER_PAGE,
@@ -204,7 +209,10 @@ const Packages = () => {
         });
 
         await API_CLIENT.update(selectedPackage.id, updateRequest);
-        showToast(`Gói dịch vụ "${formData.name}" đã được cập nhật thành công`, "success");
+        showToast(
+          `Gói dịch vụ "${formData.name}" đã được cập nhật thành công`,
+          "success"
+        );
       } else {
         // Create new package
         const createRequest = new CreateServicePackageRequest({
@@ -217,7 +225,10 @@ const Packages = () => {
         });
 
         await API_CLIENT.create(createRequest);
-        showToast(`Gói dịch vụ "${formData.name}" đã được tạo thành công`, "success");
+        showToast(
+          `Gói dịch vụ "${formData.name}" đã được tạo thành công`,
+          "success"
+        );
       }
 
       closeDialog();
@@ -251,10 +262,14 @@ const Packages = () => {
   // Function to get role name in Vietnamese
   const getRoleName = (role) => {
     switch (role) {
-      case "sportcoach": return "Huấn luyện viên";
-      case "sportcenter": return "Trung tâm thể thao";
-      case "player": return "Người chơi";
-      default: return role;
+      case "sportcoach":
+        return "Huấn luyện viên";
+      case "sportcenter":
+        return "Trung tâm thể thao";
+      case "player":
+        return "Người chơi";
+      default:
+        return role;
     }
   };
 
@@ -271,24 +286,26 @@ const Packages = () => {
       <Card
         className="h-full bg-white shadow-md rounded-lg overflow-hidden border border-gray-100 hover:border-blue-300 transition-all duration-200"
         cover={
-          <div className={`h-28 relative overflow-hidden ${
-            pkg.status === "active" 
-              ? "bg-gradient-to-r from-blue-500 to-indigo-600" 
-              : "bg-gradient-to-r from-gray-500 to-gray-600"
-          }`}>
+          <div
+            className={`h-28 relative overflow-hidden ${
+              pkg.status === "active"
+                ? "bg-gradient-to-r from-blue-500 to-indigo-600"
+                : "bg-gradient-to-r from-gray-500 to-gray-600"
+            }`}
+          >
             <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMtMS4zNiAwLTIuNTk4LS41NjItMy40ODQtMS40NjhDMzEuNjMgMTUuNjI0IDMxLjA2OSAxNC40IDMxLjA2OSAxM2MwLTEuNDIyLjU2My0yLjY0NyAxLjQ2OC0zLjUzMkMzMy40MjMgOC41NjIgMzQuNjQgOCAzNiA4YzEuMzc1IDAgMi41OTkuNTYyIDMuNDg0IDEuNDY4Ljg5MS44ODUgMS40NTMgMi4xMSAxLjQ1MyAzLjUzMiAwIDEuNC0uNTYyIDIuNjI0LTEuNDUzIDMuNTMyQTQuOTYgNC45NiAwIDAgMSAzNiAxOHpNMTggMzZjMC0xLjM5OC0uNTYyLTIuNjMtMS40NTMtMy41MTVBNC45NjEgNC45NjEgMCAwIDAgMTMuMDYzIDMxYTQuOTYgNC45NiAwIDAgMC0zLjQ4NCAxLjQ4NUM4LjY3NyAzMy4zNyA4LjEyNSAzNC42MDIgOC4xMjUgMzZjMCAxLjM3NS41NTIgMi42MDkgMS40NTQgMy41MTRBNC45NjEgNC45NjEgMCAwIDAgMTMuMDYzIDQxYy45OTkgMCAyLjEwMS0uMTc1IDMuNDg0LTEuNDg2Ljg5MS0uOTA1IDEuNDUzLTIuMTM5IDEuNDUzLTMuNTE0ek01MyAzNmMwLS4wNTIgMi4xMjEtLjg3OUMyNC42NjIgMjUuNTggMjUgMjQuODI0IDI1IDI0ek0yNSA0N2MwLS44MjQtLjMzOC0xLjU4LS44NzktMi4xMjFTMjIuODI0IDQ0IDIyIDQ0cy0xLjU4LjMzOC0yLjEyMS44NzlTMTkgNDYuMTc2IDE5IDQ3YzAgLjgyNC4zMzggMS41OC44NzkgMi4xMjFTMjEuMTc2IDUwIDIyIDUwcy0uMTU4LS4wNTIgMi4xMjEtLjg3OUMyNC42NjIgNDguNTggMjUgNDcuODI0IDI1IDQ3eiIgZmlsbD0iI2ZmZiIgZmlsbC1vcGFjaXR5PSIuMjUiLz48L2c+PC9zdmc+')] opacity-10"></div>
             <div className="flex items-center justify-center h-full relative">
               <h3 className="text-white text-2xl font-bold">
                 {formatCurrency(pkg.price)}
               </h3>
               <div className="absolute top-2 right-2">
-                <Badge 
-                  status={pkg.status === "active" ? "success" : "default"} 
+                <Badge
+                  status={pkg.status === "active" ? "success" : "default"}
                   text={
                     <span className="text-white text-xs font-medium">
                       {pkg.status === "active" ? "Hoạt động" : "Tạm dừng"}
                     </span>
-                  } 
+                  }
                 />
               </div>
             </div>
@@ -399,7 +416,11 @@ const Packages = () => {
     >
       <Paper className="p-6 bg-white rounded-lg shadow-sm border border-gray-100">
         <Box sx={{ mb: 3 }}>
-          <Typography variant="h4" component="h1" className="font-bold text-gray-800 mb-1">
+          <Typography
+            variant="h4"
+            component="h1"
+            className="font-bold text-gray-800 mb-1"
+          >
             Quản lý gói dịch vụ
           </Typography>
           <Typography variant="body1" className="text-gray-500">
@@ -433,15 +454,13 @@ const Packages = () => {
                     <Icon icon="lucide:x" className="w-4 h-4" />
                   </IconButton>
                 ),
-                className: "bg-gray-50 hover:bg-white transition-colors duration-200",
+                className:
+                  "bg-gray-50 hover:bg-white transition-colors duration-200",
               }}
             />
           </div>
 
-          <motion.div
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
             <Button
               variant="contained"
               color="primary"
@@ -456,21 +475,26 @@ const Packages = () => {
       </Paper>
 
       {/* Tabs */}
-      <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="w-full">
+      <Tabs
+        defaultValue="all"
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="w-full"
+      >
         <TabsList className="bg-white rounded-lg shadow-sm border border-gray-100 p-1 mb-4">
-          <TabsTrigger 
-            value="all" 
+          <TabsTrigger
+            value="all"
             className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 rounded-md px-4 py-2 transition-all duration-200"
           >
             Tất cả
           </TabsTrigger>
-          <TabsTrigger 
+          <TabsTrigger
             value="active"
             className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 rounded-md px-4 py-2 transition-all duration-200"
           >
             Đang hoạt động
           </TabsTrigger>
-          <TabsTrigger 
+          <TabsTrigger
             value="inactive"
             className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 rounded-md px-4 py-2 transition-all duration-200"
           >
@@ -490,7 +514,7 @@ const Packages = () => {
             packages.map((pkg) => <PackageCard key={pkg.id} pkg={pkg} />)
           ) : (
             // Show empty state
-            <motion.div 
+            <motion.div
               className="col-span-3 text-center py-10"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -498,13 +522,20 @@ const Packages = () => {
             >
               <div className="bg-gray-50 rounded-lg p-8 max-w-md mx-auto">
                 <div className="text-5xl mb-4">
-                  <Icon icon="lucide:package" className="mx-auto h-16 w-16 text-gray-400" />
+                  <Icon
+                    icon="lucide:package"
+                    className="mx-auto h-16 w-16 text-gray-400"
+                  />
                 </div>
                 <h3 className="text-xl font-medium text-gray-700 mb-2">
                   {searchTerm
                     ? `Không tìm thấy gói dịch vụ phù hợp với "${searchTerm}"`
                     : activeTab !== "all"
-                    ? `Không có gói dịch vụ nào ${activeTab === "active" ? "đang hoạt động" : "đã tạm dừng"}`
+                    ? `Không có gói dịch vụ nào ${
+                        activeTab === "active"
+                          ? "đang hoạt động"
+                          : "đã tạm dừng"
+                      }`
                     : "Chưa có gói dịch vụ nào"}
                 </h3>
                 <p className="text-gray-500 mb-4">
@@ -527,7 +558,7 @@ const Packages = () => {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <motion.div 
+        <motion.div
           className="flex justify-center mt-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -706,7 +737,11 @@ const Packages = () => {
               color="primary"
               disabled={isSubmitting}
               startIcon={
-                isSubmitting ? <CircularProgress size={20} /> : <Icon icon="lucide:check" />
+                isSubmitting ? (
+                  <CircularProgress size={20} />
+                ) : (
+                  <Icon icon="lucide:check" />
+                )
               }
               className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 ml-2"
             >

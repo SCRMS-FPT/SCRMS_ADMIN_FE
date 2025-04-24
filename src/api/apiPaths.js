@@ -1,6 +1,6 @@
-import { API_IDENTITY_URL } from "./config";
+import { API_GATEWAY_URL, API_IDENTITY_URL } from "./config";
 
-export const BASE_URL = API_IDENTITY_URL;
+export const BASE_URL = API_GATEWAY_URL;
 
 export const API_CONFIG = {
   login: {

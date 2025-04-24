@@ -23,6 +23,7 @@ import "react-toastify/dist/ReactToastify.css";
 import SportCentersPage from "@/pages/SportCenter";
 import SportCenterDetailPage from "@/pages/SportCenterDetail";
 import NotFound from "@/pages/NotFoundPage";
+import Sports from "./pages/Sports";
 
 // Protect routes by checking for token
 const ProtectedRoute = ({ children }) => {
@@ -96,6 +97,7 @@ const App = () => (
     >
       <Route index element={<Dashboard />} />
       <Route path="dashboard" element={<Dashboard />} />
+      <Route path="sports" element={<Sports />} />
       <Route path="users" element={<Users />} />
       <Route path="coaches" element={<Coaches />} />
       <Route path="packages" element={<Packages />} />

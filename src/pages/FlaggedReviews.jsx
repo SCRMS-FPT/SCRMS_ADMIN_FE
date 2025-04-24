@@ -253,14 +253,14 @@ const FlaggedReviews = () => {
                 <FlagOutlined className="text-red-500 mr-2 text-xl" />
                 <div>
                   <Typography variant="subtitle1" className="font-medium">
-                    Reported Review
+                    Đánh giá bị báo cáo
                   </Typography>
                   <Typography variant="body2" className="text-gray-500">
                     ID: {review.reviewId.substring(0, 8)}...
                   </Typography>
                 </div>
               </div>
-              <Tag color="red">1 report</Tag>
+              <Tag color="red">1 báo cáo</Tag>
             </div>
 
             <Divider className="my-2" />
@@ -287,7 +287,7 @@ const FlaggedReviews = () => {
                 variant="body2"
                 className="line-clamp-2 text-gray-700"
               >
-                {review.review.comment || "No comment provided"}
+                {review.review.comment || "Không có bình luận"}
               </Typography>
             </div>
 
@@ -300,7 +300,7 @@ const FlaggedReviews = () => {
                   className="text-gray-500 flex items-center"
                 >
                   <ExclamationCircleOutlined className="mr-1" />
-                  Reason: {review.flagReason || "Not specified"}
+                  Lý do: {review.flagReason || "Không xác định"}
                 </Typography>
               </div>
 
@@ -311,7 +311,7 @@ const FlaggedReviews = () => {
                 onClick={() => handleViewReviewDetails(review)}
                 startIcon={<InfoCircleOutlined />}
               >
-                View Details
+                Xem chi tiết
               </Button>
             </div>
           </div>
@@ -355,13 +355,13 @@ const FlaggedReviews = () => {
   const getSubjectTypeDescription = (type) => {
     switch (type?.toLowerCase()) {
       case "coach":
-        return "Coach Review";
+        return "Đánh giá huấn luyện viên";
       case "court":
-        return "Court Review";
+        return "Đánh giá sân";
       case "sportcenter":
-        return "Sport Center Review";
+        return "Đánh giá trung tâm thể thao";
       default:
-        return "Review";
+        return "Đánh giá";
     }
   };
 
@@ -382,10 +382,10 @@ const FlaggedReviews = () => {
           component="h1"
           className="text-gray-800 font-bold"
         >
-          Flagged Reviews
+          Đánh giá bị báo cáo
         </Typography>
         <Typography variant="body1" className="text-gray-600 mt-1">
-          Manage reports and moderate inappropriate content
+          Quản lý các báo cáo và kiểm duyệt nội dung không phù hợp
         </Typography>
       </div>
 
@@ -394,25 +394,25 @@ const FlaggedReviews = () => {
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center">
             <FlagOutlined className="text-red-500 mr-2" />
-            <Typography variant="h6">Reported Reviews</Typography>
+            <Typography variant="h6">Đánh giá bị báo cáo</Typography>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3">
             {/* Add Status Filter */}
             <FormControl size="small" className="min-w-[150px]">
-              <InputLabel>Status</InputLabel>
+              <InputLabel>Trạng thái</InputLabel>
               <Select
-                label="Status"
+                label="Trạng thái"
                 value={statusFilter}
                 onChange={(e) => {
                   setStatusFilter(e.target.value);
                   setCurrentPage(1); // Reset to first page when filter changes
                 }}
               >
-                <MenuItem value="">All Status</MenuItem>
-                <MenuItem value="pending">Pending</MenuItem>
-                <MenuItem value="Accepted">Accepted</MenuItem>
-                <MenuItem value="Rejected">Rejected</MenuItem>
+                <MenuItem value="">Tất cả</MenuItem>
+                <MenuItem value="pending">Chờ xử lý</MenuItem>
+                <MenuItem value="Accepted">Đã chấp nhận</MenuItem>
+                <MenuItem value="Rejected">Đã từ chối</MenuItem>
               </Select>
             </FormControl>
 
@@ -421,7 +421,7 @@ const FlaggedReviews = () => {
               startIcon={<CheckOutlined />}
               onClick={fetchFlaggedReviews}
             >
-              Refresh
+              Làm mới
             </Button>
           </div>
         </div>
@@ -441,7 +441,7 @@ const FlaggedReviews = () => {
           </Alert>
         ) : flaggedReviews.length === 0 ? (
           <Empty
-            description="No flagged reviews found"
+            description="Không có đánh giá bị báo cáo"
             className="my-12"
             image={Empty.PRESENTED_IMAGE_SIMPLE}
           />
@@ -465,7 +465,7 @@ const FlaggedReviews = () => {
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
               >
-                Previous
+                Trước
               </Button>
 
               {[...Array(totalPages)].map((_, index) => (
@@ -488,7 +488,7 @@ const FlaggedReviews = () => {
                   setCurrentPage((prev) => Math.min(totalPages, prev + 1))
                 }
               >
-                Next
+                Sau
               </Button>
             </Box>
           </div>
@@ -508,7 +508,7 @@ const FlaggedReviews = () => {
       >
         <DialogTitle className="bg-gray-50 border-b flex justify-between items-center">
           <Typography variant="h6">
-            {getSubjectTypeDescription(reviewDetails?.subjectType)} Details
+            {getSubjectTypeDescription(reviewDetails?.subjectType)} Chi tiết
           </Typography>
           <IconButton
             onClick={() => setIsDetailModalOpen(false)}
@@ -524,7 +524,7 @@ const FlaggedReviews = () => {
             <div className="flex flex-col items-center justify-center p-8">
               <CircularProgress />
               <Typography className="mt-4">
-                Loading review details...
+                Đang tải chi tiết đánh giá...
               </Typography>
             </div>
           ) : (
@@ -539,7 +539,7 @@ const FlaggedReviews = () => {
                   label={
                     <div className="flex items-center">
                       <FlagOutlined className="mr-1" />
-                      Report Details
+                      Chi tiết báo cáo
                     </div>
                   }
                 />
@@ -548,8 +548,8 @@ const FlaggedReviews = () => {
                     <div className="flex items-center">
                       <InfoCircleOutlined className="mr-1" />
                       {reviewDetails?.subjectType === "coach"
-                        ? "Coach Info"
-                        : "Court Info"}
+                        ? "Thông tin huấn luyện viên"
+                        : "Thông tin sân"}
                     </div>
                   }
                 />
@@ -566,7 +566,7 @@ const FlaggedReviews = () => {
                           variant="h6"
                           className="mb-3 flex items-center"
                         >
-                          <MessageOutlined className="mr-2" /> Review Content
+                          <MessageOutlined className="mr-2" /> Nội dung đánh giá
                         </Typography>
 
                         <Box className="bg-gray-50 p-4 rounded-lg mb-4">
@@ -584,7 +584,7 @@ const FlaggedReviews = () => {
                           </div>
 
                           <Typography variant="body1" className="mb-2">
-                            {reviewDetails?.comment || "No comment provided"}
+                            {reviewDetails?.comment || "Không có bình luận"}
                           </Typography>
                         </Box>
 
@@ -595,7 +595,7 @@ const FlaggedReviews = () => {
                           className="mb-2 text-red-500 font-medium flex items-center"
                         >
                           <FlagOutlined className="mr-2" />
-                          Report Information
+                          Thông tin báo cáo
                         </Typography>
 
                         <Box className="space-y-2">
@@ -605,8 +605,8 @@ const FlaggedReviews = () => {
                                 variant="body2"
                                 className="font-medium"
                               >
-                                Reason:{" "}
-                                {selectedReview?.flagReason || "Not specified"}
+                                Lý do:{" "}
+                                {selectedReview?.flagReason || "Không xác định"}
                               </Typography>
                               <Typography
                                 variant="caption"
@@ -619,7 +619,7 @@ const FlaggedReviews = () => {
                               variant="body2"
                               className="mt-2 text-gray-600"
                             >
-                              Status:{" "}
+                              Trạng thái:{" "}
                               <Tag
                                 color={
                                   selectedReview?.status === "pending"
@@ -629,7 +629,13 @@ const FlaggedReviews = () => {
                                     : "red"
                                 }
                               >
-                                {selectedReview?.status || "Pending"}
+                                {selectedReview?.status === "pending"
+                                  ? "Chờ xử lý"
+                                  : selectedReview?.status === "accepted"
+                                  ? "Đã chấp nhận"
+                                  : selectedReview?.status === "rejected"
+                                  ? "Đã từ chối"
+                                  : selectedReview?.status}
                               </Tag>
                             </Typography>
                           </div>
@@ -647,7 +653,8 @@ const FlaggedReviews = () => {
                           variant="h6"
                           className="mb-3 flex items-center"
                         >
-                          <UserOutlined className="mr-2" /> Author Information
+                          <UserOutlined className="mr-2" /> Thông tin người đánh
+                          giá
                         </Typography>
 
                         {authorDetails ? (
@@ -683,7 +690,7 @@ const FlaggedReviews = () => {
                                   variant="body2"
                                   className="text-gray-500"
                                 >
-                                  User ID:
+                                  Mã người dùng:
                                 </Typography>
                                 <Typography variant="body2">
                                   {authorDetails.id.substring(0, 8)}...
@@ -695,14 +702,14 @@ const FlaggedReviews = () => {
                                   variant="body2"
                                   className="text-gray-500"
                                 >
-                                  Status:
+                                  Trạng thái:
                                 </Typography>
                                 <Chip
                                   size="small"
                                   label={
                                     !authorDetails.IsDeleted
-                                      ? "Active"
-                                      : "Inactive"
+                                      ? "Hoạt động"
+                                      : "Ngưng hoạt động"
                                   }
                                   color={
                                     !authorDetails.IsDeleted
@@ -717,7 +724,7 @@ const FlaggedReviews = () => {
                                   variant="body2"
                                   className="text-gray-500"
                                 >
-                                  Roles:
+                                  Vai trò:
                                 </Typography>
                                 <div>
                                   {authorDetails.roles?.map((role, index) => (
@@ -738,7 +745,7 @@ const FlaggedReviews = () => {
                                   variant="body2"
                                   className="text-gray-500"
                                 >
-                                  Joined:
+                                  Ngày tham gia:
                                 </Typography>
                                 <Typography variant="body2">
                                   {formatDate(authorDetails.createdAt)}
@@ -748,8 +755,8 @@ const FlaggedReviews = () => {
                           </>
                         ) : (
                           <Alert severity="warning">
-                            Author details not available or user may have been
-                            deleted
+                            Không có thông tin người dùng hoặc tài khoản đã bị
+                            xóa
                           </Alert>
                         )}
                       </Paper>
@@ -772,9 +779,9 @@ const FlaggedReviews = () => {
                   ) : (
                     <Alert severity="warning" className="mt-4">
                       {reviewDetails?.subjectType === "coach"
-                        ? "Coach"
-                        : "Court"}{" "}
-                      details not available
+                        ? "Huấn luyện viên"
+                        : "Sân"}{" "}
+                      không có thông tin
                     </Alert>
                   )}
                 </Box>
@@ -789,7 +796,7 @@ const FlaggedReviews = () => {
             variant="outlined"
             disabled={isDeleting}
           >
-            Close
+            Đóng
           </Button>
 
           <div className="flex gap-2 ml-auto">
@@ -800,7 +807,7 @@ const FlaggedReviews = () => {
               disabled={isDeleting}
               startIcon={<CheckOutlined />}
             >
-              Dismiss Report
+              Bỏ qua báo cáo
             </Button>
 
             <Button
@@ -816,7 +823,7 @@ const FlaggedReviews = () => {
                 )
               }
             >
-              {isDeleting ? "Processing..." : "Accept & Delete Review"}
+              {isDeleting ? "Đang xử lý..." : "Chấp nhận & Xóa đánh giá"}
             </Button>
           </div>
         </DialogActions>
@@ -831,12 +838,12 @@ const FlaggedReviews = () => {
           }}
         >
           <DialogTitle className="bg-gray-50 border-b">
-            Accept report and delete review?
+            Chấp nhận báo cáo và xóa đánh giá?
           </DialogTitle>
           <DialogContent className="pt-4">
             <Typography>
-              This action will mark the report as accepted and permanently
-              delete the review.
+              Hành động này sẽ đánh dấu báo cáo là đã chấp nhận và xóa vĩnh viễn
+              đánh giá này.
             </Typography>
           </DialogContent>
           <DialogActions className="bg-gray-50 border-t p-3">
@@ -844,7 +851,7 @@ const FlaggedReviews = () => {
               onClick={() => setIsConfirmDialogOpen(false)}
               variant="outlined"
             >
-              Cancel
+              Hủy
             </Button>
             <Button
               onClick={() => {
@@ -860,7 +867,7 @@ const FlaggedReviews = () => {
               }
               disabled={isDeleting}
             >
-              Yes, Delete Review
+              Đồng ý xóa đánh giá
             </Button>
           </DialogActions>
         </Dialog>
@@ -886,7 +893,7 @@ const CoachDetailsPanel = ({ coachData }) => {
             <div>
               <Typography variant="h6">{coachData.fullName}</Typography>
               <Typography variant="body2" className="text-gray-500">
-                Coach
+                Huấn luyện viên
               </Typography>
             </div>
           </div>
@@ -898,19 +905,19 @@ const CoachDetailsPanel = ({ coachData }) => {
           </Typography>
 
           <Typography variant="body2" className="text-gray-700 mb-3">
-            <span className="font-medium">Phone:</span>{" "}
-            {coachData.phone || "N/A"}
+            <span className="font-medium">Số điện thoại:</span>{" "}
+            {coachData.phone || "Không có"}
           </Typography>
 
           <Typography variant="body2" className="text-gray-700 mb-3">
-            <span className="font-medium">Rate:</span>{" "}
+            <span className="font-medium">Giá thuê:</span>{" "}
             {coachData.ratePerHour
-              ? `${coachData.ratePerHour.toLocaleString()} VND/hour`
-              : "N/A"}
+              ? `${coachData.ratePerHour.toLocaleString()} VND/giờ`
+              : "Không có"}
           </Typography>
 
           <Typography variant="body2" className="text-gray-700">
-            <span className="font-medium">Member since:</span>{" "}
+            <span className="font-medium">Thành viên từ:</span>{" "}
             {formatDate(coachData.createdAt)}
           </Typography>
         </Paper>
@@ -919,7 +926,7 @@ const CoachDetailsPanel = ({ coachData }) => {
       <Grid item xs={12} md={7}>
         <Paper elevation={0} className="p-4 border rounded-lg h-full">
           <Typography variant="h6" className="mb-3 flex items-center">
-            <InfoCircleOutlined className="mr-2" /> Coach Information
+            <InfoCircleOutlined className="mr-2" /> Thông tin huấn luyện viên
           </Typography>
 
           {coachData.bio ? (
@@ -931,14 +938,14 @@ const CoachDetailsPanel = ({ coachData }) => {
             </Typography>
           ) : (
             <Alert severity="info" className="mb-4">
-              No biography provided
+              Không có mô tả
             </Alert>
           )}
 
           <Divider className="my-3" />
 
           <Typography variant="subtitle2" className="mb-2 flex items-center">
-            <TrophyOutlined className="mr-2" /> Sports
+            <TrophyOutlined className="mr-2" /> Môn thể thao
           </Typography>
 
           <div className="flex flex-wrap gap-2 mb-4">
@@ -953,7 +960,7 @@ const CoachDetailsPanel = ({ coachData }) => {
               ))
             ) : (
               <Typography variant="body2" className="text-gray-500">
-                No sports specified
+                Không có môn thể thao
               </Typography>
             )}
           </div>
@@ -964,7 +971,7 @@ const CoachDetailsPanel = ({ coachData }) => {
                 variant="subtitle2"
                 className="mb-2 flex items-center"
               >
-                <TeamOutlined className="mr-2" /> Available Packages
+                <TeamOutlined className="mr-2" /> Gói huấn luyện
               </Typography>
 
               <div className="space-y-2">
@@ -1005,7 +1012,7 @@ const CourtDetailsPanel = ({ courtData }) => {
       <Grid item xs={12} md={5}>
         <Paper elevation={0} className="p-4 border rounded-lg h-full">
           <Typography variant="h6" className="mb-3 flex items-center">
-            <EnvironmentOutlined className="mr-2" /> Court Information
+            <EnvironmentOutlined className="mr-2" /> Thông tin sân
           </Typography>
 
           <div className="mb-4 bg-gray-50 p-3 rounded-lg">
@@ -1013,45 +1020,45 @@ const CourtDetailsPanel = ({ courtData }) => {
               {courtData.courtName}
             </Typography>
             <Typography variant="body2" className="text-gray-700 mt-1">
-              Sport Center: {courtData.sportCenterName || "N/A"}
+              Trung tâm thể thao: {courtData.sportCenterName || "Không có"}
             </Typography>
             <Typography variant="body2" className="text-gray-700">
-              Sport: {courtData.sportName || "N/A"}
+              Môn thể thao: {courtData.sportName || "Không có"}
             </Typography>
           </div>
 
           <Divider className="my-3" />
 
           <Typography variant="body2" className="mb-2 text-gray-700">
-            <span className="font-medium">Status:</span>{" "}
+            <span className="font-medium">Trạng thái:</span>{" "}
             <Chip
               size="small"
-              label={courtData.status === 0 ? "Active" : "Inactive"}
+              label={courtData.status === 0 ? "Hoạt động" : "Ngưng hoạt động"}
               color={courtData.status === 0 ? "success" : "default"}
             />
           </Typography>
 
           <Typography variant="body2" className="mb-2 text-gray-700">
-            <span className="font-medium">Type:</span>{" "}
+            <span className="font-medium">Loại sân:</span>{" "}
             {courtData.courtType === 1
-              ? "Indoor"
+              ? "Trong nhà"
               : courtData.courtType === 2
-              ? "Outdoor"
-              : "Mixed"}
+              ? "Ngoài trời"
+              : "Kết hợp"}
           </Typography>
 
           <Typography variant="body2" className="mb-2 text-gray-700">
-            <span className="font-medium">Slot Duration:</span>{" "}
-            {courtData.slotDuration} minutes
+            <span className="font-medium">Thời lượng mỗi ca:</span>{" "}
+            {courtData.slotDuration} phút
           </Typography>
 
           <Typography variant="body2" className="mb-2 text-gray-700">
-            <span className="font-medium">Min Deposit:</span>{" "}
+            <span className="font-medium">Đặt cọc tối thiểu:</span>{" "}
             {courtData.minDepositPercentage}%
           </Typography>
 
           <Typography variant="body2" className="text-gray-700">
-            <span className="font-medium">Created:</span>{" "}
+            <span className="font-medium">Ngày tạo:</span>{" "}
             {formatDate(courtData.createdAt)}
           </Typography>
         </Paper>
@@ -1060,7 +1067,7 @@ const CourtDetailsPanel = ({ courtData }) => {
       <Grid item xs={12} md={7}>
         <Paper elevation={0} className="p-4 border rounded-lg h-full">
           <Typography variant="h6" className="mb-3">
-            Description
+            Mô tả
           </Typography>
 
           {courtData.description ? (
@@ -1072,14 +1079,14 @@ const CourtDetailsPanel = ({ courtData }) => {
             </Typography>
           ) : (
             <Alert severity="info" className="mb-4">
-              No description provided
+              Không có mô tả
             </Alert>
           )}
 
           <Divider className="my-3" />
 
           <Typography variant="subtitle2" className="mb-2">
-            Facilities
+            Tiện ích
           </Typography>
 
           {courtData.facilities?.length > 0 ? (
@@ -1095,7 +1102,7 @@ const CourtDetailsPanel = ({ courtData }) => {
             </div>
           ) : (
             <Typography variant="body2" className="text-gray-500 mb-4">
-              No facilities specified
+              Không có tiện ích
             </Typography>
           )}
 
@@ -1104,7 +1111,7 @@ const CourtDetailsPanel = ({ courtData }) => {
               <Divider className="my-3" />
 
               <Typography variant="subtitle2" className="mb-2">
-                Active Promotions
+                Khuyến mãi đang áp dụng
               </Typography>
 
               <div className="space-y-2">
@@ -1115,10 +1122,10 @@ const CourtDetailsPanel = ({ courtData }) => {
                   >
                     <div>
                       <Typography variant="body2" className="font-medium">
-                        {promo.description || "Discount"}
+                        {promo.description || "Giảm giá"}
                       </Typography>
                       <Typography variant="caption" className="text-gray-600">
-                        Valid until: {formatDate(promo.validTo)}
+                        Hạn đến: {formatDate(promo.validTo)}
                       </Typography>
                     </div>
                     <Chip

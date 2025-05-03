@@ -36,7 +36,7 @@ export default function AdminLogin() {
       localStorage.setItem("user", JSON.stringify(result.user));
       navigate("/");
     } catch (err) {
-      toast.error(err.message || "Đăng nhập thất bại", {
+      toast.error("Đăng nhập thất bại", {
         position: "bottom-right",
         autoClose: 3000,
         hideProgressBar: false,

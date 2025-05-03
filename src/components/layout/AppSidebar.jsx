@@ -130,8 +130,9 @@ const AppSidebar = ({
       <Sidebar className="hidden md:flex border-r">
         <SidebarHeader className="border-b">
           <div className="flex items-center gap-2 px-2 py-3">
-            <Activity className="h-6 w-6 text-primary" />
-            <span className="text-xl font-bold">Trang quản lý website</span>
+            {/* <Activity className="h-6 w-6 text-primary" /> */}
+            <img src="/src/assets/logo.png" alt="Logo" className="h-15 w-15" />
+            <span className="text-xl font-bold">Trang quản lý web</span>
           </div>
         </SidebarHeader>
         <SidebarContent>

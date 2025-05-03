@@ -5,7 +5,7 @@ export const BASE_URL = API_GATEWAY_URL;
 export const API_CONFIG = {
   login: {
     endpoints: {
-      login: "/api/identity/login",
+      login: "/api/identity/adminlogin",
     },
   },
   dashboard: {

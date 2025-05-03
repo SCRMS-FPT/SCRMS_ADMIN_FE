@@ -59,7 +59,7 @@ const Packages = () => {
     description: "",
     price: 0,
     durationDays: 30,
-    associatedRole: "sportcoach",
+    associatedRole: "Coach", // Default to Coach
     status: "active",
   });
   const [formErrors, setFormErrors] = useState({});
@@ -126,7 +126,7 @@ const Packages = () => {
         description: selectedPackage.description || "",
         price: selectedPackage.price || 0,
         durationDays: selectedPackage.durationDays || 30,
-        associatedRole: selectedPackage.associatedRole || "sportcoach",
+        associatedRole: selectedPackage.associatedRole || "Coach", // Default to Coach if not set
         status: selectedPackage.status || "active",
       });
     } else if (isDialogOpen && !selectedPackage) {
@@ -136,7 +136,7 @@ const Packages = () => {
         description: "",
         price: 0,
         durationDays: 30,
-        associatedRole: "sportcoach",
+        associatedRole: "Coach", // Default to Coach
         status: "active",
       });
     }
@@ -247,7 +247,9 @@ const Packages = () => {
     setDeleteItemId(id);
 
     try {
-      await API_CLIENT.delete(id);
+      console.log("Deleting package with ID:", id); // Add logging to debug
+      const response = await API_CLIENT.delete(id);
+      console.log("Delete response:", response); // Log the response
       showToast("Gói dịch vụ đã được xóa thành công", "success");
       fetchPackages(); // Refresh the list
     } catch (err) {
@@ -262,12 +264,10 @@ const Packages = () => {
   // Function to get role name in Vietnamese
   const getRoleName = (role) => {
     switch (role) {
-      case "sportcoach":
+      case "Coach":
         return "Huấn luyện viên";
-      case "sportcenter":
-        return "Trung tâm thể thao";
-      case "player":
-        return "Người chơi";
+      case "CourtOwner":
+        return "Chủ sân";
       default:
         return role;
     }
@@ -329,37 +329,41 @@ const Packages = () => {
               </TooltipContent>
             </ShadcnTooltip>
           </TooltipProvider>,
-          <Popconfirm
-            key="delete"
-            title="Xóa gói dịch vụ này?"
-            description="Hành động này không thể hoàn tác"
-            onConfirm={() => handleDelete(pkg.id)}
-            okText="Đồng ý"
-            cancelText="Hủy"
-            okButtonProps={{ danger: true }}
-          >
-            <TooltipProvider>
-              <ShadcnTooltip>
-                <TooltipTrigger asChild>
-                  <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="text-red-500 hover:text-red-700 transition-colors p-2 flex items-center justify-center"
-                    disabled={isDeleting && deleteItemId === pkg.id}
+
+          <TooltipProvider key="delete">
+            <ShadcnTooltip>
+              <TooltipTrigger asChild>
+                <div>
+                  <Popconfirm
+                    title="Xóa gói dịch vụ này?"
+                    description="Hành động này không thể hoàn tác"
+                    onConfirm={() => handleDelete(pkg.id)}
+                    okText="Đồng ý"
+                    cancelText="Hủy"
+                    okButtonProps={{ danger: true }}
+                    placement="topRight"
+                    overlayClassName="z-50"
                   >
-                    {isDeleting && deleteItemId === pkg.id ? (
-                      <CircularProgress size={20} />
-                    ) : (
-                      <Icon icon="lucide:trash-2" className="w-5 h-5" />
-                    )}
-                  </motion.button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Xóa gói dịch vụ</p>
-                </TooltipContent>
-              </ShadcnTooltip>
-            </TooltipProvider>
-          </Popconfirm>,
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="text-red-500 hover:text-red-700 transition-colors p-2 flex items-center justify-center"
+                      disabled={isDeleting && deleteItemId === pkg.id}
+                    >
+                      {isDeleting && deleteItemId === pkg.id ? (
+                        <CircularProgress size={20} />
+                      ) : (
+                        <Icon icon="lucide:trash-2" className="w-5 h-5" />
+                      )}
+                    </motion.button>
+                  </Popconfirm>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Xóa gói dịch vụ</p>
+              </TooltipContent>
+            </ShadcnTooltip>
+          </TooltipProvider>,
         ]}
       >
         <div className="px-4 py-3 h-48 flex flex-col">
@@ -696,9 +700,8 @@ const Packages = () => {
                   value={formData.associatedRole}
                   onChange={handleInputChange}
                 >
-                  <MenuItem value="sportcoach">Huấn luyện viên</MenuItem>
-                  <MenuItem value="sportcenter">Trung tâm thể thao</MenuItem>
-                  <MenuItem value="player">Người chơi</MenuItem>
+                  <MenuItem value="Coach">Huấn luyện viên</MenuItem>
+                  <MenuItem value="CourtOwner">Chủ sân</MenuItem>
                 </Select>
               </FormControl>
 

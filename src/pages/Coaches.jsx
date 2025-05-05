@@ -164,7 +164,7 @@ const Coaches = () => {
         showToast("Không thể xóa HLV không tồn tại.", "error");
         return;
       }
-      await removeUserRole(selectedDelete, "coach");
+      await removeUserRole(selectedDelete, ["coach"]);
       await deleteCoaches(selectedDelete);
       showToast("Huấn luyện viên đã được xóa thành công!", "success");
       setSelectedDelete(null);

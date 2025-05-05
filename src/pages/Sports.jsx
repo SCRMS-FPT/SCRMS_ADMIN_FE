@@ -28,7 +28,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { showToast } from "@/lib/utils";
-import { Client } from "@/api/CourtApi";
+import { ApiException, Client } from "@/api/CourtApi";
 import { API_GATEWAY_URL } from "@/api/config";
 
 const Sports = () => {
@@ -113,9 +113,9 @@ const Sports = () => {
       return;
     }
 
-    try {
-      if (editingSport) {
-        // Cập nhật môn thể thao
+    if (editingSport) {
+      // Cập nhật môn thể thao
+      try {
         await apiClient.updateSport({
           id: editingSport.id,
           name,
@@ -123,15 +123,46 @@ const Sports = () => {
           icon,
         });
         showToast("Cập nhật môn thể thao thành công", "success");
-      } else {
-        // Tạo mới môn thể thao
+        fetchSports();
+        closeDialog();
+      } catch (err) {
+        if (err instanceof ApiException) {
+          let detail = "Cập nhật môn thể thao thất bại";
+          try {
+            const body = JSON.parse(err.response);
+            if (body?.detail?.includes("Duplicate")) {
+              detail = "Môn thể thao đã tồn tại";
+            }
+          } catch (parseError) {}
+
+          showToast(detail, "error");
+        } else {
+          showToast("Cập nhật môn thể thao thất bại", "error");
+        }
+      }
+    } else {
+      // Tạo mới môn thể thao
+      try {
         await apiClient.createSport({ name, description, icon });
         showToast("Tạo mới môn thể thao thành công", "success");
+        fetchSports();
+        closeDialog();
+      } catch (err) {
+        if (err instanceof ApiException) {
+          let detail = "Tạo mới môn thể thao thất bại";
+
+          try {
+            const body = JSON.parse(err.response);
+            if (body?.detail?.includes("Duplicate")) {
+              detail = "Môn thể thao đã tồn tại";
+            }
+          } catch (parseError) {}
+
+          showToast(detail, "error");
+        } else {
+          showToast("Tạo mới môn thể thao thất bại", "error");
+        }
       }
-      fetchSports();
-      closeDialog();
-    } catch (error) {
-      showToast("Không thể lưu môn thể thao", "error");
     }
   };
 
@@ -190,8 +221,8 @@ const Sports = () => {
           </div>
         </div>
 
-        <div className="hidden md:block overflow-x-auto">
-          <Table>
+        <div className="w-full overflow-x-auto">
+          <Table className="min-w-[600px] md:min-w-full">
             <TableHeader className="bg-muted/50">
               <TableRow>
                 <TableHead className="font-semibold text-center">Tên</TableHead>

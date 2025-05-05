@@ -113,9 +113,9 @@ const Sports = () => {
       return;
     }
 
-    try {
-      if (editingSport) {
-        // Cập nhật môn thể thao
+    if (editingSport) {
+      // Cập nhật môn thể thao
+      try {
         await apiClient.updateSport({
           id: editingSport.id,
           name,
@@ -123,16 +123,20 @@ const Sports = () => {
           icon,
         });
         showToast("Cập nhật môn thể thao thành công", "success");
-      } else {
-        // Tạo mới môn thể thao
+      } catch (err) {
+        showToast("Cập nhật môn thể thao thất bại", "error");
+      }
+    } else {
+      // Tạo mới môn thể thao
+      try {
         await apiClient.createSport({ name, description, icon });
         showToast("Tạo mới môn thể thao thành công", "success");
+      } catch (err) {
+        showToast("Tạo mới môn thể thao thất bại", "error");
       }
-      fetchSports();
-      closeDialog();
-    } catch (error) {
-      showToast("Không thể lưu môn thể thao", "error");
     }
+    fetchSports();
+    closeDialog();
   };
 
   // Mở hộp thoại xác nhận xóa
@@ -190,8 +194,8 @@ const Sports = () => {
           </div>
         </div>
 
-        <div className="hidden md:block overflow-x-auto">
-          <Table>
+        <div className="w-full overflow-x-auto">
+          <Table className="min-w-[600px] md:min-w-full">
             <TableHeader className="bg-muted/50">
               <TableRow>
                 <TableHead className="font-semibold text-center">Tên</TableHead>

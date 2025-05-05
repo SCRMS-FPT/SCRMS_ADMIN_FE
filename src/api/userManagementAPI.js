@@ -186,15 +186,15 @@ export async function removeUserRole(userId, roleData) {
     throw new Error("User ID is required to assign roles.");
   }
 
-  if (
-    !Array.isArray(roleData) ||
-    roleData.length === 0 ||
-    roleData.some((role) => typeof role !== "string" || !role.trim())
-  ) {
-    throw new Error(
-      "Role data must be a non-empty array of valid role strings."
-    );
-  }
+  // if (
+  //   !Array.isArray(roleData) ||
+  //   roleData.length === 0 ||
+  //   roleData.some((role) => typeof role !== "string" || !role.trim())
+  // ) {
+  //   throw new Error(
+  //     "Role data must be a non-empty array of valid role strings."
+  //   );
+  // }
 
   const token = localStorage.getItem("authToken");
   const url = BASE_URL + endpoints.removeRoles;

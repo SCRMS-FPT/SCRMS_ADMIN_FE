@@ -28,6 +28,7 @@ import {
   Skeleton,
   InputAdornment,
   IconButton,
+  Alert,
 } from "@mui/material";
 import {
   EyeOutlined,
@@ -90,6 +91,7 @@ const WithdrawalRequests = () => {
   const [isProcessModalOpen, setIsProcessModalOpen] = useState(false);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const [error, setError] = useState(null);
+  const [insufficientFunds, setInsufficientFunds] = useState(false);
 
   // Fetch withdrawal requests
   const fetchRequests = async () => {
@@ -178,6 +180,17 @@ const WithdrawalRequests = () => {
 
   // Open process modal
   const openProcessModal = (status) => {
+    if (status === "Approved" && userBalance && selectedRequest) {
+      // Check if user has sufficient balance
+      if (selectedRequest.amount > userBalance.balance) {
+        setInsufficientFunds(true);
+      } else {
+        setInsufficientFunds(false);
+      }
+    } else {
+      setInsufficientFunds(false);
+    }
+
     setProcessForm({
       status,
       adminNote: "",
@@ -747,6 +760,17 @@ const WithdrawalRequests = () => {
         </DialogTitle>
         <DialogContent className="p-6">
           <div className="py-2">
+            {insufficientFunds && (
+              <Alert severity="error" className="mb-4">
+                <Typography variant="body2">
+                  <strong>Cảnh báo:</strong> Số tiền yêu cầu rút (
+                  {formatCurrency(selectedRequest?.amount)}) vượt quá số dư hiện
+                  tại của người dùng ({formatCurrency(userBalance?.balance)}).
+                  Không thể duyệt yêu cầu này.
+                </Typography>
+              </Alert>
+            )}
+
             <Typography variant="body2" className="mb-4">
               {processForm.status === "Approved"
                 ? "Vui lòng xác nhận bạn muốn duyệt yêu cầu rút tiền này. Thêm ghi chú nếu cần."
@@ -788,27 +812,38 @@ const WithdrawalRequests = () => {
           >
             Hủy
           </Button>
-          <Button
-            variant="contained"
-            color={processForm.status === "Approved" ? "success" : "error"}
-            onClick={processRequest}
-            disabled={isProcessing || !processForm.adminNote.trim()}
-            startIcon={
-              isProcessing ? (
-                <CircularProgress size={20} color="inherit" />
-              ) : processForm.status === "Approved" ? (
-                <CheckCircleOutlined />
-              ) : (
-                <CloseCircleOutlined />
-              )
-            }
+          <Tooltip
+            title={insufficientFunds ? "Không thể duyệt do số dư không đủ" : ""}
+            placement="top"
           >
-            {isProcessing
-              ? "Đang xử lý..."
-              : processForm.status === "Approved"
-              ? "Xác nhận duyệt"
-              : "Xác nhận từ chối"}
-          </Button>
+            <span>
+              <Button
+                variant="contained"
+                color={processForm.status === "Approved" ? "success" : "error"}
+                onClick={processRequest}
+                disabled={
+                  isProcessing ||
+                  !processForm.adminNote.trim() ||
+                  (processForm.status === "Approved" && insufficientFunds)
+                }
+                startIcon={
+                  isProcessing ? (
+                    <CircularProgress size={20} color="inherit" />
+                  ) : processForm.status === "Approved" ? (
+                    <CheckCircleOutlined />
+                  ) : (
+                    <CloseCircleOutlined />
+                  )
+                }
+              >
+                {isProcessing
+                  ? "Đang xử lý..."
+                  : processForm.status === "Approved"
+                  ? "Xác nhận duyệt"
+                  : "Xác nhận từ chối"}
+              </Button>
+            </span>
+          </Tooltip>
         </DialogActions>
       </Dialog>
     </motion.div>
